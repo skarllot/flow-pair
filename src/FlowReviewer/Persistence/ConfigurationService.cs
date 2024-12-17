@@ -2,7 +2,6 @@ using System.IO.Abstractions;
 using System.Text.Json;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowReviewer.Common;
-using Ciandt.FlowTools.FlowReviewer.Persistence.Models;
 using Ciandt.FlowTools.FlowReviewer.Persistence.Models.v1;
 using Spectre.Console;
 

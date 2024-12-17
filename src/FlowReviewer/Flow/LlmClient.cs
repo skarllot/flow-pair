@@ -2,10 +2,11 @@ using System.Collections.Immutable;
 using System.Net.Http.Headers;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowReviewer.Common;
+using Ciandt.FlowTools.FlowReviewer.Flow.AmazonBedrock;
 using Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.OpenAi;
 using Ciandt.FlowTools.FlowReviewer.Persistence;
 using Ciandt.FlowTools.FlowReviewer.Persistence.Models.v1;
-using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowReviewer.Flow;
 
@@ -15,7 +16,9 @@ public partial interface ILlmClient : IDisposable;
 public sealed class LlmClient(
     AppJsonContext jsonContext,
     IConfigurationService configurationService,
-    IUserSessionService userSessionService)
+    IUserSessionService userSessionService,
+    IOpenAiClient openAiClient,
+    IBedrockClient bedrockClient)
     : ILlmClient
 {
     private const string FlowBaseAddress = "https://flow.ciandt.com/";
@@ -38,14 +41,25 @@ public sealed class LlmClient(
         };
     }
 
-    public Result<Message, FlowError> ChatCompletion(ImmutableList<Message> messages)
+    public Result<Message, FlowError> ChatCompletion(AllowedModel model, ImmutableList<Message> messages)
     {
+        IModelClient modelClient = model switch
+        {
+            AllowedModel.Gpt4 => openAiClient,
+            AllowedModel.Gpt4o => openAiClient,
+            AllowedModel.Gpt4oMini => openAiClient,
+            AllowedModel.Gpt35Turbo => openAiClient,
+            AllowedModel.Claude3Sonnet => bedrockClient,
+            AllowedModel.Claude35Sonnet => bedrockClient,
+            _ => throw new ArgumentOutOfRangeException(nameof(model), model, null)
+        };
+
         return from configuration in configurationService.CurrentAppConfiguration
                 .MapErr(v => new FlowError(0, v))
             from session in userSessionService.UserSession
                 .MapErr(v => new FlowError(0, v))
             from token in RequestToken(configuration, session)
-            from chat in RequestChatCompletion(configuration, messages)
+            from chat in modelClient.ChatCompletion(_client!, model, messages)
             select chat;
     }
 
@@ -133,34 +147,5 @@ public sealed class LlmClient(
         userSession = userSession with { AvailableModels = response.Select(x => x.Id).ToImmutableList() };
         userSessionService.Save(userSession);
         return userSession;
-    }
-
-    private Result<Message, FlowError> RequestChatCompletion(
-        AppConfiguration configuration,
-        ImmutableList<Message> messages)
-    {
-        _client ??= CreateHttpClient(configuration);
-        using var responseMessage = _client.PostAsJson(
-            "/ai-orchestration-api/v1/openai/chat/completions",
-            new ChatCompletionRequest(AllowedModel.Gpt4o, messages),
-            jsonContext.ChatCompletionRequest);
-
-        if (!responseMessage.IsSuccessStatusCode)
-        {
-            return new FlowError(
-                responseMessage.StatusCode,
-                "Failed to retrieve chat completion",
-                responseMessage.Content.ReadAsString());
-        }
-
-        var response = responseMessage.Content.ReadFromJson(jsonContext.ChatCompletionResponse);
-        if (response is null || response.Choices.Count == 0)
-        {
-            return new FlowError(
-                responseMessage.StatusCode,
-                "Retrieved chat completion is null or empty");
-        }
-
-        return response.Choices[0].Message;
     }
 }

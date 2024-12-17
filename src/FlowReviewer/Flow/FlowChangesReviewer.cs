@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.IO.Abstractions;
+using System.Text;
 using System.Text.Json;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowReviewer.ChangeTracking;
@@ -21,30 +22,14 @@ public sealed class FlowChangesReviewer(
 {
     public Option<Unit> Run(ImmutableList<FileChange> changes)
     {
-        var result = changes
+        var diff = changes
             .Where(f => f.Path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
-            .Traverse(
-                f =>
-                {
-                    console.Write($"Reviewing '{f.Path}'...");
-                    var message = llmClient.ChatCompletion([s_systemMessage, new Message(Role.User, f.Diff)]);
-                    console.WriteLine(" OK");
-                    return message;
-                });
+            .Aggregate(new StringBuilder(), (curr, next) => curr.AppendLine().AppendLine(next.Diff))
+            .ToString();
 
-        if (!result.IsOk)
-        {
-            console.MarkupLineInterpolated($"[bold red]Error:[/] {result.UnwrapErr().ToString()}");
-            return None;
-        }
-
-        var feedback = result.Unwrap()
-            .Select(m => m.Content)
-            .Select(
-                m => JsonSerializer.Deserialize(
-                    m.AsSpan()[m.IndexOf('[')..(m.LastIndexOf(']') + 1)],
-                    jsonContext.ImmutableListReviewerFeedbackResponse) ?? [])
-            .Aggregate(ImmutableList<ReviewerFeedbackResponse>.Empty, (curr, next) => curr.AddRange(next));
+        var feedback = GetFeedback(AllowedModel.Claude35Sonnet, diff)
+            .Concat(GetFeedback(AllowedModel.Gpt4o, diff))
+            .ToImmutableList();
 
         console.WriteLine($"Created {feedback.Count} comments");
 
@@ -59,6 +44,27 @@ public sealed class FlowChangesReviewer(
         }
 
         return Unit();
+    }
+
+    private ImmutableList<ReviewerFeedbackResponse> GetFeedback(AllowedModel model, string diff)
+    {
+        var result = llmClient.ChatCompletion(
+            model,
+            [s_systemMessage, new Message(Role.User, diff)]);
+
+        if (!result.IsOk)
+        {
+            console.MarkupLineInterpolated($"[bold red]Error:[/] {result.UnwrapErr().ToString()}");
+            return [];
+        }
+
+        var content = result.Unwrap().Content;
+        var feedback = content.Contains('[') && content.Contains(']')
+            ? JsonSerializer.Deserialize(
+                content.AsSpan()[content.IndexOf('[')..(content.LastIndexOf(']') + 1)],
+                jsonContext.ImmutableListReviewerFeedbackResponse) ?? []
+            : [];
+        return feedback;
     }
 
     private static readonly Message s_systemMessage = new(
@@ -80,6 +86,7 @@ public sealed class FlowChangesReviewer(
         5. Flag any API keys or secrets present in plain text immediately as highest risk.
         6. Rate the changes based on SOLID principles if applicable.
         7. Apply the principles of DRY, KISS, YAGNI and Clean Code during the review of the code.
+        8. Do not infer unknown code, do not speculate the referenced code.
 
         Only provide feedback on critical issues. If the code is already well-written or issues are minor, do not provide any feedback.
 
