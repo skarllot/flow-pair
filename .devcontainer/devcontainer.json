@@ -1,0 +1,4 @@
+{
+	"name": "Flow Reviewer",
+	"image": "mcr.microsoft.com/devcontainers/dotnet:1.3.6-9.0-noble"
+}

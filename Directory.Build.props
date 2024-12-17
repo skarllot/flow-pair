@@ -1,0 +1,20 @@
+﻿<Project>
+
+  <Sdk Name="ViHo.PackAsAnalyzer" Version="1.0.1" />
+
+  <PropertyGroup>
+    <RootNamespace>Ciandt.FlowTools.$(MSBuildProjectName)</RootNamespace>
+    <AssemblyName>$(RootNamespace)</AssemblyName>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)</SolutionDir>
+    <PackageOutputPath>$(SolutionDir)artifacts</PackageOutputPath>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <LangVersion>13</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>true</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+</Project>

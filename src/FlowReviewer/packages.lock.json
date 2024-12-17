@@ -1,0 +1,103 @@
+{
+  "version": 2,
+  "dependencies": {
+    "net9.0": {
+      "AutomaticInterface": {
+        "type": "Direct",
+        "requested": "[5.0.3, )",
+        "resolved": "5.0.3",
+        "contentHash": "l+sryO+LJK1m29tGt2TgnOP2lh+ScixRn4VEFb/dLVCFVGJsPXtBv5yrolIXsEZqiJ9y6bDdlN6q8lvklNq3Bg=="
+      },
+      "DotNet.ReproducibleBuilds": {
+        "type": "Direct",
+        "requested": "[1.2.25, )",
+        "resolved": "1.2.25",
+        "contentHash": "xCXiw7BCxHJ8pF6wPepRUddlh2dlQlbr81gXA72hdk4FLHkKXas7EH/n+fk5UCA/YfMqG1Z6XaPiUjDbUNBUzg=="
+      },
+      "FxKit": {
+        "type": "Direct",
+        "requested": "[0.8.3, )",
+        "resolved": "0.8.3",
+        "contentHash": "4Ka+j3jf2Pjb1n0L30MjiMdHd6i5tI0lKppvKKi4OqM0uO0s4s8yZUYJH4eUiaiNVY9aHPBFuUVcbOX+bfEvfg==",
+        "dependencies": {
+          "FxKit.CompilerServices.Annotations": "0.8.3",
+          "JetBrains.Annotations": "2024.3.0"
+        }
+      },
+      "Jab": {
+        "type": "Direct",
+        "requested": "[0.10.2, )",
+        "resolved": "0.10.2",
+        "contentHash": "/uSW/ze1HtSvzBq34+LcGCKdGujwYIt1LJaRg293iDTrt+4I6B1IxhHVpMZka4lduiWEldS9fkthr5mh+oDLzw=="
+      },
+      "LibGit2Sharp": {
+        "type": "Direct",
+        "requested": "[0.31.0, )",
+        "resolved": "0.31.0",
+        "contentHash": "b3+UfV7LjKMjAHWwl7VawejiOv2gJIC6dTCA/S0puLTHACAA/Oeb5JJmWUQMeyH/T/WR/LaIK8bk2RbdFnrZvg==",
+        "dependencies": {
+          "LibGit2Sharp.NativeBinaries": "[2.0.323]"
+        }
+      },
+      "Microsoft.DotNet.ILCompiler": {
+        "type": "Direct",
+        "requested": "[9.0.0, )",
+        "resolved": "9.0.0",
+        "contentHash": "bbnlV2PbUmCQ8Ndpx0kJaicLyV28IU+4IzyctQLL57+DxrHurYr2qsJrC8+yD44Q0DyPfv2oM168c1Tk6Bxbmg=="
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions": {
+        "type": "Direct",
+        "requested": "[9.0.0, )",
+        "resolved": "9.0.0",
+        "contentHash": "+6f2qv2a3dLwd5w6JanPIPs47CxRbnk+ZocMJUhv9NxP88VlOcJYZs9jY+MYSjxvady08bUZn6qgiNh7DadGgg=="
+      },
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[9.0.0, )",
+        "resolved": "9.0.0",
+        "contentHash": "zAwp213evC3UkimtVXRb+Dlgc/40QG145nmZDtp2LO9zJJMfrp+i/87BnXN7tRXEA4liyzdFkjqG1HE8/RPb4A=="
+      },
+      "Nerdbank.GitVersioning": {
+        "type": "Direct",
+        "requested": "[3.7.112, )",
+        "resolved": "3.7.112",
+        "contentHash": "j0jcfnTjvhytRanVR34Gaj6RFKk8EDmVhRW7929nWjCo8tzBxsa3XmFmbSGDA6nWXGhfehTixWhPgGWAbz+NQA=="
+      },
+      "Spectre.Console": {
+        "type": "Direct",
+        "requested": "[0.49.1, )",
+        "resolved": "0.49.1",
+        "contentHash": "USV+pdu49OJ3nCjxNuw1K9Zw/c1HCBbwbjXZp0EOn6wM99tFdAtN34KEBZUMyRuJuXlUMDqhd8Yq9obW2MslYA=="
+      },
+      "TestableIO.System.IO.Abstractions.Wrappers": {
+        "type": "Direct",
+        "requested": "[21.1.7, )",
+        "resolved": "21.1.7",
+        "contentHash": "UcQ+kdN0Ibqbhp6uAMAbc06ri7FeQskQFJX+xZD6siVI5Dg7GaeY4dQYqSfbDA5ZPITtXX9Si4E8XhE6Hhufhg==",
+        "dependencies": {
+          "TestableIO.System.IO.Abstractions": "21.1.7"
+        }
+      },
+      "FxKit.CompilerServices.Annotations": {
+        "type": "Transitive",
+        "resolved": "0.8.3",
+        "contentHash": "VhTqB4b0G/pxPcSNJ/iR0TLK+63i3UgrJ/CZ/8VX/oN0Ck1/WdsucxUqE6wJAHEOG3LNB9yxh8MA4cHfF20o1w=="
+      },
+      "JetBrains.Annotations": {
+        "type": "Transitive",
+        "resolved": "2024.3.0",
+        "contentHash": "ox5pkeLQXjvJdyAB4b2sBYAlqZGLh3PjSnP1bQNVx72ONuTJ9+34/+Rq91Fc0dG29XG9RgZur9+NcP4riihTug=="
+      },
+      "LibGit2Sharp.NativeBinaries": {
+        "type": "Transitive",
+        "resolved": "2.0.323",
+        "contentHash": "Kg+fJGWhGj5qRXG0Ilj4ddhuodGXZg57yhfX6OVUDR0M2DKg/UR42/d74+qv5l1qotc1qJilo/ho7xQnULP6yA=="
+      },
+      "TestableIO.System.IO.Abstractions": {
+        "type": "Transitive",
+        "resolved": "21.1.7",
+        "contentHash": "qsaIAF06PJiFUp1jH2y5NP3IcJILUYtcdGgx25p3D9G4QrFz4Cs3frGp8njX+zQWeb/tHBS+CTMHZtU7Nqa1lg=="
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+using System.IO.Abstractions;
+using Jab;
+using Spectre.Console;
+
+namespace Ciandt.FlowTools.FlowReviewer.DependencyInjection;
+
+[ServiceProviderModule]
+[Singleton(typeof(IFileSystem), typeof(FileSystem))]
+[Singleton(typeof(IAnsiConsole), Factory = nameof(CreateAnsiConsole))]
+public interface IExternalModule
+{
+    static IAnsiConsole CreateAnsiConsole() => AnsiConsole.Create(
+        new AnsiConsoleSettings
+        {
+            Ansi = AnsiSupport.Detect,
+            ColorSystem = ColorSystemSupport.Detect,
+            Out = new AnsiConsoleOutput(Console.Out)
+        });
+}

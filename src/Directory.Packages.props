@@ -1,0 +1,20 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+    <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <GlobalPackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25" />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.7.112" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="AutomaticInterface" Version="5.0.3" />
+    <PackageVersion Include="FxKit" Version="0.8.3" />
+    <PackageVersion Include="Jab" Version="0.10.2" />
+    <PackageVersion Include="LibGit2Sharp" Version="0.31.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="Spectre.Console" Version="0.49.1" />
+    <PackageVersion Include="TestableIO.System.IO.Abstractions.Wrappers" Version="21.1.7" />
+  </ItemGroup>
+</Project>
