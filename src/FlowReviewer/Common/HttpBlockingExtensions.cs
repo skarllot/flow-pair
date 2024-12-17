@@ -8,6 +8,24 @@ namespace Ciandt.FlowTools.FlowReviewer.Common;
 
 public static class HttpBlockingExtensions
 {
+    public static HttpResponseMessage Get(
+        this HttpClient httpClient,
+        [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        return httpClient.Send(request, HttpCompletionOption.ResponseHeadersRead);
+    }
+
+    public static TValue? GetFromJson<TValue>(
+        this HttpClient httpClient,
+        [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,
+        JsonTypeInfo<TValue> jsonTypeInfo)
+    {
+        var responseMessage = httpClient.Get(requestUri);
+        responseMessage.EnsureSuccessStatusCode();
+        return responseMessage.Content.ReadFromJson(jsonTypeInfo);
+    }
+
     public static HttpResponseMessage Post(
         this HttpClient httpClient,
         [StringSyntax(StringSyntaxAttribute.Uri)] string requestUri,

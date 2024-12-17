@@ -1,4 +1,4 @@
-namespace Ciandt.FlowTools.FlowReviewer.Flow;
+namespace Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
 
 public sealed record GenerateTokenRequest(
     string ClientId,

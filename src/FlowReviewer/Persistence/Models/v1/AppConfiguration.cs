@@ -1,8 +1,9 @@
 using System.Collections.Immutable;
 
-namespace Ciandt.FlowTools.FlowReviewer.Persistence;
+namespace Ciandt.FlowTools.FlowReviewer.Persistence.Models.v1;
 
 public sealed record AppConfiguration(
+    Version Version,
     string Tenant,
     string ClientId,
     string ClientSecret)

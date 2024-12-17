@@ -63,6 +63,12 @@
         "resolved": "3.7.112",
         "contentHash": "j0jcfnTjvhytRanVR34Gaj6RFKk8EDmVhRW7929nWjCo8tzBxsa3XmFmbSGDA6nWXGhfehTixWhPgGWAbz+NQA=="
       },
+      "Raiqub.Generators.EnumUtilities": {
+        "type": "Direct",
+        "requested": "[1.9.2, )",
+        "resolved": "1.9.2",
+        "contentHash": "iQX0t2SvA2JnIY27HH08Q7ggwRo1qEwIwKv4b4g+yzonTRl2ZRDO76sH8cdd6f5LXokWvy6nDHcWdStNuFhn4A=="
+      },
       "Spectre.Console": {
         "type": "Direct",
         "requested": "[0.49.1, )",

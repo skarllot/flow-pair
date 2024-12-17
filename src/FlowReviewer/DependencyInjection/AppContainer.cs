@@ -14,6 +14,7 @@ namespace Ciandt.FlowTools.FlowReviewer.DependencyInjection;
 [Singleton(typeof(IUserSessionService), typeof(UserSessionService))]
 [Singleton(typeof(IGitDiffExtractor), typeof(GitDiffExtractor))]
 [Singleton(typeof(ILlmClient), typeof(LlmClient))]
+[Singleton(typeof(IFlowChangesReviewer), typeof(FlowChangesReviewer))]
 public sealed partial class AppContainer
 {
     private static AppJsonContext AppJsonContextDefaultInstance() => AppJsonContext.Default;

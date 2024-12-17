@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Ciandt.FlowTools.FlowReviewer.Flow;
+namespace Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
 
 public sealed record GenerateTokenResponse(
     [property: JsonPropertyName("access_token")] string AccessToken,

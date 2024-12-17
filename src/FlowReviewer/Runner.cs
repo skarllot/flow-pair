@@ -12,7 +12,7 @@ public class Runner(
     IConfigurationService configurationService,
     IUserSessionService userSessionService,
     IGitDiffExtractor gitDiffExtractor,
-    ILlmClient llmClient)
+    IFlowChangesReviewer changesReviewer)
     : IRunner
 {
     public void Run()
@@ -20,7 +20,7 @@ public class Runner(
         _ = from config in configurationService.ReadOrCreate()
             from session in userSessionService.Load()
             from diff in gitDiffExtractor.Extract()
-            from llm in llmClient.Prompt(diff)
+            from changes in changesReviewer.Run(diff)
             select Unit();
     }
 }

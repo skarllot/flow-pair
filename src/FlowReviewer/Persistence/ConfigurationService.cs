@@ -2,6 +2,8 @@ using System.IO.Abstractions;
 using System.Text.Json;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowReviewer.Common;
+using Ciandt.FlowTools.FlowReviewer.Persistence.Models;
+using Ciandt.FlowTools.FlowReviewer.Persistence.Models.v1;
 using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowReviewer.Persistence;
@@ -15,9 +17,11 @@ public class ConfigurationService(
     AppJsonContext jsonContext)
     : IConfigurationService
 {
+    private static readonly Version s_latestVersion = new(1, 0);
     private const string ConfigFileName = "appsettings.json";
 
-    public Option<AppConfiguration> CurrentAppConfiguration { get; private set; }
+    public Result<AppConfiguration, string> CurrentAppConfiguration { get; private set; } =
+        "Configuration file not read";
 
     public Option<AppConfiguration> ReadOrCreate()
     {
@@ -27,13 +31,15 @@ public class ConfigurationService(
         if (!fileSystem.File.Exists(configurationFile))
         {
             console.MarkupLine($"[bold]No configuration file found:[/] {configurationFile}");
-            var configuration = CreateConfigurationFile(appDataPath, configurationFile);
-            return CurrentAppConfiguration = Some(configuration);
+            CurrentAppConfiguration = CreateConfigurationFile(appDataPath, configurationFile);
+        }
+        else
+        {
+            CurrentAppConfiguration = ReadConfigurationFile(configurationFile) ??
+                                      CreateConfigurationFile(appDataPath, configurationFile);
         }
 
-        return CurrentAppConfiguration = Some(
-            ReadConfigurationFile(configurationFile)
-            ?? CreateConfigurationFile(appDataPath, configurationFile));
+        return CurrentAppConfiguration.ToOption();
     }
 
     private AppConfiguration? ReadConfigurationFile(string configurationFile)
@@ -42,6 +48,12 @@ public class ConfigurationService(
         {
             using var stream = fileSystem.File.OpenRead(configurationFile);
             var configuration = JsonSerializer.Deserialize(stream, jsonContext.AppConfiguration);
+            if (configuration?.Version > s_latestVersion)
+            {
+                console.MarkupLine($"[bold]Unknown configuration file version:[/] {configuration.Version}");
+                return null;
+            }
+
             return configuration;
         }
         catch (JsonException exception)
@@ -54,6 +66,7 @@ public class ConfigurationService(
     private AppConfiguration CreateConfigurationFile(string appDataPath, string configurationFile)
     {
         var configuration = new AppConfiguration(
+            s_latestVersion,
             console.Prompt(new TextPrompt<string>("Tenant:") { AllowEmpty = false }),
             console.Prompt(new TextPrompt<string>("Client ID:") { AllowEmpty = false }),
             console.Prompt(new TextPrompt<string>("Client Secret:") { AllowEmpty = false }));
