@@ -1,4 +1,5 @@
 ﻿using Ciandt.FlowTools.FlowReviewer;
 using Ciandt.FlowTools.FlowReviewer.DependencyInjection;
 
-new AppContainer().GetService<IRunner>().Run();
+using var container = new AppContainer();
+container.GetService<IRunner>().Run();

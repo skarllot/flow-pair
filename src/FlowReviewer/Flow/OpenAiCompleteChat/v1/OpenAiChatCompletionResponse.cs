@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 
-namespace Ciandt.FlowTools.FlowReviewer.Flow.OpenAi.Models.v1;
+namespace Ciandt.FlowTools.FlowReviewer.Flow.OpenAiCompleteChat.v1;
 
 public sealed record OpenAiChatCompletionResponse(
     [property: JsonPropertyName("id")] string Id,

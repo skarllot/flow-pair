@@ -24,6 +24,12 @@
           "JetBrains.Annotations": "2024.3.0"
         }
       },
+      "FxKit.CompilerServices": {
+        "type": "Direct",
+        "requested": "[0.8.3, )",
+        "resolved": "0.8.3",
+        "contentHash": "0YBpWO3ds1jxAr61cNWxLmaNWRVvoW52vJ9fZLyvpcOFp6PbWwpppcndRxVB03odgWloW4jkrAv8rQIqpUBLKA=="
+      },
       "Jab": {
         "type": "Direct",
         "requested": "[0.10.2, )",

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Raiqub.Generators.EnumUtilities;
 
-namespace Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
+namespace Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 
 public partial class RoleJsonConverter : JsonConverter<Role>;
 

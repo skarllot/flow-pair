@@ -1,8 +1,9 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowReviewer.Flow.AmazonBedrock.Models.v1;
-using Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
-using Ciandt.FlowTools.FlowReviewer.Flow.OpenAi.Models.v1;
+using Ciandt.FlowTools.FlowReviewer.Agent.ReviewChanges.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.AnthropicCompleteChat.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.GenerateToken.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.OpenAiCompleteChat.v1;
 using Ciandt.FlowTools.FlowReviewer.Persistence.Models.v1;
 
 namespace Ciandt.FlowTools.FlowReviewer.Common;
@@ -17,7 +18,6 @@ namespace Ciandt.FlowTools.FlowReviewer.Common;
 [JsonSerializable(typeof(UserSession))]
 [JsonSerializable(typeof(GenerateTokenRequest))]
 [JsonSerializable(typeof(GenerateTokenResponse))]
-[JsonSerializable(typeof(ImmutableList<GetAvailableModelsResponse>))]
 [JsonSerializable(typeof(OpenAiChatCompletionRequest))]
 [JsonSerializable(typeof(OpenAiChatCompletionResponse))]
 [JsonSerializable(typeof(BedrockChatCompletionRequest))]

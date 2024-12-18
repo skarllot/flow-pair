@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 
-namespace Ciandt.FlowTools.FlowReviewer.Flow.OpenAi.Models.v1;
+namespace Ciandt.FlowTools.FlowReviewer.Flow.OpenAiCompleteChat.v1;
 
 /// <param name="AllowedModels">The list of models to use for this request.</param>
 /// <param name="Messages">A list of messages comprising the conversation so far.</param>
@@ -28,7 +28,7 @@ namespace Ciandt.FlowTools.FlowReviewer.Flow.OpenAi.Models.v1;
 /// <para>Note that you'll be charged based on the number of generated tokens across all of the choices. Keep n as 1 to minimize costs.</para>
 /// </param>
 public sealed record OpenAiChatCompletionRequest(
-    [property: JsonPropertyName("allowedModels")] ImmutableList<AllowedModel> AllowedModels,
+    [property: JsonPropertyName("allowedModels")] ImmutableList<AllowedOpenAiModels> AllowedModels,
     [property: JsonPropertyName("messages")] ImmutableList<Message> Messages,
     [property: JsonPropertyName("temperature")] float? Temperature = null,
     [property: JsonPropertyName("top_p")] float? TopP = null,

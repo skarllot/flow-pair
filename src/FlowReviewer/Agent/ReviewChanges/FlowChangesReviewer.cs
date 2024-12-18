@@ -3,19 +3,21 @@ using System.IO.Abstractions;
 using System.Text;
 using System.Text.Json;
 using AutomaticInterface;
+using Ciandt.FlowTools.FlowReviewer.Agent.ReviewChanges.v1;
 using Ciandt.FlowTools.FlowReviewer.ChangeTracking;
 using Ciandt.FlowTools.FlowReviewer.Common;
-using Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat;
+using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowReviewer.Flow;
+namespace Ciandt.FlowTools.FlowReviewer.Agent.ReviewChanges;
 
 public partial interface IFlowChangesReviewer;
 
 [GenerateAutomaticInterface]
 public sealed class FlowChangesReviewer(
     IAnsiConsole console,
-    ILlmClient llmClient,
+    IProxyClient proxyClient,
     AppJsonContext jsonContext,
     IFileSystem fileSystem)
     : IFlowChangesReviewer
@@ -48,7 +50,7 @@ public sealed class FlowChangesReviewer(
 
     private ImmutableList<ReviewerFeedbackResponse> GetFeedback(AllowedModel model, string diff)
     {
-        var result = llmClient.ChatCompletion(
+        var result = proxyClient.ChatCompletion(
             model,
             [s_systemMessage, new Message(Role.User, diff)]);
 

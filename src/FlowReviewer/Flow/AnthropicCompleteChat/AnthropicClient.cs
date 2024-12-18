@@ -1,20 +1,22 @@
 using System.Collections.Immutable;
 using System.Text;
+using AutomaticInterface;
 using Ciandt.FlowTools.FlowReviewer.Common;
-using Ciandt.FlowTools.FlowReviewer.Flow.AmazonBedrock.Models.v1;
-using Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.AnthropicCompleteChat.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 
-namespace Ciandt.FlowTools.FlowReviewer.Flow.AmazonBedrock;
+namespace Ciandt.FlowTools.FlowReviewer.Flow.AnthropicCompleteChat;
 
-public interface IBedrockClient : IModelClient;
+public partial interface IAnthropicClient;
 
-public sealed class BedrockClient(
+[GenerateAutomaticInterface]
+public sealed class AnthropicClient(
+    FlowHttpClient httpClient,
     AppJsonContext jsonContext)
-    : IBedrockClient
+    : IAnthropicClient
 {
     public Result<Message, FlowError> ChatCompletion(
-        HttpClient httpClient,
-        AllowedModel model,
+        AllowedAnthropicModels model,
         ImmutableList<Message> messages)
     {
         var systemMessage = messages
@@ -34,7 +36,7 @@ public sealed class BedrockClient(
         {
             return new FlowError(
                 responseMessage.StatusCode,
-                "Failed to retrieve chat completion",
+                "Failed to retrieve Anthropic chat completion",
                 responseMessage.Content.ReadAsString());
         }
 
@@ -43,7 +45,7 @@ public sealed class BedrockClient(
         {
             return new FlowError(
                 responseMessage.StatusCode,
-                "Retrieved chat completion is null or empty");
+                "Retrieved Anthropic chat completion is null or empty");
         }
 
         return response.Content.Select(c => new Message(response.Role, c.Text)).First();

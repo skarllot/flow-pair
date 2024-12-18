@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
+using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 
-namespace Ciandt.FlowTools.FlowReviewer.Flow.AmazonBedrock.Models.v1;
+namespace Ciandt.FlowTools.FlowReviewer.Flow.AnthropicCompleteChat.v1;
 
 public sealed record BedrockChatCompletionResponse(
     [property: JsonPropertyName("id")] string Id,

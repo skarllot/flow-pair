@@ -1,4 +1,4 @@
-namespace Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
+namespace Ciandt.FlowTools.FlowReviewer.Agent.ReviewChanges.v1;
 
 public sealed record ReviewerFeedbackResponse(
     int RiskScore,
