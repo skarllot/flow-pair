@@ -3,8 +3,9 @@ using Raiqub.Generators.EnumUtilities;
 
 namespace Ciandt.FlowTools.FlowReviewer.Flow.Models.v1;
 
-//[JsonConverterGenerator(AllowIntegerValues = false)]
-[EnumGenerator]
+public partial class RoleJsonConverter : JsonConverter<Role>;
+
+[JsonConverterGenerator(AllowIntegerValues = false)]
 [JsonConverter(typeof(RoleJsonConverter))]
 public enum Role
 {
