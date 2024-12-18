@@ -1,9 +1,7 @@
 using System.Collections.Immutable;
-using System.Text;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowReviewer.Common;
 using Ciandt.FlowTools.FlowReviewer.Flow.AnthropicCompleteChat.v1;
-using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 
 namespace Ciandt.FlowTools.FlowReviewer.Flow.AnthropicCompleteChat;
 
@@ -15,22 +13,15 @@ public sealed class AnthropicClient(
     AppJsonContext jsonContext)
     : IAnthropicClient
 {
-    public Result<Message, FlowError> ChatCompletion(
+    public Result<AnthropicMessage, FlowError> ChatCompletion(
         AllowedAnthropicModels model,
-        ImmutableList<Message> messages)
+        ImmutableList<AnthropicMessage> messages,
+        string? system = null)
     {
-        var systemMessage = messages
-            .Where(m => m.Role == Role.System)
-            .Aggregate(new StringBuilder(), (curr, next) => curr.AppendLine(next.Content))
-            .ToString();
-        var nonSystemMessages = messages
-            .Where(m => m.Role != Role.System)
-            .ToImmutableList();
-
         using var responseMessage = httpClient.PostAsJson(
             "/ai-orchestration-api/v1/bedrock/invoke",
-            new BedrockChatCompletionRequest([model], nonSystemMessages, systemMessage),
-            jsonContext.BedrockChatCompletionRequest);
+            new AnthropicChatCompletionRequest([model], messages, system),
+            jsonContext.AnthropicChatCompletionRequest);
 
         if (!responseMessage.IsSuccessStatusCode)
         {
@@ -40,7 +31,7 @@ public sealed class AnthropicClient(
                 responseMessage.Content.ReadAsString());
         }
 
-        var response = responseMessage.Content.ReadFromJson(jsonContext.BedrockChatCompletionResponse);
+        var response = responseMessage.Content.ReadFromJson(jsonContext.AnthropicChatCompletionResponse);
         if (response is null || response.Content.Count == 0)
         {
             return new FlowError(
@@ -48,6 +39,6 @@ public sealed class AnthropicClient(
                 "Retrieved Anthropic chat completion is null or empty");
         }
 
-        return response.Content.Select(c => new Message(response.Role, c.Text)).First();
+        return new AnthropicMessage(response.Role, response.Content);
     }
 }

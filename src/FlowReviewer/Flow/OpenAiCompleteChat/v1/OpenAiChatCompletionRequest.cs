@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 
 namespace Ciandt.FlowTools.FlowReviewer.Flow.OpenAiCompleteChat.v1;
 
@@ -29,7 +28,7 @@ namespace Ciandt.FlowTools.FlowReviewer.Flow.OpenAiCompleteChat.v1;
 /// </param>
 public sealed record OpenAiChatCompletionRequest(
     [property: JsonPropertyName("allowedModels")] ImmutableList<AllowedOpenAiModels> AllowedModels,
-    [property: JsonPropertyName("messages")] ImmutableList<Message> Messages,
+    [property: JsonPropertyName("messages")] ImmutableList<OpenAiMessage> Messages,
     [property: JsonPropertyName("temperature")] float? Temperature = null,
     [property: JsonPropertyName("top_p")] float? TopP = null,
     [property: JsonPropertyName("stream")] bool? Stream = false,

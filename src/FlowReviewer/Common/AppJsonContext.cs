@@ -20,7 +20,7 @@ namespace Ciandt.FlowTools.FlowReviewer.Common;
 [JsonSerializable(typeof(GenerateTokenResponse))]
 [JsonSerializable(typeof(OpenAiChatCompletionRequest))]
 [JsonSerializable(typeof(OpenAiChatCompletionResponse))]
-[JsonSerializable(typeof(BedrockChatCompletionRequest))]
-[JsonSerializable(typeof(BedrockChatCompletionResponse))]
+[JsonSerializable(typeof(AnthropicChatCompletionRequest))]
+[JsonSerializable(typeof(AnthropicChatCompletionResponse))]
 [JsonSerializable(typeof(ImmutableList<ReviewerFeedbackResponse>))]
 public partial class AppJsonContext : JsonSerializerContext;

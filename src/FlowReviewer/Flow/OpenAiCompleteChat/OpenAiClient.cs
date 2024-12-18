@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowReviewer.Common;
 using Ciandt.FlowTools.FlowReviewer.Flow.OpenAiCompleteChat.v1;
-using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 
 namespace Ciandt.FlowTools.FlowReviewer.Flow.OpenAiCompleteChat;
 
@@ -14,9 +13,9 @@ public sealed class OpenAiClient(
     AppJsonContext jsonContext)
     : IOpenAiClient
 {
-    public Result<Message, FlowError> ChatCompletion(
+    public Result<OpenAiMessage, FlowError> ChatCompletion(
         AllowedOpenAiModels model,
-        ImmutableList<Message> messages)
+        ImmutableList<OpenAiMessage> messages)
     {
         using var responseMessage = httpClient.PostAsJson(
             "/ai-orchestration-api/v1/openai/chat/completions",
