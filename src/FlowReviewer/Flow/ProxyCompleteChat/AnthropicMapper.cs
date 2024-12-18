@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using System.Text;
+using Ciandt.FlowTools.FlowReviewer.Common;
 using Ciandt.FlowTools.FlowReviewer.Flow.AnthropicCompleteChat.v1;
 using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
 
@@ -28,7 +28,7 @@ public static class AnthropicMapper
 
     public static string? ToAnthropicSystem(this IEnumerable<Message> messages) => messages
         .Where(m => m.Role == Role.System)
-        .Aggregate((string?)null, (curr, next) => curr is null ? next.Content : $"{curr}\n{next.Content}");
+        .AggregateToStringLines(m => m.Content);
 
     public static ImmutableList<AnthropicMessage> ToAnthropicMessages(this ImmutableList<Message> messages) => messages
         .Where(m => m.Role != Role.System)
@@ -46,6 +46,6 @@ public static class AnthropicMapper
         message.Role.ToProxy(),
         message.Content
             .Where(c => c.Type == AnthropicMessageType.Text)
-            .Aggregate(new StringBuilder(), (curr, next) => curr.AppendLine(next.Text))
+            .AggregateToStringLines(c => c.Text ?? string.Empty)
             .ToString());
 }
