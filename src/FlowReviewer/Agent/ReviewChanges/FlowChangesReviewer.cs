@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO.Abstractions;
+using System.Text;
 using System.Text.Json;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowReviewer.Agent.ReviewChanges.v1;
@@ -7,6 +9,7 @@ using Ciandt.FlowTools.FlowReviewer.ChangeTracking;
 using Ciandt.FlowTools.FlowReviewer.Common;
 using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowReviewer.Flow.ProxyCompleteChat.v1;
+using Ciandt.FlowTools.FlowReviewer.Persistence;
 using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowReviewer.Agent.ReviewChanges;
@@ -28,21 +31,33 @@ public sealed class FlowChangesReviewer(
             .Where(g => g.Key.IsSome)
             .Select(g => new { Instructions = g.Key.Unwrap(), Diff = g.AggregateToStringLines(c => c.Diff) })
             .SelectMany(x => GetFeedback([AllowedModel.Claude35Sonnet, AllowedModel.Gpt4o], x.Diff, x.Instructions))
+            .OrderByDescending(x => x.RiskScore).ThenBy(x => x.Path, StringComparer.OrdinalIgnoreCase)
             .ToImmutableList();
 
         console.WriteLine($"Created {feedback.Count} comments");
 
         if (feedback.Count > 0)
         {
+            var tempPath = ApplicationData.GetTempPath(fileSystem);
+            fileSystem.Directory.CreateDirectory(tempPath);
             var feedbackFilePath = fileSystem.Path.Combine(
-                fileSystem.Directory.GetCurrentDirectory(),
-                $"{DateTime.UtcNow:yyyyMMddHHmmss}-feedback.json");
+                tempPath,
+                $"{DateTime.UtcNow:yyyyMMddHHmmss}-feedback.html");
 
-            using var stream = fileSystem.File.Open(feedbackFilePath, FileMode.Create);
-            JsonSerializer.Serialize(stream, feedback, jsonContext.ImmutableListReviewerFeedbackResponse);
+            var htmlContent = new FeedbackHtmlTemplate(feedback).TransformText();
+            fileSystem.File.WriteAllText(feedbackFilePath, htmlContent, Encoding.UTF8);
+
+            OpenHtmlFile(feedbackFilePath);
         }
 
         return Unit();
+    }
+
+    private static void OpenHtmlFile(string filePath)
+    {
+        using var process = new Process();
+        process.StartInfo = new ProcessStartInfo { FileName = filePath, UseShellExecute = true };
+        process.Start();
     }
 
     private ImmutableList<ReviewerFeedbackResponse> GetFeedback(
@@ -70,12 +85,37 @@ public sealed class FlowChangesReviewer(
             return [];
         }
 
-        var content = result.Unwrap().Content;
-        var feedback = content.Contains('[') && content.Contains(']')
-            ? JsonSerializer.Deserialize(
-                content.AsSpan()[content.IndexOf('[')..(content.LastIndexOf(']') + 1)],
-                jsonContext.ImmutableListReviewerFeedbackResponse) ?? []
-            : [];
+        var feedback = TryDeserializeFeedback(result.Unwrap().Content);
         return feedback;
+    }
+
+    private ImmutableList<ReviewerFeedbackResponse> TryDeserializeFeedback(ReadOnlySpan<char> content)
+    {
+        if (content.IsWhiteSpace())
+            return [];
+
+        while (!content.IsEmpty)
+        {
+            var start = content.IndexOf('[');
+            if (start < 0)
+                return [];
+
+            var end = content.IndexOf(']');
+            if (end < start)
+                return [];
+
+            try
+            {
+                return JsonSerializer.Deserialize(
+                    content[start..(end + 1)],
+                    jsonContext.ImmutableListReviewerFeedbackResponse) ?? [];
+            }
+            catch (JsonException)
+            {
+                content = content[(end + 1)..];
+            }
+        }
+
+        return [];
     }
 }

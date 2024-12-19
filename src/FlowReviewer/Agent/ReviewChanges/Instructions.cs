@@ -72,7 +72,7 @@ public sealed record Instructions(
 
             The message in the field text must be in English.
 
-            Format the response in a valid JSON format as a list of feedbacks. The feedback must not contains any block formatting and line breakers. Remember it is crucial that the result has the file path.
+            Format the response in a valid JSON format as a list of feedbacks. Remember it is crucial that the result has the file path.
             This valid JSON is going to be inserted in a value of a key-value from another JSON object, be-aware about the formatting. Remember to only list feedbacks that needs user action.
             The schema of the JSON feedback object must be:
             ```json
