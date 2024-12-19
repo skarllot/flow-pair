@@ -18,9 +18,7 @@ public sealed class FlowHttpClient : HttpClient
     public string? FlowTenant
     {
         get => DefaultRequestHeaders.TryGetValues("FlowTenant", out var values) ? values.FirstOrDefault() : null;
-        set => _ = value is null
-            ? DefaultRequestHeaders.Remove("FlowTenant")
-            : DefaultRequestHeaders.TryAddWithoutValidation("FlowTenant", value);
+        set => SetOrRemoveHeaderValue(DefaultRequestHeaders, "FlowTenant", value);
     }
 
     public string? BearerToken
@@ -28,8 +26,14 @@ public sealed class FlowHttpClient : HttpClient
         get => DefaultRequestHeaders.TryGetValues("Authorization", out var values)
             ? values.FirstOrDefault()?.Replace("Bearer ", "", StringComparison.OrdinalIgnoreCase)
             : null;
-        set => _ = value is null
-            ? DefaultRequestHeaders.Remove("Authorization")
-            : DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {value}");
+        set => SetOrRemoveHeaderValue(DefaultRequestHeaders, "Authorization", $"Bearer {value}");
+    }
+
+    private static void SetOrRemoveHeaderValue(HttpRequestHeaders headers, string name, string? value)
+    {
+        headers.Remove(name);
+
+        if (value is not null)
+            headers.Add(name, value);
     }
 }
