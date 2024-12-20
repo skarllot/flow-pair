@@ -32,6 +32,7 @@ public sealed class FlowChangesReviewer(
             .Where(g => g.Key.IsSome)
             .Select(g => new { Instructions = g.Key.Unwrap(), Diff = g.AggregateToStringLines(c => c.Diff) })
             .SelectMany(x => GetFeedback([AllowedModel.Claude35Sonnet, AllowedModel.Gpt4o], x.Diff, x.Instructions))
+            .Where(f => !string.IsNullOrWhiteSpace(f.Feedback))
             .OrderByDescending(x => x.RiskScore).ThenBy(x => x.Path, StringComparer.OrdinalIgnoreCase)
             .ToImmutableList();
 
