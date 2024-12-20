@@ -1,7 +1,4 @@
 ﻿<Project>
-
-  <Sdk Name="ViHo.PackAsAnalyzer" Version="1.0.1" />
-
   <PropertyGroup>
     <RootNamespace>Ciandt.FlowTools.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>$(RootNamespace)</AssemblyName>
@@ -16,5 +13,4 @@
     <AnalysisMode>Recommended</AnalysisMode>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
-
 </Project>
