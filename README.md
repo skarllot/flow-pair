@@ -2,6 +2,7 @@
 
 _FlowPair provides automated code review and feedback using CI&T Flow AI through a command-line interface._
 
+[![Build status](https://github.com/skarllot/flow-pair/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/skarllot/flow-pair/actions)
 [![GitHub Release](https://img.shields.io/github/v/release/skarllot/flow-pair)](https://github.com/skarllot/flow-pair/releases)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://raw.githubusercontent.com/skarllot/flow-pair/main/LICENSE)
 
@@ -27,14 +28,16 @@ FlowPair is a CLI tool that leverages CI&T's Flow AI to provide automated code r
 3. Add the FlowPair directory to your system's PATH.
 
 4. Open a terminal and run the following command to verify the installation:
-```
+
+```bash
 flowpair --version
 ```
 
 ## Configuration
 
 To configure FlowPair, run:
-```
+
+```bash
 flowpair configure
 ```
 
@@ -49,7 +52,8 @@ These credentials are necessary for authenticating with the CI&T Flow AI service
 ## Usage
 
 To review your Git changes and receive feedback, simply run:
-```
+
+```bash
 flowpair review
 ```
 
