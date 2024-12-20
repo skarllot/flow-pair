@@ -57,8 +57,9 @@ This command will:
 1. Detect Git staged (or unstaged) changes in your current repository
 2. Send the changes to CI&T Flow AI for review
 3. Generate an HTML file with the feedback
+4. Automatically open the HTML report in your default web browser
 
-The HTML report will be saved in your current directory for easy access and review.
+This streamlined process allows you to quickly view and act on the AI-generated feedback for your code changes.
 
 ## Documentation
 
