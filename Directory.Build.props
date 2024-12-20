@@ -4,6 +4,7 @@
     <AssemblyName>$(RootNamespace)</AssemblyName>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)</SolutionDir>
     <PackageOutputPath>$(SolutionDir)artifacts</PackageOutputPath>
+    <PublishDir>$(SolutionDir)publish</PublishDir>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>

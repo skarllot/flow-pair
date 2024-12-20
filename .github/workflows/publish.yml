@@ -14,9 +14,22 @@ permissions:
   contents: read
 
 jobs:
-  nuget:
+  pack:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        include:
+          - os: ubuntu-latest
+            runtime: linux-x64
+          - os: macos-latest
+            runtime: osx-x64
+          - os: windows-latest
+            runtime: win-x64
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: 🛡️ Harden Runner
@@ -56,7 +69,12 @@ jobs:
         run: dotnet build --no-restore -c Release
 
       - name: 📦 Pack
-        run: dotnet pack /p:CI=true /p:PublicRelease=true --no-build -c Release
+        run: |
+          dotnet publish -r ${{ matrix.runtime }} -c Release
+          7z a -tzip -mx9 flowpair-${{ matrix.runtime }}-${{ github.ref_name }}.zip $PWD/publish/*.*
 
       - name: 🚀 Publish
-        run: dotnet nuget push "artifacts/*.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_APIKEY }} --skip-duplicate
+        uses: softprops/action-gh-release@e7a8f85e1c67a31e6ed99a94b41bd0b71bbee6b8 # v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "flowpair*.zip"
