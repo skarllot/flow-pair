@@ -79,10 +79,10 @@ jobs:
     - name: 🏗️ Build
       run: dotnet build --no-restore
 
-    - name: ✅ Test AOT
-      run: |
-        dotnet publish -r ${{ matrix.runtime }} -c Release
-        7z a -tzip -mx9 flowpair-${{ matrix.runtime }}-${{ github.ref_name }}.zip $PWD/publish/*.*
-
     - name: ✅ Test
       run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+    - name: ✅ Test Publish
+      run: |
+        dotnet publish -r ${{ matrix.runtime }} -c Release
+        7z a -tzip -mx9 flowpair-${{ matrix.runtime }}.zip $PWD/publish/*.*
