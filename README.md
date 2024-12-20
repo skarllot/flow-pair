@@ -75,10 +75,9 @@ Before contributing, please read our [contribution guidelines](CONTRIBUTING.md).
 
 ## Support
 
-If you need help or have any questions, please:
+If you need help, have any questions, or want to report issues:
 
-- Check our [GitHub Issues](https://github.com/skarllot/flow-pair/issues) for existing problems or to report new ones
-- Contact the maintainer at [skarllot@gmail.com](mailto:skarllot@gmail.com)
+- Use our [GitHub Issues](https://github.com/skarllot/flow-pair/issues) page to report problems or seek assistance
 
 ## License
 
