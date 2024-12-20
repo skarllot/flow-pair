@@ -20,8 +20,21 @@ permissions:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        include:
+          - os: ubuntu-latest
+            runtime: linux-x64
+          - os: macos-latest
+            runtime: osx-x64
+          - os: windows-latest
+            runtime: win-x64
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
 
     steps:
     - name: 🛡️ Harden Runner
@@ -65,6 +78,11 @@ jobs:
 
     - name: 🏗️ Build
       run: dotnet build --no-restore
+
+    - name: ✅ Test AOT
+      run: |
+        dotnet publish -r ${{ matrix.runtime }} -c Release
+        7z a -tzip -mx9 flowpair-${{ matrix.runtime }}-${{ github.ref_name }}.zip $PWD/publish/*.*
 
     - name: ✅ Test
       run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
