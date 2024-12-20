@@ -50,9 +50,9 @@ public static partial class HtmlFormatter
         return result.ToString();
     }
 
-    [GeneratedRegex(@"```(\S+)?(.*?)```", RegexOptions.Multiline)]
+    [GeneratedRegex(@"```(\S+)?(.*?)```", RegexOptions.Singleline)]
     private static partial Regex CodeDelimiterRegex();
 
-    [GeneratedRegex("`(.*?)`", RegexOptions.Singleline)]
+    [GeneratedRegex("`(.*?)`", RegexOptions.Multiline)]
     private static partial Regex CodeBlockDelimiterRegex();
 }
