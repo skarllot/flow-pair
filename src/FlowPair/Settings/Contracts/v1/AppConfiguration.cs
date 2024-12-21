@@ -1,12 +1,14 @@
 using System.Collections.Immutable;
+using Ciandt.FlowTools.FlowPair.Support.Persistence;
 
-namespace Ciandt.FlowTools.FlowPair.Persistence.Operations.Configure.v1;
+namespace Ciandt.FlowTools.FlowPair.Settings.Contracts.v1;
 
 public sealed record AppConfiguration(
     Version Version,
     string Tenant,
     string ClientId,
-    string ClientSecret)
+    string ClientSecret,
+    string? PreferredModel = null) : IVersionedJsonValue
 {
     public const string LlmAppCode = "llm-api";
     public static Version CurrentVersion { get; } = new(1, 0);

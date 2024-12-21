@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 
-namespace Ciandt.FlowTools.FlowPair.Persistence.Services;
+namespace Ciandt.FlowTools.FlowPair.Support.Persistence;
 
 public static class ApplicationData
 {

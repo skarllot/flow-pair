@@ -1,14 +1,18 @@
+using Ciandt.FlowTools.FlowPair.Common;
 using ConsoleAppFramework;
-using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
 
 public class LoginCommand(
-    IAnsiConsole console)
+    ILoginUseCase loginUseCase)
 {
+    /// <summary>
+    /// Sign in to the Flow.
+    /// </summary>
     [Command("login")]
-    public void Execute()
+    public int Execute()
     {
-        console.Write("");
+        return loginUseCase.Execute(isBackground: false)
+            .UnwrapErrOr(0);
     }
 }

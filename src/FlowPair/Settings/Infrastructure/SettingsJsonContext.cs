@@ -1,8 +1,7 @@
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowPair.Persistence.Models.v1;
-using Ciandt.FlowTools.FlowPair.Persistence.Operations.Configure.v1;
+using Ciandt.FlowTools.FlowPair.Settings.Contracts.v1;
 
-namespace Ciandt.FlowTools.FlowPair.Persistence.Infrastructure;
+namespace Ciandt.FlowTools.FlowPair.Settings.Infrastructure;
 
 [JsonSourceGenerationOptions(
     GenerationMode = JsonSourceGenerationMode.Default,
@@ -11,5 +10,4 @@ namespace Ciandt.FlowTools.FlowPair.Persistence.Infrastructure;
     PropertyNameCaseInsensitive = true,
     RespectNullableAnnotations = true)]
 [JsonSerializable(typeof(AppConfiguration))]
-[JsonSerializable(typeof(UserSession))]
-public partial class PersistenceJsonContext : JsonSerializerContext;
+public partial class SettingsJsonContext : JsonSerializerContext;

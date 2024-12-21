@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Mime;
 
-namespace Ciandt.FlowTools.FlowPair.Flow;
+namespace Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
 
 public sealed class FlowHttpClient : HttpClient
 {

@@ -1,11 +1,10 @@
-using Ciandt.FlowTools.FlowPair.Flow;
 using Ciandt.FlowTools.FlowPair.Flow.AnthropicCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.GenerateToken;
 using Ciandt.FlowTools.FlowPair.Flow.OpenAiCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.ProxyCompleteChat;
 using Jab;
 
-namespace Ciandt.FlowTools.FlowPair.DependencyInjection;
+namespace Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
 
 [ServiceProviderModule]
 [Singleton(typeof(FlowHttpClient))]

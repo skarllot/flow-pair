@@ -4,8 +4,8 @@ using Ciandt.FlowTools.FlowPair.Agent.ReviewChanges.v1;
 using Ciandt.FlowTools.FlowPair.Flow.AnthropicCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.Flow.GenerateToken.v1;
 using Ciandt.FlowTools.FlowPair.Flow.OpenAiCompleteChat.v1;
-using Ciandt.FlowTools.FlowPair.Persistence.Models.v1;
-using Ciandt.FlowTools.FlowPair.Persistence.Operations.Configure.v1;
+using Ciandt.FlowTools.FlowPair.Settings.Contracts.v1;
+using Ciandt.FlowTools.FlowPair.UserSessions.Contracts.v1;
 
 namespace Ciandt.FlowTools.FlowPair.Common;
 

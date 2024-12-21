@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.AnthropicCompleteChat.v1;
+using Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
 
 namespace Ciandt.FlowTools.FlowPair.Flow.AnthropicCompleteChat;
 

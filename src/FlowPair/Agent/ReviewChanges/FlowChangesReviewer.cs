@@ -9,7 +9,7 @@ using Ciandt.FlowTools.FlowPair.ChangeTracking;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.ProxyCompleteChat.v1;
-using Ciandt.FlowTools.FlowPair.Persistence.Services;
+using Ciandt.FlowTools.FlowPair.Support.Persistence;
 using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.ReviewChanges;
@@ -42,7 +42,7 @@ public sealed class FlowChangesReviewer(
             var tempPath = ApplicationData.GetTempPath(fileSystem);
             tempPath.Create();
 
-            var feedbackFilePath = tempPath.CreateFile($"{DateTime.UtcNow:yyyyMMddHHmmss}-feedback.html");
+            var feedbackFilePath = tempPath.NewFile($"{DateTime.UtcNow:yyyyMMddHHmmss}-feedback.html");
 
             var htmlContent = new FeedbackHtmlTemplate(feedback).TransformText();
             feedbackFilePath.WriteAllText(htmlContent, Encoding.UTF8);

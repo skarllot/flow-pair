@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowPair.Common;
+using Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
 using Ciandt.FlowTools.FlowPair.Flow.OpenAiCompleteChat.v1;
 
 namespace Ciandt.FlowTools.FlowPair.Flow.OpenAiCompleteChat;

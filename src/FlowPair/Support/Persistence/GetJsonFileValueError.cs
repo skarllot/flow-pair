@@ -1,10 +1,10 @@
 using System.Text.Json;
 using FxKit.CompilerServices;
 
-namespace Ciandt.FlowTools.FlowPair.Persistence.Services;
+namespace Ciandt.FlowTools.FlowPair.Support.Persistence;
 
 [Union]
-public partial record GetConfigurationError
+public partial record GetJsonFileValueError
 {
     partial record NotFound;
     partial record Invalid(JsonException Exception);

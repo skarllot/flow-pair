@@ -1,10 +1,9 @@
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.GenerateToken.v1;
-using Ciandt.FlowTools.FlowPair.Persistence;
-using Ciandt.FlowTools.FlowPair.Persistence.Models.v1;
-using Ciandt.FlowTools.FlowPair.Persistence.Operations.Configure.v1;
-using Spectre.Console;
+using Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
+using Ciandt.FlowTools.FlowPair.Settings.Contracts.v1;
+using Ciandt.FlowTools.FlowPair.UserSessions.Contracts.v1;
 
 namespace Ciandt.FlowTools.FlowPair.Flow.GenerateToken;
 
@@ -12,10 +11,8 @@ public partial interface IFlowAuthService;
 
 [GenerateAutomaticInterface]
 public sealed class FlowAuthService(
-    IAnsiConsole console,
     FlowHttpClient httpClient,
-    AppJsonContext jsonContext,
-    IUserSessionService userSessionService)
+    AppJsonContext jsonContext)
     : IFlowAuthService
 {
     public Result<UserSession, FlowError> RequestToken(AppConfiguration configuration, UserSession userSession)
@@ -29,7 +26,6 @@ public sealed class FlowAuthService(
             return userSession;
         }
 
-        console.Write("Generating Flow token...");
         using var responseMessage = httpClient.PostAsJson(
             requestUri: "/auth-engine-api/v1/api-key/token",
             value: new GenerateTokenRequest(
@@ -40,7 +36,6 @@ public sealed class FlowAuthService(
 
         if (!responseMessage.IsSuccessStatusCode)
         {
-            console.WriteLine(" FAIL");
             return new FlowError(
                 responseMessage.StatusCode,
                 "Failed to get Flow access token",
@@ -50,7 +45,6 @@ public sealed class FlowAuthService(
         var response = responseMessage.Content.ReadFromJson(jsonContext.GenerateTokenResponse);
         if (response is null)
         {
-            console.WriteLine(" FAIL");
             return new FlowError(
                 responseMessage.StatusCode,
                 "Retrieved Flow access token is null");
@@ -63,8 +57,6 @@ public sealed class FlowAuthService(
 
         httpClient.BearerToken = userSession.AccessToken;
 
-        userSessionService.Save(userSession);
-        console.WriteLine(" OK");
         return userSession;
     }
 }
