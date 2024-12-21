@@ -30,7 +30,10 @@
     <PackageReference Include="Jab" />
     <PackageReference Include="LibGit2Sharp" />
     <PackageReference Include="Raiqub.Generators.EnumUtilities" />
-    <PackageReference Include="Raiqub.Generators.T4CodeWriter" />
+    <PackageReference Include="Raiqub.Generators.T4CodeWriter.Sources">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Spectre.Console" />
     <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
   </ItemGroup>
