@@ -4,13 +4,12 @@ using System.IO.Abstractions;
 using System.Text;
 using System.Text.Json;
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Agent.ReviewChanges;
 using Ciandt.FlowTools.FlowPair.Agent.ReviewChanges.v1;
 using Ciandt.FlowTools.FlowPair.ChangeTracking;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.ProxyCompleteChat.v1;
-using Ciandt.FlowTools.FlowPair.Persistence;
+using Ciandt.FlowTools.FlowPair.Persistence.Services;
 using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.ReviewChanges;
@@ -41,15 +40,14 @@ public sealed class FlowChangesReviewer(
         if (feedback.Count > 0)
         {
             var tempPath = ApplicationData.GetTempPath(fileSystem);
-            fileSystem.Directory.CreateDirectory(tempPath);
-            var feedbackFilePath = fileSystem.Path.Combine(
-                tempPath,
-                $"{DateTime.UtcNow:yyyyMMddHHmmss}-feedback.html");
+            tempPath.Create();
+
+            var feedbackFilePath = tempPath.CreateFile($"{DateTime.UtcNow:yyyyMMddHHmmss}-feedback.html");
 
             var htmlContent = new FeedbackHtmlTemplate(feedback).TransformText();
-            fileSystem.File.WriteAllText(feedbackFilePath, htmlContent, Encoding.UTF8);
+            feedbackFilePath.WriteAllText(htmlContent, Encoding.UTF8);
 
-            OpenHtmlFile(feedbackFilePath);
+            OpenHtmlFile(feedbackFilePath.FullName);
         }
 
         return Unit();

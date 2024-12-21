@@ -18,6 +18,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="ConsoleAppFramework">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="FxKit" />
     <PackageReference Include="FxKit.CompilerServices">
       <PrivateAssets>all</PrivateAssets>
@@ -25,7 +29,6 @@
     </PackageReference>
     <PackageReference Include="Jab" />
     <PackageReference Include="LibGit2Sharp" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Raiqub.Generators.EnumUtilities" />
     <PackageReference Include="Raiqub.Generators.T4CodeWriter" />
     <PackageReference Include="Spectre.Console" />

@@ -10,7 +10,7 @@ public sealed class FlowHttpClient : HttpClient
     public FlowHttpClient() : base(new SocketsHttpHandler())
     {
         BaseAddress = new Uri(FlowBaseAddress);
-        DefaultRequestHeaders.Add("FlowAgent", "local-flow-reviewer");
+        DefaultRequestHeaders.Add("FlowAgent", "flow-pair");
         DefaultRequestHeaders.Add("FlowOperationId", Guid.NewGuid().ToString("N"));
         DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
     }

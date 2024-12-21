@@ -3,6 +3,7 @@ using System.Text.Json;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Persistence.Models.v1;
+using Ciandt.FlowTools.FlowPair.Persistence.Services;
 using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowPair.Persistence;
@@ -20,7 +21,7 @@ public sealed class UserSessionService(
     private const string SessionFileName = "session.json";
 
     private readonly IFileInfo _sessionFile =
-        fileSystem.FileInfo.New(fileSystem.Path.Combine(ApplicationData.GetPath(fileSystem), SessionFileName));
+        ApplicationData.GetAppDataDirectory(fileSystem).CreateFile(SessionFileName);
 
     public Result<UserSession, string> UserSession { get; private set; } = "User session file not read";
 

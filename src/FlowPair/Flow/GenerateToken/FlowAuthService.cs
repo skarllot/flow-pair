@@ -3,6 +3,7 @@ using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.GenerateToken.v1;
 using Ciandt.FlowTools.FlowPair.Persistence;
 using Ciandt.FlowTools.FlowPair.Persistence.Models.v1;
+using Ciandt.FlowTools.FlowPair.Persistence.Operations.Configure.v1;
 using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowPair.Flow.GenerateToken;
