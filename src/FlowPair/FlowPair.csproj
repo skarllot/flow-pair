@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Agent\ReviewChanges\FeedbackHtmlTemplate.cs">
+    <Compile Update="Agent\Operations\ReviewChanges\FeedbackHtmlTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FeedbackHtmlTemplate.tt</DependentUpon>
@@ -46,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Agent\ReviewChanges\FeedbackHtmlTemplate.tt">
+    <None Update="Agent\Operations\ReviewChanges\FeedbackHtmlTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>FeedbackHtmlTemplate.cs</LastGenOutput>
     </None>

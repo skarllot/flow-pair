@@ -2,7 +2,6 @@ using System.IO.Abstractions;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Ciandt.FlowTools.FlowPair.Common;
-using Unit = FxKit.Unit;
 
 namespace Ciandt.FlowTools.FlowPair.Support.Persistence;
 
@@ -41,7 +40,7 @@ public abstract class JsonFileRepository<TValue>(
         JsonSerializer.Serialize(stream, value, jsonTypeInfo);
 
         _valueCache = value;
-        return Unit.Default;
+        return Unit();
     }
 
     private Result<TValue, GetJsonFileValueError> ReadConfigurationFile(IFileInfo configurationFile)

@@ -1,13 +1,19 @@
 using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
-using Ciandt.FlowTools.FlowPair.Agent.ReviewChanges;
+using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
 using Jab;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
 
 [ServiceProviderModule]
 
+// Infrastructure
+[Singleton(typeof(AgentJsonContext), Factory = nameof(GetJsonContext))]
+
 // Operations
 [Singleton(typeof(ILoginUseCase), typeof(LoginUseCase))]
 [Singleton(typeof(LoginCommand))]
-[Singleton(typeof(IFlowChangesReviewer), typeof(FlowChangesReviewer))]
-public interface IAgentModule;
+[Singleton(typeof(ReviewChangesCommand))]
+public interface IAgentModule
+{
+    static AgentJsonContext GetJsonContext() => AgentJsonContext.Default;
+}

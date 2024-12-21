@@ -1,7 +1,9 @@
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow;
-using Ciandt.FlowTools.FlowPair.Flow.GenerateToken;
+using Ciandt.FlowTools.FlowPair.Flow.Contracts;
+using Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
+using Ciandt.FlowTools.FlowPair.Flow.Operations.GenerateToken;
 using Ciandt.FlowTools.FlowPair.Settings.Contracts.v1;
 using Ciandt.FlowTools.FlowPair.Settings.Services;
 using Ciandt.FlowTools.FlowPair.Support.Persistence;
@@ -17,15 +19,17 @@ public partial interface ILoginUseCase;
 public sealed class LoginUseCase(
     TimeProvider timeProvider,
     IAnsiConsole console,
+    FlowHttpClient httpClient,
     IAppSettingsRepository appSettingsRepository,
     IUserSessionRepository userSessionRepository,
-    IFlowAuthService flowAuthService)
+    IFlowGenerateTokenHandler generateTokenHandler)
     : ILoginUseCase
 {
     public Result<UserSession, int> Execute(bool isBackground)
     {
         var result = from config in appSettingsRepository.Read().MapErr(HandleConfigurationError)
             from session in userSessionRepository.Read()
+                .Do(SetupHttpAuthentication)
                 .UnwrapOrElse(UserSession.Empty)
                 .Ensure(s => s.IsExpired(timeProvider), 0)
             from auth in RequestToken(config, session, verbose: isBackground).MapErr(HandleFlowError)
@@ -52,10 +56,12 @@ public sealed class LoginUseCase(
         return 1;
     }
 
-    private int HandleFlowError(FlowError error)
+    private void SetupHttpAuthentication(UserSession session)
     {
-        console.MarkupLineInterpolated($"[red]Error:[/] {error.FullMessage}");
-        return 2;
+        if (session.IsExpired(timeProvider))
+            return;
+
+        httpClient.BearerToken = session.AccessToken;
     }
 
     private Result<UserSession, FlowError> RequestToken(
@@ -68,7 +74,7 @@ public sealed class LoginUseCase(
             console.Write("Signing in to Flow...");
         }
 
-        var result = flowAuthService.RequestToken(configuration, userSession);
+        var result = generateTokenHandler.Execute(configuration, userSession);
         if (verbose)
         {
             result
@@ -77,5 +83,11 @@ public sealed class LoginUseCase(
         }
 
         return result;
+    }
+
+    private int HandleFlowError(FlowError error)
+    {
+        console.MarkupLineInterpolated($"[red]Error:[/] {error.FullMessage}");
+        return 2;
     }
 }
