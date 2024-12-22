@@ -50,4 +50,7 @@ public static class FunctionalExtensions
     public static TOk? UnwrapOrNull<TOk, TErr>(this Result<TOk, TErr> result)
         where TOk : class
         where TErr : notnull => result.TryGet(out var ok, out _) ? ok : null;
+
+    public static T? UnwrapOrNull<T>(this Option<T> option)
+        where T : class => option.TryGet(out var value) ? value : null;
 }
