@@ -57,13 +57,9 @@ public class GitGetChangesHandler(
     {
         var lastCommit = repo.Head.Tip;
         var parentCommit = lastCommit.Parents.FirstOrDefault();
-        if (parentCommit is null)
-        {
-            return;
-        }
 
         foreach (var changes in repo.Diff
-                     .Compare<Patch>(parentCommit.Tree, lastCommit.Tree)
+                     .Compare<Patch>(parentCommit?.Tree, lastCommit.Tree)
                      .Where(p => !p.IsBinaryComparison && p.Status != ChangeKind.Deleted && p.Mode != Mode.Directory))
         {
             builder.Add(new FileChange(changes.Path, changes.Patch));
