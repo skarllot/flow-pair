@@ -6,6 +6,7 @@
     <PackageOutputPath>$(SolutionDir)artifacts</PackageOutputPath>
     <PublishDir>$(SolutionDir)publish</PublishDir>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>

@@ -10,11 +10,14 @@
     <PublishSingleFile>true</PublishSingleFile>
     <PublishReadyToRun>true</PublishReadyToRun>
     <RuntimeIdentifiers>win-x64;linux-x64;linux-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
-    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutomaticInterface">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ConsoleAppFramework">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -25,15 +28,17 @@
     </PackageReference>
     <PackageReference Include="Jab" />
     <PackageReference Include="LibGit2Sharp" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Raiqub.Generators.EnumUtilities" />
-    <PackageReference Include="Raiqub.Generators.T4CodeWriter" />
+    <PackageReference Include="Raiqub.Generators.T4CodeWriter.Sources">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Spectre.Console" />
     <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Agent\ReviewChanges\FeedbackHtmlTemplate.cs">
+    <Compile Update="Agent\Operations\ReviewChanges\FeedbackHtmlTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FeedbackHtmlTemplate.tt</DependentUpon>
@@ -41,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Agent\ReviewChanges\FeedbackHtmlTemplate.tt">
+    <None Update="Agent\Operations\ReviewChanges\FeedbackHtmlTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>FeedbackHtmlTemplate.cs</LastGenOutput>
     </None>
