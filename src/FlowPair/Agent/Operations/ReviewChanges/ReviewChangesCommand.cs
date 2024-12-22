@@ -4,10 +4,10 @@ using System.Text;
 using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
-using Ciandt.FlowTools.FlowPair.ChangeTracking;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
+using Ciandt.FlowTools.FlowPair.Git.GetChanges;
 using Ciandt.FlowTools.FlowPair.Support.Persistence;
 using Ciandt.FlowTools.FlowPair.Support.Presentation;
 using ConsoleAppFramework;
@@ -19,17 +19,19 @@ public class ReviewChangesCommand(
     IAnsiConsole console,
     IFileSystem fileSystem,
     AgentJsonContext jsonContext,
-    IGitDiffExtractor gitDiffExtractor,
+    IGitGetChangesHandler getChangesHandler,
     ILoginUseCase loginUseCase,
     IProxyCompleteChatHandler completeChatHandler)
 {
     /// <summary>
     /// Review changed files using Flow.
     /// </summary>
+    /// <param name="path">Path to the repository.</param>
     [Command("review")]
-    public int Execute()
+    public int Execute(
+        [Argument] string? path = null)
     {
-        return (from diff in gitDiffExtractor.Extract().OkOr(0)
+        return (from diff in getChangesHandler.Extract(path).OkOr(0)
                 from session in loginUseCase.Execute(isBackground: true)
                     .UnwrapErrOr(0)
                     .Ensure(n => n == 0, 1)
