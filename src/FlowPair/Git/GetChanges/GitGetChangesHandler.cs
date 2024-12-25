@@ -15,7 +15,7 @@ public class GitGetChangesHandler(
     IAnsiConsole console)
     : IGitGetChangesHandler
 {
-    public Option<ImmutableList<FileChange>> Extract(string? path)
+    public Option<ImmutableList<FileChange>> Extract(string? path, string? commit)
     {
         path = TryFindRepository(fileSystem, path).UnwrapOrNull();
         if (path is null)
@@ -27,6 +27,46 @@ public class GitGetChangesHandler(
         using var repo = new Repository(path);
         var builder = ImmutableList.CreateBuilder<FileChange>();
 
+        if (!string.IsNullOrEmpty(commit))
+        {
+            if (!FillChangesFromCommit(repo, builder, commit))
+            {
+                return None;
+            }
+        }
+        else
+        {
+            FillChangesFallback(repo, builder);
+        }
+
+        console.MarkupLine($"Found {builder.Count} changed files");
+        return Some(builder.ToImmutable());
+    }
+
+    private bool FillChangesFromCommit(Repository repo, ImmutableList<FileChange>.Builder builder, string commit)
+    {
+        var foundCommit = repo.Commits
+            .FirstOrDefault(c => c.Sha.StartsWith(commit, StringComparison.OrdinalIgnoreCase));
+        if (foundCommit is null)
+        {
+            console.MarkupLine("[red]Error:[/] Could not locate specified commit.");
+            return false;
+        }
+
+        var parentCommit = foundCommit.Parents.FirstOrDefault();
+
+        foreach (var changes in repo.Diff
+                     .Compare<Patch>(parentCommit?.Tree, foundCommit.Tree)
+                     .Where(p => !p.IsBinaryComparison && p.Status != ChangeKind.Deleted && p.Mode != Mode.Directory))
+        {
+            builder.Add(new FileChange(changes.Path, changes.Patch));
+        }
+
+        return true;
+    }
+
+    private static void FillChangesFallback(Repository repo, ImmutableList<FileChange>.Builder builder)
+    {
         FillChanges(repo, builder, DiffTargets.Index);
 
         if (builder.Count == 0)
@@ -38,9 +78,6 @@ public class GitGetChangesHandler(
         {
             FillChangesFromLastCommit(repo, builder);
         }
-
-        console.MarkupLine($"Found {builder.Count} changed files");
-        return Some(builder.ToImmutable());
     }
 
     private static void FillChanges(Repository repo, ImmutableList<FileChange>.Builder builder, DiffTargets diffTargets)

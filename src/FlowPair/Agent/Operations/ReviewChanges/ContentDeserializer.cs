@@ -7,33 +7,35 @@ namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
 
 public static class ContentDeserializer
 {
-    public static ImmutableList<ReviewerFeedbackResponse> TryDeserializeFeedback(
+    public static Result<ImmutableList<ReviewerFeedbackResponse>, string> TryDeserializeFeedback(
         ReadOnlySpan<char> content,
         JsonTypeInfo<ImmutableList<ReviewerFeedbackResponse>> typeInfo)
     {
         if (content.IsWhiteSpace())
-            return [];
+            return "JSON not found on empty content";
 
+        JsonException? lastException = null;
         while (!content.IsEmpty)
         {
             var start = content.IndexOf('[');
             if (start < 0)
-                return [];
+                return "Invalid JSON: '[' not found";
 
-            var end = content.IndexOf(']');
+            var end = content.LastIndexOf(']');
             if (end < start)
-                return [];
+                return "Invalid JSON: ']' not found or comes before '['";
 
             try
             {
                 return JsonSerializer.Deserialize(content[start..(end + 1)], typeInfo) ?? [];
             }
-            catch (JsonException)
+            catch (JsonException exception)
             {
-                content = content[(end + 1)..];
+                lastException = exception;
+                content = content[(start + 1)..];
             }
         }
 
-        return [];
+        return lastException?.Message ?? "Invalid JSON";
     }
 }

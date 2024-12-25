@@ -5,6 +5,13 @@ namespace Ciandt.FlowTools.FlowPair.Common;
 
 public static class FunctionalExtensions
 {
+    public static Option<T> DoAlways<T>(this Option<T> source, Action action)
+        where T : notnull
+    {
+        action();
+        return source;
+    }
+
     /// <summary>
     /// Returns a failure result if the predicate is false. Otherwise, returns a result with the specified value.
     /// </summary>

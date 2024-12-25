@@ -5,5 +5,4 @@ public sealed record ReviewerFeedbackResponse(
     string RiskDescription,
     string Feedback,
     string Path,
-    int Line,
-    string LineType);
+    string LineRange);
