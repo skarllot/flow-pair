@@ -28,7 +28,7 @@
             <h2 class="subtitle">
                 <span class="tag<#= GetRiskLevelCssClass(response.RiskScore) #>">Risk Score: <#= response.RiskScore #></span> <#= response.RiskDescription #>
             </h2>
-            <p><strong>File:</strong> <#= response.Path #>:<#= response.Line #></p>
+            <p><strong>File:</strong> <#= response.Path #>:<#= response.LineRange #></p>
             <div class="notification">
                 <#= HtmlFormatter.EncodeToHtml(response.Feedback) #>
             </div>

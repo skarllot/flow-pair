@@ -12,10 +12,13 @@ namespace Ciandt.FlowTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
 /// <param name="AnthropicVersion">The anthropic version.</param>
 /// <param name="Temperature">The amount of randomness injected into the response, between 0 and 1.</param>
 /// <param name="MaxTokens">The maximum number of tokens to generate before stopping.</param>
+/// <summary>
+/// See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html">Anthropic Claude Messages API</a>.
+/// </summary>
 public sealed record AnthropicChatCompletionRequest(
     [property: JsonPropertyName("allowedModels")] ImmutableList<AllowedAnthropicModels> AllowedModels,
     [property: JsonPropertyName("messages")] ImmutableList<AnthropicMessage> Messages,
     [property: JsonPropertyName("system")] string? System = null,
     [property: JsonPropertyName("anthropic_version")] string AnthropicVersion = "bedrock-2023-05-31",
     [property: JsonPropertyName("temperature")] float? Temperature = null,
-    [property: JsonPropertyName("max_tokens")] int MaxTokens = 4096);
+    [property: JsonPropertyName("max_tokens")] int MaxTokens = 8192);

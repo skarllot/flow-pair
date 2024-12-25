@@ -58,7 +58,7 @@ namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges
             #line hidden
             this.Write(":");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(response.Line));
+            this.Write(this.ToStringHelper.ToStringWithCulture(response.LineRange));
             
             #line default
             #line hidden
