@@ -88,5 +88,5 @@ jobs:
 
     - name: ✅ Test Publish
       run: |
-        dotnet publish --no-build -r ${{ matrix.os }}-${{ matrix.arch }} -c Debug
+        dotnet publish --no-restore -r ${{ matrix.os }}-${{ matrix.arch }} -c Debug
         7z a -tzip -mx9 flowpair-${{ matrix.os }}-${{ matrix.arch }}.zip $PWD/publish/*.*
