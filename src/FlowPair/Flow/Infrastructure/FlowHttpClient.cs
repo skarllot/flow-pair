@@ -11,7 +11,6 @@ public sealed class FlowHttpClient : HttpClient
     {
         BaseAddress = new Uri(FlowBaseAddress);
         DefaultRequestHeaders.Add("FlowAgent", "flow-pair");
-        DefaultRequestHeaders.Add("FlowOperationId", Guid.NewGuid().ToString("N"));
         DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
     }
 
