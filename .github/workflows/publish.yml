@@ -74,7 +74,7 @@ jobs:
         run: dotnet publish --no-restore -r ${{ matrix.os }}-${{ matrix.arch }} -c Release
 
       - name: 📦 Pack
-        run: 7z a -tzip -mx9 flowpair-${{ matrix.os }}-${{ matrix.arch }}-${{ github.ref_name }}.zip $PWD/publish/*.*
+        run: 7z a -tzip -mx9 flowpair-${{ matrix.os }}-${{ matrix.arch }}-${{ github.ref_name }}.zip $PWD/publish/*
 
       - name: 📤 Upload artifact
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
@@ -99,6 +99,7 @@ jobs:
           allowed-endpoints: >
             api.github.com:443
             github.com:443
+            uploads.github.com:443
 
       - name: 📥 Download artifact
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
