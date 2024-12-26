@@ -22,20 +22,20 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        os: [ linux, osx, win ]
         arch: [ x64, arm64 ]
         include:
-          - os: ubuntu-latest
-            runtime: linux-${{ matrix.arch }}
-          - os: macos-latest
-            runtime: osx-${{ matrix.arch }}
-          - os: windows-latest
-            runtime: win-${{ matrix.arch }}
+          - os: linux
+            image: ubuntu-latest
+          - os: osx
+            image: macos-latest
+          - os: win
+            image: windows-latest
         exclude:
-          - os: windows-latest
+          - os: win
             arch: arm64
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.image }}
     defaults:
       run:
         shell: bash
@@ -88,5 +88,5 @@ jobs:
 
     - name: ✅ Test Publish
       run: |
-        dotnet publish --no-build -r ${{ matrix.runtime }}
-        7z a -tzip -mx9 flowpair-${{ matrix.runtime }}.zip $PWD/publish/*.*
+        dotnet publish --no-build -r ${{ matrix.os }}-${{ matrix.arch }} -c Debug
+        7z a -tzip -mx9 flowpair-${{ matrix.os }}-${{ matrix.arch }}.zip $PWD/publish/*.*
