@@ -61,17 +61,12 @@ public sealed record ChatScript(
                     """
                     Ensure the feedback contain the file path and the line number.
                     Do not provide positive reinforcement or comments on good decisions. Focus solely on areas that need improvement.
+                    Ensure the feedback details are brief, concise, and accurate. If there are multiple similar issues, only comment on the most critical.
                     """),
                 Instruction.StepInstruction.Of(
                     """
-                    Ensure the feedback details are brief, concise, and accurate. If there are multiple similar issues, only comment on the most critical.
                     Include brief example code snippets in the feedback details for your suggested changes when you're confident your suggestions are improvements.
                     Use the same programming language as the file under review. If there are multiple improvements you suggest in the feedback details, use an ordered list to indicate the priority of the changes.
-                    """),
-                Instruction.StepInstruction.Of(
-                    """
-                    Ensure the message in the feedback is in English.
-                    Ensure the feedback do not infer unknown code, do not speculate the referenced code.
                     """),
                 Instruction.JsonConvertInstruction.Of(
                     """

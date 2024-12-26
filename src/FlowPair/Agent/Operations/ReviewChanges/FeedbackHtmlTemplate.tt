@@ -26,7 +26,7 @@
 #>
         <div class="box">
             <h2 class="subtitle">
-                <span class="tag<#= GetRiskLevelCssClass(response.RiskScore) #>">Risk Score: <#= response.RiskScore #></span> <#= response.RiskDescription #>
+                <span class="tag<#= GetRiskLevelCssClass(response.RiskScore) #>">Risk Score: <#= response.RiskScore #></span> <#= response.Title #>
             </h2>
             <p><strong>File:</strong> <#= response.Path #>:<#= response.LineRange #></p>
             <div class="notification">
