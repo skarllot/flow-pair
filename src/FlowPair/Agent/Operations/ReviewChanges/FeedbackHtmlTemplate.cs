@@ -46,7 +46,7 @@ namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges
             #line hidden
             this.Write("</span> ");
             
-            this.Write(this.ToStringHelper.ToStringWithCulture(response.RiskDescription));
+            this.Write(this.ToStringHelper.ToStringWithCulture(response.Title));
             
             #line default
             #line hidden
