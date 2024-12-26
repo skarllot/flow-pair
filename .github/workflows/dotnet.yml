@@ -84,5 +84,5 @@ jobs:
 
     - name: ✅ Test Publish
       run: |
-        dotnet publish -r ${{ matrix.runtime }} -c Release
+        dotnet publish --no-build -r ${{ matrix.runtime }} -c Release
         7z a -tzip -mx9 flowpair-${{ matrix.runtime }}.zip $PWD/publish/*.*
