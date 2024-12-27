@@ -1,5 +1,6 @@
 using System.IO.Abstractions.TestingHelpers;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
+using Ciandt.FlowTools.FlowPair.Tests.Mock;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
@@ -16,18 +17,18 @@ public class WorkingDirectoryWalkerTest
         var fileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { @"C:\Project\.git", new MockDirectoryData() },
-                { @"C:\Project\src", new MockDirectoryData() },
-                { @"C:\Project\src\file.cs", new MockFileData("content") }
+                { PathNormalizer.FromWindows(@"C:\Project\.git"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\Project\src"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\Project\src\file.cs"), new MockFileData("content") }
             });
         var walker = new WorkingDirectoryWalker(fileSystem);
 
         // Act
-        var result = walker.TryFindRepositoryRoot(@"C:\Project\src");
+        var result = walker.TryFindRepositoryRoot(PathNormalizer.FromWindows(@"C:\Project\src"));
 
         // Assert
         result.Should().BeSome()
-            .FullName.Should().Be(@"C:\Project");
+            .FullName.Should().Be(PathNormalizer.FromWindows(@"C:\Project"));
     }
 
     [Fact]
@@ -37,13 +38,13 @@ public class WorkingDirectoryWalkerTest
         var fileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { @"C:\Project\src", new MockDirectoryData() },
-                { @"C:\Project\src\file.cs", new MockFileData("content") }
+                { PathNormalizer.FromWindows(@"C:\Project\src"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\Project\src\file.cs"), new MockFileData("content") }
             });
         var walker = new WorkingDirectoryWalker(fileSystem);
 
         // Act
-        var result = walker.TryFindRepositoryRoot(@"C:\Project\src");
+        var result = walker.TryFindRepositoryRoot(PathNormalizer.FromWindows(@"C:\Project\src"));
 
         // Assert
         result.Should().BeNone();
@@ -56,8 +57,8 @@ public class WorkingDirectoryWalkerTest
         var fileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { @"C:\CurrentDir\.git", new MockDirectoryData() },
-                { @"C:\CurrentDir\file.cs", new MockFileData("content") }
+                { PathNormalizer.FromWindows(@"C:\CurrentDir\.git"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\CurrentDir\file.cs"), new MockFileData("content") }
             },
             @"C:\CurrentDir");
         var walker = new WorkingDirectoryWalker(fileSystem);
@@ -67,7 +68,7 @@ public class WorkingDirectoryWalkerTest
 
         // Assert
         result.Should().BeSome()
-            .FullName.Should().Be(@"C:\CurrentDir");
+            .FullName.Should().Be(PathNormalizer.FromWindows(@"C:\CurrentDir"));
     }
 
     [Fact]
@@ -77,19 +78,19 @@ public class WorkingDirectoryWalkerTest
         var fileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { @"C:\Project\.git", new MockDirectoryData() },
-                { @"C:\Project\src", new MockDirectoryData() },
-                { @"C:\Project\src\SubProject\.git", new MockDirectoryData() },
-                { @"C:\Project\src\SubProject\file.cs", new MockFileData("content") }
+                { PathNormalizer.FromWindows(@"C:\Project\.git"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\Project\src"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\Project\src\SubProject\.git"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\Project\src\SubProject\file.cs"), new MockFileData("content") }
             });
         var walker = new WorkingDirectoryWalker(fileSystem);
 
         // Act
-        var result = walker.TryFindRepositoryRoot(@"C:\Project\src\SubProject");
+        var result = walker.TryFindRepositoryRoot(PathNormalizer.FromWindows(@"C:\Project\src\SubProject"));
 
         // Assert
         result.Should().BeSome()
-            .FullName.Should().Be(@"C:\Project\src\SubProject");
+            .FullName.Should().Be(PathNormalizer.FromWindows(@"C:\Project\src\SubProject"));
     }
 
     [Fact]
@@ -100,7 +101,7 @@ public class WorkingDirectoryWalkerTest
         var walker = new WorkingDirectoryWalker(fileSystem);
 
         // Act
-        var result = walker.TryFindRepositoryRoot(@"C:\NonExistentPath");
+        var result = walker.TryFindRepositoryRoot(PathNormalizer.FromWindows(@"C:\NonExistentPath"));
 
         // Assert
         result.Should().BeNone();
