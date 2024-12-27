@@ -14,7 +14,10 @@ public static partial class PathNormalizer
         var result = path;
         if (AbsolutePathRegex().IsMatch(path))
         {
-            result = AbsolutePathRegex().Replace(path, "/$2");
+            result = AbsolutePathRegex().Replace(path, "$2");
+
+            if (string.IsNullOrEmpty(result))
+                return "/";
         }
 
         return result.Replace('\\', '/');
