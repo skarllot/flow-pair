@@ -60,7 +60,7 @@ public class WorkingDirectoryWalkerTest
                 { PathNormalizer.FromWindows(@"C:\CurrentDir\.git"), new MockDirectoryData() },
                 { PathNormalizer.FromWindows(@"C:\CurrentDir\file.cs"), new MockFileData("content") }
             },
-            @"C:\CurrentDir");
+            PathNormalizer.FromWindows(@"C:\CurrentDir"));
         var walker = new WorkingDirectoryWalker(fileSystem);
 
         // Act
