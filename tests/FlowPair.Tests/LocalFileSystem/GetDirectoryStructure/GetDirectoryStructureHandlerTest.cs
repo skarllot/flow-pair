@@ -1,5 +1,6 @@
 using System.IO.Abstractions.TestingHelpers;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
+using Ciandt.FlowTools.FlowPair.Tests.Mock;
 using FluentAssertions;
 using JetBrains.Annotations;
 
@@ -15,8 +16,11 @@ public class GetDirectoryStructureHandlerTest
     {
         // Arrange
         var fileSystem = new MockFileSystem(
-            new Dictionary<string, MockFileData> { { @"C:\TestDir", new MockDirectoryData() } });
-        var directoryInfo = fileSystem.DirectoryInfo.New(@"C:\TestDir");
+            new Dictionary<string, MockFileData>
+            {
+                { PathNormalizer.FromWindows(@"C:\TestDir"), new MockDirectoryData() }
+            });
+        var directoryInfo = fileSystem.DirectoryInfo.New(PathNormalizer.FromWindows(@"C:\TestDir"));
 
         // Act
         var result = _handler.Execute(directoryInfo);
@@ -32,11 +36,11 @@ public class GetDirectoryStructureHandlerTest
         var fileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { @"C:\TestDir", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir1", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir2", new MockDirectoryData() }
+                { PathNormalizer.FromWindows(@"C:\TestDir"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir1"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir2"), new MockDirectoryData() }
             });
-        var directoryInfo = fileSystem.DirectoryInfo.New(@"C:\TestDir");
+        var directoryInfo = fileSystem.DirectoryInfo.New(PathNormalizer.FromWindows(@"C:\TestDir"));
 
         // Act
         var result = _handler.Execute(directoryInfo);
@@ -57,12 +61,12 @@ public class GetDirectoryStructureHandlerTest
         var fileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { @"C:\TestDir", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir1", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir1\SubSubDir1", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir2", new MockDirectoryData() }
+                { PathNormalizer.FromWindows(@"C:\TestDir"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir1"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir1\SubSubDir1"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir2"), new MockDirectoryData() }
             });
-        var directoryInfo = fileSystem.DirectoryInfo.New(@"C:\TestDir");
+        var directoryInfo = fileSystem.DirectoryInfo.New(PathNormalizer.FromWindows(@"C:\TestDir"));
 
         // Act
         var result = _handler.Execute(directoryInfo);
@@ -84,11 +88,11 @@ public class GetDirectoryStructureHandlerTest
         var fileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { @"C:\TestDir", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir1", new MockDirectoryData() },
-                { @"C:\TestDir\.hiddenDir", new MockDirectoryData() }
+                { PathNormalizer.FromWindows(@"C:\TestDir"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir1"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\.hiddenDir"), new MockDirectoryData() }
             });
-        var directoryInfo = fileSystem.DirectoryInfo.New(@"C:\TestDir");
+        var directoryInfo = fileSystem.DirectoryInfo.New(PathNormalizer.FromWindows(@"C:\TestDir"));
 
         // Act
         var result = _handler.Execute(directoryInfo);
@@ -108,12 +112,12 @@ public class GetDirectoryStructureHandlerTest
         var fileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { @"C:\TestDir", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir1", new MockDirectoryData() },
-                { @"C:\TestDir\node_modules", new MockDirectoryData() },
-                { @"C:\TestDir\bin", new MockDirectoryData() }
+                { PathNormalizer.FromWindows(@"C:\TestDir"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir1"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\node_modules"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\bin"), new MockDirectoryData() }
             });
-        var directoryInfo = fileSystem.DirectoryInfo.New(@"C:\TestDir");
+        var directoryInfo = fileSystem.DirectoryInfo.New(PathNormalizer.FromWindows(@"C:\TestDir"));
 
         // Act
         var result = _handler.Execute(directoryInfo);
@@ -133,14 +137,14 @@ public class GetDirectoryStructureHandlerTest
         var fileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { @"C:\TestDir", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir1", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir1\SubSubDir1", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir1\SubSubDir1\DeepDir1", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir2", new MockDirectoryData() },
-                { @"C:\TestDir\SubDir2\SubSubDir2", new MockDirectoryData() }
+                { PathNormalizer.FromWindows(@"C:\TestDir"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir1"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir1\SubSubDir1"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir1\SubSubDir1\DeepDir1"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir2"), new MockDirectoryData() },
+                { PathNormalizer.FromWindows(@"C:\TestDir\SubDir2\SubSubDir2"), new MockDirectoryData() }
             });
-        var directoryInfo = fileSystem.DirectoryInfo.New(@"C:\TestDir");
+        var directoryInfo = fileSystem.DirectoryInfo.New(PathNormalizer.FromWindows(@"C:\TestDir"));
 
         // Act
         var result = _handler.Execute(directoryInfo);
