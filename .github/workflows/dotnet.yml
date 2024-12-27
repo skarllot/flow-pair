@@ -56,8 +56,6 @@ jobs:
           dotnetcli.azureedge.net:443
           github.com:443
           objects.githubusercontent.com:443
-          production.cloudflare.docker.com:443
-          registry-1.docker.io:443
           storage.googleapis.com:443
 
     - name: 🛒 Checkout
@@ -85,6 +83,11 @@ jobs:
 
     - name: ✅ Test
       run: dotnet test --no-build --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
+
+    - name: ☂️ Upload coverage reports to Codecov
+      uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # v5.1.2
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     - name: ✅ Test Publish
       run: |

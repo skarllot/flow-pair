@@ -3,7 +3,8 @@
 _FlowPair provides automated code review and feedback using CI&T Flow AI through a command-line interface._
 
 [![Build status](https://github.com/skarllot/flow-pair/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/skarllot/flow-pair/actions)
-[![GitHub Release](https://img.shields.io/github/v/release/skarllot/flow-pair)](https://github.com/skarllot/flow-pair/releases)
+[![GitHub release](https://img.shields.io/github/v/release/skarllot/flow-pair)](https://github.com/skarllot/flow-pair/releases)
+[![Code coverage](https://codecov.io/gh/skarllot/flow-pair/graph/badge.svg?token=XQ7SBGPS89)](https://codecov.io/gh/skarllot/flow-pair)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://raw.githubusercontent.com/skarllot/flow-pair/main/LICENSE)
 
 <hr />

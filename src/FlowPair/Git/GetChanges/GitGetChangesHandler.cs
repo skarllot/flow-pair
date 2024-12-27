@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using System.IO.Abstractions;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowPair.Common;
+using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using LibGit2Sharp;
 using Spectre.Console;
 
@@ -11,20 +11,20 @@ public partial interface IGitGetChangesHandler;
 
 [GenerateAutomaticInterface]
 public class GitGetChangesHandler(
-    IFileSystem fileSystem,
-    IAnsiConsole console)
+    IAnsiConsole console,
+    IWorkingDirectoryWalker workingDirectoryWalker)
     : IGitGetChangesHandler
 {
     public Option<ImmutableList<FileChange>> Extract(string? path, string? commit)
     {
-        path = TryFindRepository(fileSystem, path).UnwrapOrNull();
-        if (path is null)
+        var gitRootDir = workingDirectoryWalker.TryFindRepositoryRoot(path).UnwrapOrNull();
+        if (gitRootDir is null)
         {
             console.MarkupLine("[red]Error:[/] Could not locate Git repository.");
             return None;
         }
 
-        using var repo = new Repository(path);
+        using var repo = new Repository(gitRootDir.FullName);
         var builder = ImmutableList.CreateBuilder<FileChange>();
 
         if (!string.IsNullOrEmpty(commit))
@@ -101,23 +101,5 @@ public class GitGetChangesHandler(
         {
             builder.Add(new FileChange(changes.Path, changes.Patch));
         }
-    }
-
-    private static Option<string> TryFindRepository(IFileSystem fileSystem, string? path)
-    {
-        var currentDirectory = fileSystem.DirectoryInfo.New(path ?? fileSystem.Directory.GetCurrentDirectory());
-        while (currentDirectory != null)
-        {
-            if (currentDirectory
-                .EnumerateDirectories(".git", SearchOption.TopDirectoryOnly)
-                .Any())
-            {
-                return currentDirectory.FullName;
-            }
-
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        return None;
     }
 }
