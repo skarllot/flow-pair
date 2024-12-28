@@ -1,9 +1,9 @@
 <#@ template language="C#" debug="false" linePragmas="false" hostspecific="false" inherits="CodeWriterBase<ImmutableList<ReviewerFeedbackResponse>>" #>
 <#@ import namespace="System.Collections.Immutable" #>
 <#@ import namespace="System.Text" #>
-<#@ import namespace="Ciandt.FlowTools.FlowPair.Common" #>
+<#@ import namespace="Common" #>
 <#@ import namespace="Raiqub.Generators.T4CodeWriter" #>
-<#@ import namespace="Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1" #>
+<#@ import namespace="v1" #>
 <!DOCTYPE html>
 <html>
   <head>

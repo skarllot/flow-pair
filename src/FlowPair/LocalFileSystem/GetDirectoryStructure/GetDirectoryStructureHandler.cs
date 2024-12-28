@@ -12,11 +12,12 @@ public partial interface IGetDirectoryStructureHandler;
 public sealed class GetDirectoryStructureHandler
     : IGetDirectoryStructureHandler
 {
-    private static readonly FrozenSet<string> s_ignoreList =
-    [
-        "__pycache__", "artifacts", "bin", "blib", "build", "cache", "dist", "node_modules", "obj", "out", "pkg",
-        "Pods", "project", "publish", "target", "vendor", "venv", "xcuserdata"
-    ];
+    private static readonly FrozenSet<string> s_ignoreList = FrozenSet.Create(
+        StringComparer.OrdinalIgnoreCase,
+        [
+            "__pycache__", "artifacts", "bin", "blib", "build", "cache", "dist", "node_modules", "obj", "out", "pkg",
+            "Pods", "project", "publish", "target", "vendor", "venv", "xcuserdata"
+        ]);
 
     public string Execute(IDirectoryInfo directoryInfo)
     {

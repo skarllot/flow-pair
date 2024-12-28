@@ -26,6 +26,11 @@ namespace Ciandt.FlowTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
 /// <para>How many chat completion choices to generate for each input message.</para>
 /// <para>Note that you'll be charged based on the number of generated tokens across all of the choices. Keep n as 1 to minimize costs.</para>
 /// </param>
+/// <remarks>
+/// <para>See:</para>
+/// <para>* <a href="https://flow.ciandt.com/docs/developerPortal/llm/openai-chat-completion/">Creates a completion for the chat message</a>.</para>
+/// <para>* <a href="https://platform.openai.com/docs/api-reference/chat">OpenAI Chat endpoint</a>.</para>
+/// </remarks>
 public sealed record OpenAiChatCompletionRequest(
     [property: JsonPropertyName("allowedModels")] ImmutableList<AllowedOpenAiModels> AllowedModels,
     [property: JsonPropertyName("messages")] ImmutableList<OpenAiMessage> Messages,

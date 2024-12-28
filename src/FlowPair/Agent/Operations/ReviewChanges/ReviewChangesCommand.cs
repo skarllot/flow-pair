@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO.Abstractions;
 using System.Text;
 using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
+using Ciandt.FlowTools.FlowPair.Agent.Models;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
 using Ciandt.FlowTools.FlowPair.Common;
@@ -16,7 +17,7 @@ using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
 
-public class ReviewChangesCommand(
+public sealed class ReviewChangesCommand(
     IAnsiConsole console,
     IFileSystem fileSystem,
     AgentJsonContext jsonContext,
@@ -28,7 +29,7 @@ public class ReviewChangesCommand(
     /// Review changed files using Flow.
     /// </summary>
     /// <param name="path">Path to the repository.</param>
-    /// <param name="commit">-c, Commit hash</param>
+    /// <param name="commit">-c, Commit hash.</param>
     [Command("review")]
     public int Execute(
         [Argument] string? path = null,
@@ -46,7 +47,7 @@ public class ReviewChangesCommand(
     private Result<Unit, int> BuildFeedback(ImmutableList<FileChange> changes)
     {
         var feedback = changes
-            .GroupBy(c => ChatScript.FindChatScriptForFile(ChatScript.Default, c.Path))
+            .GroupBy(c => ChatScript.FindChatScriptForFile(ReviewChatScript.Default, c.Path))
             .Where(g => g.Key.IsSome)
             .Select(g => new { Script = g.Key.Unwrap(), Diff = g.AggregateToStringLines(c => c.Diff) })
             .SelectMany(

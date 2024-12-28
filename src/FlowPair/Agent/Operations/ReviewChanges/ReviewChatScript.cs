@@ -1,14 +1,10 @@
 using System.Collections.Immutable;
+using Ciandt.FlowTools.FlowPair.Agent.Models;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
 
-public sealed record ChatScript(
-    string Name,
-    ImmutableArray<string> Extensions,
-    string SystemInstruction,
-    ImmutableList<Instruction> Instructions)
+public static class ReviewChatScript
 {
-    public const string StopKeywordPlaceholder = "<NO FEEDBACK>";
     public static readonly ImmutableList<ChatScript> Default =
     [
         new(
@@ -56,7 +52,7 @@ public sealed record ChatScript(
                         "avoid magic strings and numbers",
                         "ensure new code follow existing patterns and structure",
                     ],
-                    $" if applicable; otherwise, reply with \"{StopKeywordPlaceholder}\" when there are no suggestions"),
+                    $" if applicable; otherwise, reply with \"{ChatScript.StopKeywordPlaceholder}\" when there are no suggestions"),
                 Instruction.StepInstruction.Of(
                     """
                     Ensure the feedback contain the file path and the line number.
@@ -76,13 +72,4 @@ public sealed record ChatScript(
                     """),
             ]),
     ];
-
-    public static Option<ChatScript> FindChatScriptForFile(
-        IReadOnlyList<ChatScript> scripts,
-        string filePath)
-    {
-        return scripts
-            .Reverse()
-            .FirstOrDefault(i => i.Extensions.Any(s => filePath.EndsWith(s, StringComparison.OrdinalIgnoreCase)));
-    }
 }

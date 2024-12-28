@@ -1,10 +1,32 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace Ciandt.FlowTools.FlowPair.Common;
 
 public static class FunctionalExtensions
 {
+    public static Option<TAccumulate> Aggregate<TSource, TAccumulate>(
+        this IEnumerable<TSource> source,
+        TAccumulate seed,
+        [InstantHandle] Func<TAccumulate, TSource, Option<TAccumulate>> func)
+        where TAccumulate : notnull
+    {
+        var result = Some(seed);
+
+        foreach (var item in source)
+        {
+            if (!result.TryGet(out var value))
+            {
+                return None;
+            }
+
+            result = func(value, item);
+        }
+
+        return result;
+    }
+
     public static Option<T> DoAlways<T>(this Option<T> source, Action action)
         where T : notnull
     {

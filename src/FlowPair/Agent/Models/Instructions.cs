@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using FxKit.CompilerServices;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
+namespace Ciandt.FlowTools.FlowPair.Agent.Models;
 
 [Union]
 public partial record Instruction
