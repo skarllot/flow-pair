@@ -10,6 +10,15 @@ public sealed record ChatScript(
 {
     public const string StopKeywordPlaceholder = "<NO FEEDBACK>";
 
+    public double TotalSteps => Instructions
+        .Aggregate(
+            (IEnumerable<double>) [0D],
+            (curr, next) => next.Match(
+                StepInstruction: _ => curr.Select(v => v + 1),
+                MultiStepInstruction: x => Enumerable.Range(0, x.Messages.Count).Select(_ => curr.First() + 1),
+                JsonConvertInstruction: _ => curr.Select(v => v + 1)))
+        .Sum();
+
     public static Option<ChatScript> FindChatScriptForFile(
         IReadOnlyList<ChatScript> scripts,
         string filePath)

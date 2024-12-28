@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Ciandt.FlowTools.FlowPair.Agent.Models;
+using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest;
 
@@ -43,7 +44,8 @@ public static class UnitTestChatScript
                     Copy the unit test content in a valid JSON format.
                     The "content" property can be multiline with entire unit test content.
                     The schema of the JSON object must be:
-                    """),
+                    """,
+                    CreateUnitTestResponse.Schema),
             ]),
     ];
 }

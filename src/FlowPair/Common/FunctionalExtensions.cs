@@ -6,32 +6,26 @@ namespace Ciandt.FlowTools.FlowPair.Common;
 
 public static class FunctionalExtensions
 {
-    public static Option<TAccumulate> Aggregate<TSource, TAccumulate>(
+    public static Result<TAccumulate, TError> TryAggregate<TSource, TAccumulate, TError>(
         this IEnumerable<TSource> source,
         TAccumulate seed,
-        [InstantHandle] Func<TAccumulate, TSource, Option<TAccumulate>> func)
+        [InstantHandle] Func<TAccumulate, TSource, Result<TAccumulate, TError>> func)
         where TAccumulate : notnull
+        where TError : notnull
     {
-        var result = Some(seed);
+        var result = Ok<TAccumulate, TError>(seed);
 
         foreach (var item in source)
         {
-            if (!result.TryGet(out var value))
+            if (!result.TryGet(out var value, out var error))
             {
-                return None;
+                return error;
             }
 
             result = func(value, item);
         }
 
         return result;
-    }
-
-    public static Option<T> DoAlways<T>(this Option<T> source, Action action)
-        where T : notnull
-    {
-        action();
-        return source;
     }
 
     /// <summary>
@@ -47,8 +41,8 @@ public static class FunctionalExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue, TError> Ensure<TValue, TError>(
         this TValue value,
-        Func<TValue, bool> predicate,
-        Func<TError> error)
+        [InstantHandle] Func<TValue, bool> predicate,
+        [InstantHandle] Func<TError> error)
         where TValue : notnull
         where TError : notnull =>
         predicate(value) ? value : error();
@@ -66,7 +60,7 @@ public static class FunctionalExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue, TError> Ensure<TValue, TError>(
         this TValue value,
-        Func<TValue, bool> predicate,
+        [InstantHandle] Func<TValue, bool> predicate,
         TError error)
         where TValue : notnull
         where TError : notnull =>

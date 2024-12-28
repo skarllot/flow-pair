@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Ciandt.FlowTools.FlowPair.Agent.Models;
+using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
 
@@ -69,7 +70,8 @@ public static class ReviewChatScript
                     Format the feedback in a valid JSON format as a list of feedbacks, or "[]" for no feedbacks.
                     The "feedback" property can be multiline and include example code snippets.
                     The schema of the JSON feedback object must be:
-                    """),
+                    """,
+                    ReviewerFeedbackResponse.Schema),
             ]),
     ];
 }
