@@ -10,14 +10,6 @@ public sealed class WorkingDirectoryWalker(
     IFileSystem fileSystem)
     : IWorkingDirectoryWalker
 {
-    private static readonly EnumerationOptions s_fileEnumerationOptions = new()
-    {
-        IgnoreInaccessible = true,
-        MatchCasing = MatchCasing.CaseInsensitive,
-        MatchType = MatchType.Simple,
-        RecurseSubdirectories = true
-    };
-
     public Option<IDirectoryInfo> TryFindRepositoryRoot(string? path)
     {
         var currentDirectory = fileSystem.DirectoryInfo.New(path ?? fileSystem.Directory.GetCurrentDirectory());
@@ -39,17 +31,5 @@ public sealed class WorkingDirectoryWalker(
         }
 
         return None;
-    }
-
-    public IEnumerable<IFileInfo> FindFilesByExtension(IDirectoryInfo rootDirectory, IEnumerable<string> extensions)
-    {
-        return extensions
-            .SelectMany(e => rootDirectory.EnumerateFiles($"*{e}", s_fileEnumerationOptions));
-    }
-
-    public IEnumerable<IFileInfo> FindFilesByName(IDirectoryInfo rootDirectory, IEnumerable<string> filenames)
-    {
-        return filenames
-            .SelectMany(e => rootDirectory.EnumerateFiles(e, s_fileEnumerationOptions));
     }
 }
