@@ -15,13 +15,13 @@ public sealed record ChatThread(
 {
     private const int MaxJsonRetries = 3;
 
-    public Message LastMessage => Messages[^1];
+    public Message? LastMessage => Messages.Count > 0 ? Messages[^1] : null;
 
     public bool IsInterrupted =>
-        LastMessage.Role == Role.Assistant &&
+        LastMessage?.Role == Role.Assistant &&
         LastMessage.Content.Contains(StopKeyword, StringComparison.Ordinal);
 
-    public bool IsCompleted => LastMessage.Role == Role.Assistant;
+    public bool IsCompleted => LastMessage?.Role == Role.Assistant;
 
     public ChatThread AddMessages(params ReadOnlySpan<Message> newMessages) =>
         this with { Messages = [..Messages, ..newMessages] };

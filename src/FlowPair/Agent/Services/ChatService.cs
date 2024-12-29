@@ -1,6 +1,4 @@
 using System.Collections.Immutable;
-using System.IO.Abstractions;
-using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using AutomaticInterface;
 using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
@@ -8,7 +6,7 @@ using Ciandt.FlowTools.FlowPair.Agent.Models;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
-using Ciandt.FlowTools.FlowPair.Support.Persistence;
+using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.Services;
@@ -17,9 +15,9 @@ public partial interface IChatService;
 
 [GenerateAutomaticInterface]
 public sealed class ChatService(
-    IFileSystem fileSystem,
     AgentJsonContext jsonContext,
-    IProxyCompleteChatHandler completeChatHandler)
+    IProxyCompleteChatHandler completeChatHandler,
+    ITempFileWriter tempFileWriter)
     : IChatService
 {
     public Result<ImmutableList<TResult>, string> RunMultiple<TResult>(
@@ -64,14 +62,8 @@ public sealed class ChatService(
 
     private void SaveChatHistory(ChatWorkspace workspace)
     {
-        var tempPath = ApplicationData.GetTempPath(fileSystem);
-        tempPath.Create();
-
-        var historyFilePath = tempPath.NewFile($"{DateTime.UtcNow:yyyyMMddHHmmss}-history.json");
-
-        using var stream = historyFilePath.Open(FileMode.Create);
-        JsonSerializer.Serialize(
-            stream,
+        tempFileWriter.WriteJson(
+            $"{DateTime.UtcNow:yyyyMMddHHmmss}-history.json",
             workspace.ChatThreads.Select(t => t.Messages).ToImmutableList(),
             jsonContext.ImmutableListImmutableListMessage);
     }
@@ -83,7 +75,7 @@ public sealed class ChatService(
             .Where(t => t is { IsInterrupted: false, IsCompleted: true })
             .SelectMany(
                 t => ContentDeserializer
-                    .TryDeserialize(t.LastMessage.Content, jsonTypeInfo)
+                    .TryDeserialize(t.LastMessage?.Content, jsonTypeInfo)
                     .UnwrapOr([]))
             .ToImmutableList();
 }

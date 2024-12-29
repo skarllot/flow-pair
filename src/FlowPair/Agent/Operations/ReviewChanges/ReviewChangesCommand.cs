@@ -1,6 +1,4 @@
 using System.Collections.Immutable;
-using System.IO.Abstractions;
-using System.Text;
 using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
 using Ciandt.FlowTools.FlowPair.Agent.Models;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
@@ -9,7 +7,7 @@ using Ciandt.FlowTools.FlowPair.Agent.Services;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.Git.GetChanges;
-using Ciandt.FlowTools.FlowPair.Support.Persistence;
+using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using Ciandt.FlowTools.FlowPair.Support.Presentation;
 using ConsoleAppFramework;
 using Spectre.Console;
@@ -18,11 +16,11 @@ namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
 
 public sealed class ReviewChangesCommand(
     IAnsiConsole console,
-    IFileSystem fileSystem,
     AgentJsonContext jsonContext,
     IGitGetChangesHandler getChangesHandler,
     ILoginUseCase loginUseCase,
-    IChatService chatService)
+    IChatService chatService,
+    ITempFileWriter tempFileWriter)
 {
     /// <summary>
     /// Review changed files using Flow.
@@ -58,15 +56,11 @@ public sealed class ReviewChangesCommand(
 
         if (feedback.Count > 0)
         {
-            var tempPath = ApplicationData.GetTempPath(fileSystem);
-            tempPath.Create();
-
-            var feedbackFilePath = tempPath.NewFile($"{DateTime.UtcNow:yyyyMMddHHmmss}-feedback.html");
-
-            var htmlContent = new FeedbackHtmlTemplate(feedback).TransformText();
-            feedbackFilePath.WriteAllText(htmlContent, Encoding.UTF8);
-
-            FileLauncher.OpenFile(feedbackFilePath.FullName);
+            tempFileWriter
+                .Write(
+                    filename: $"{DateTime.UtcNow:yyyyMMddHHmmss}-feedback.html",
+                    content: new FeedbackHtmlTemplate(feedback).TransformText())
+                .LaunchFile(console);
         }
 
         return Unit();
