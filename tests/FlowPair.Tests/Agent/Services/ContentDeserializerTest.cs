@@ -61,7 +61,7 @@ public class ContentDeserializerTest
     public void TryDeserializeShouldReturnErrorForInvalidJsonStructure()
     {
         // Arrange
-        var jsonContent = "{\"RiskScore\": 5, \"Feedback\": \"Missing closing brace";
+        var jsonContent = "{\"RiskScore\": 5, \"Feedback\": \"Invalid feedback }";
         var typeInfo = TestJsonContext.Default.TestObj;
 
         // Act
