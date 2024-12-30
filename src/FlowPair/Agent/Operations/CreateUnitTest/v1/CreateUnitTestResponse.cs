@@ -13,7 +13,7 @@ public sealed record CreateUnitTestResponse(
           "properties": {
             "filePath": {
               "type": "string",
-              "description": "The file path of the created unit test",
+              "description": "The file path of the created unit test (relative to the repository root directory)",
               "minLength": 1
             },
             "content": {

@@ -9,7 +9,7 @@ public static class ReviewChatScript
     public static readonly ImmutableList<ChatScript> Default =
     [
         new(
-            "Generic programming chat script",
+            "Code review chat script",
             [
                 /* Python          */".py", ".pyw", ".pyx", ".pxd", ".pxi",
                 /* JavaScript      */".js", ".jsx", ".mjs", ".cjs",

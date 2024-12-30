@@ -8,6 +8,11 @@ public static class FileSystemExtensions
 {
     private const int DefaultBufferSize = 1024;
 
+    public static string GetRelativePath(this IDirectoryInfo directory, string path)
+    {
+        return directory.FileSystem.Path.GetRelativePath(directory.FullName, path);
+    }
+
     public static IFileInfo NewFile(this IDirectoryInfo directoryInfo, string fileName)
     {
         var fileSystem = directoryInfo.FileSystem;

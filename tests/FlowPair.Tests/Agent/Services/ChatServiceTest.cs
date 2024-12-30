@@ -136,7 +136,7 @@ public class ChatServiceTest
             jsonTypeInfo: AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse);
 
         // Assert
-        _tempFileWriter.WriteJson(
+        _tempFileWriter.Received(1).WriteJson(
             Arg.Any<string>(),
             Arg.Any<ImmutableList<ImmutableList<Message>>>(),
             AgentJsonContext.Default.ImmutableListImmutableListMessage);

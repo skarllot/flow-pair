@@ -1,15 +1,15 @@
 using System.Collections.Immutable;
 using Ciandt.FlowTools.FlowPair.Agent.Models;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
+using Ciandt.FlowTools.FlowPair.Agent.Operations.UpdateUnitTest.v1;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest;
+namespace Ciandt.FlowTools.FlowPair.Agent.Operations.UpdateUnitTest;
 
-public static class UnitTestChatScript
+public static class UpdateUnitTestChatScript
 {
     public static readonly ImmutableList<ChatScript> Default =
     [
         new(
-            "Create unit tests chat script",
+            "Update unit tests chat script",
             [
                 /* Python          */".py", ".pyw", ".pyx", ".pxd", ".pxi",
                 /* JavaScript      */".js", ".jsx", ".mjs", ".cjs",
@@ -36,19 +36,20 @@ public static class UnitTestChatScript
             """,
             [
                 Instruction.StepInstruction.Of(
-                    "Create unit tests for the specified code"),
+                    "Update the unit tests for the specified source code"),
                 Instruction.StepInstruction.Of(
                     "Ensure the unit test cover every path"),
                 Instruction.StepInstruction.Of(
                     "Ensure the unit test does not create any mutants on mutation analysis"),
+                Instruction.StepInstruction.Of(
+                    "If any test is redundant remove it"),
                 Instruction.JsonConvertInstruction.Of(
                     """
                     Copy the generated unit tests content in a valid JSON format.
-                    The file path of the new unit test must follow language and project standards.
                     The "content" property can be multiline with entire unit test content.
                     The schema of the JSON object must be:
                     """,
-                    CreateUnitTestResponse.Schema),
+                    UpdateUnitTestResponse.Schema),
             ]),
     ];
 }

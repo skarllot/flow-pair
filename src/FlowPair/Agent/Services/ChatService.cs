@@ -20,6 +20,18 @@ public sealed class ChatService(
     ITempFileWriter tempFileWriter)
     : IChatService
 {
+    public Result<TResult, string> RunSingle<TResult>(
+        Progress progress,
+        AllowedModel model,
+        ChatScript chatScript,
+        IEnumerable<Message> initialMessages,
+        JsonTypeInfo<TResult> jsonTypeInfo)
+        where TResult : notnull
+    {
+        return progress.Start(
+            context => RunSingleInternal(context, model, chatScript, initialMessages, jsonTypeInfo));
+    }
+
     public Result<ImmutableList<TResult>, string> RunMultiple<TResult>(
         Progress progress,
         AllowedModel model,
@@ -30,6 +42,36 @@ public sealed class ChatService(
     {
         return progress.Start(
             context => RunMultipleInternal(context, model, chatScript, initialMessages, jsonTypeInfo));
+    }
+
+    private Result<TResult, string> RunSingleInternal<TResult>(
+        ProgressContext progressContext,
+        AllowedModel model,
+        ChatScript chatScript,
+        IEnumerable<Message> initialMessages,
+        JsonTypeInfo<TResult> jsonTypeInfo)
+        where TResult : notnull
+    {
+        var progress = progressContext.AddTask(
+            $"Running '{chatScript.Name}'",
+            maxValue: chatScript.TotalSteps);
+
+        var workspace = new ChatWorkspace(
+        [
+            new ChatThread(
+                progress,
+                model,
+                $"<{Guid.NewGuid().ToString("N")[..8]}>",
+                str => ContentDeserializer.TryDeserialize(str, jsonTypeInfo).Select(static _ => Unit()),
+                [new Message(Role.System, chatScript.SystemInstruction), ..initialMessages])
+        ]);
+
+        return chatScript.Instructions
+            .TryAggregate(workspace, (ws, i) => ws.RunInstruction(i, completeChatHandler))
+            .Do(SaveChatHistory)
+            .SelectMany(
+                chatWorkspace => DeserializeSingle(chatWorkspace, jsonTypeInfo)
+                    .OkOr("Failed to produce a valid JSON content"));
     }
 
     private Result<ImmutableList<TResult>, string> RunMultipleInternal<TResult>(
@@ -67,6 +109,19 @@ public sealed class ChatService(
             workspace.ChatThreads.Select(t => t.Messages).ToImmutableList(),
             jsonContext.ImmutableListImmutableListMessage);
     }
+
+    private static Option<TResult> DeserializeSingle<TResult>(
+        ChatWorkspace chatWorkspace,
+        JsonTypeInfo<TResult> jsonTypeInfo)
+        where TResult : notnull =>
+        chatWorkspace.ChatThreads
+            .Where(t => t is { IsInterrupted: false, IsCompleted: true })
+            .Select(
+                t => ContentDeserializer
+                    .TryDeserialize(t.LastMessage?.Content, jsonTypeInfo)
+                    .ToOption())
+            .FirstOrNone(x => x.IsSome)
+            .UnwrapOr(None);
 
     private static ImmutableList<TResult> DeserializeList<TResult>(
         ChatWorkspace chatWorkspace,
