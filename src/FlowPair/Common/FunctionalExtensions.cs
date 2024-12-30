@@ -1,15 +1,31 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace Ciandt.FlowTools.FlowPair.Common;
 
 public static class FunctionalExtensions
 {
-    public static Option<T> DoAlways<T>(this Option<T> source, Action action)
-        where T : notnull
+    public static Result<TAccumulate, TError> TryAggregate<TSource, TAccumulate, TError>(
+        this IEnumerable<TSource> source,
+        TAccumulate seed,
+        [InstantHandle] Func<TAccumulate, TSource, Result<TAccumulate, TError>> func)
+        where TAccumulate : notnull
+        where TError : notnull
     {
-        action();
-        return source;
+        var result = Ok<TAccumulate, TError>(seed);
+
+        foreach (var item in source)
+        {
+            if (!result.TryGet(out var value, out var error))
+            {
+                return error;
+            }
+
+            result = func(value, item);
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -25,8 +41,8 @@ public static class FunctionalExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue, TError> Ensure<TValue, TError>(
         this TValue value,
-        Func<TValue, bool> predicate,
-        Func<TError> error)
+        [InstantHandle] Func<TValue, bool> predicate,
+        [InstantHandle] Func<TError> error)
         where TValue : notnull
         where TError : notnull =>
         predicate(value) ? value : error();
@@ -44,7 +60,7 @@ public static class FunctionalExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<TValue, TError> Ensure<TValue, TError>(
         this TValue value,
-        Func<TValue, bool> predicate,
+        [InstantHandle] Func<TValue, bool> predicate,
         TError error)
         where TValue : notnull
         where TError : notnull =>

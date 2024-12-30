@@ -1,13 +1,24 @@
 using System.Diagnostics;
+using System.IO.Abstractions;
+using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowPair.Support.Presentation;
 
 public static class FileLauncher
 {
-    public static void OpenFile(string filePath)
+    public static Unit LaunchFile(this IFileInfo fileInfo, IAnsiConsole console)
     {
-        using var process = new Process();
-        process.StartInfo = new ProcessStartInfo { FileName = filePath, UseShellExecute = true };
-        process.Start();
+        try
+        {
+            using var process = new Process();
+            process.StartInfo = new ProcessStartInfo { FileName = fileInfo.FullName, UseShellExecute = true };
+            process.Start();
+        }
+        catch (Exception e)
+        {
+            console.WriteException(e);
+        }
+
+        return Unit();
     }
 }
