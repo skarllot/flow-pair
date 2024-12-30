@@ -34,11 +34,11 @@ public static class ContentDeserializer
         {
             var start = content.IndexOf(startChar);
             if (start < 0)
-                return $"Invalid JSON: '{startChar}' not found";
+                return lastException?.Message ?? $"Invalid JSON: '{startChar}' not found";
 
             var end = content.LastIndexOf(endChar);
             if (end < start)
-                return $"Invalid JSON: '{endChar}' not found or comes before '{startChar}'";
+                return lastException?.Message ?? $"Invalid JSON: '{endChar}' not found or comes before '{startChar}'";
 
             try
             {

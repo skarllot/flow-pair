@@ -69,7 +69,7 @@ public class ContentDeserializerTest
 
         // Assert
         result.Should().BeErr()
-            .Should().StartWith("Invalid JSON:");
+            .Should().StartWith("Expected end of string");
     }
 
     [Fact]
