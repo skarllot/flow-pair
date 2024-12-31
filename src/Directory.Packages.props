@@ -10,7 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="AutomaticInterface" Version="5.0.3" />
-    <PackageVersion Include="ConsoleAppFramework" Version="5.3.1" />
+    <PackageVersion Include="ConsoleAppFramework" Version="5.3.3" />
     <PackageVersion Include="FxKit" Version="0.8.3" />
     <PackageVersion Include="FxKit.CompilerServices" Version="0.8.3" />
     <PackageVersion Include="Jab" Version="0.10.2" />
