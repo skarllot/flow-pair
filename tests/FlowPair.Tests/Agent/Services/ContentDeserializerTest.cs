@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
 using Ciandt.FlowTools.FlowPair.Agent.Services;
 using FluentAssertions;
-using FxKit;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 

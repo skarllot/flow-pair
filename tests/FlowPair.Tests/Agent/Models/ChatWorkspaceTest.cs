@@ -3,7 +3,6 @@ using Ciandt.FlowTools.FlowPair.Agent.Models;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using FluentAssertions;
-using FxKit;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
@@ -141,6 +140,6 @@ public class ChatWorkspaceTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit.Default,
+            ValidateJson: _ => Unit(),
             Messages: messages ?? []);
 }

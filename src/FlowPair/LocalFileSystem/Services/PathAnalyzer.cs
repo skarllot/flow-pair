@@ -14,7 +14,12 @@ public static partial class PathAnalyzer
         {
             var tmp = path.AsSpan();
             if (DriveLetterRegex().IsMatch(tmp))
+            {
                 tmp = tmp[2..];
+
+                if (tmp.IsEmpty)
+                    return "/";
+            }
 
             return string.Create(
                 length: tmp.Length,

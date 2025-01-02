@@ -26,9 +26,11 @@ public sealed class CreateUnitTestCommand(
     /// Create unit test for the code on the file.
     /// </summary>
     /// <param name="filePath">-f, The file path of the code to test.</param>
+    /// <param name="exampleFilePath">-e, The example unit test file path.</param>
     [Command("create-unittest")]
     public int Execute(
-        string filePath)
+        string filePath,
+        string? exampleFilePath = null)
     {
         var fileInfo = fileSystem.FileInfo.New(PathAnalyzer.Normalize(filePath));
         if (!fileInfo.Exists)
@@ -37,12 +39,21 @@ public sealed class CreateUnitTestCommand(
             return 1;
         }
 
+        var exampleFileInfo = exampleFilePath is not null
+            ? fileSystem.FileInfo.New(PathAnalyzer.Normalize(exampleFilePath))
+            : null;
+        if (exampleFileInfo is not null && !exampleFileInfo.Exists)
+        {
+            console.MarkupLine("[red]Error:[/] The specified example file does not exist.");
+            return 2;
+        }
+
         return (from rootPath in workingDirectoryWalker.TryFindRepositoryRoot(fileInfo.Directory?.FullName)
                     .OkOrElse(HandleFindRepositoryRootError)
                 from session in loginUseCase.Execute(isBackground: true)
                     .UnwrapErrOr(0)
-                    .Ensure(n => n == 0, 3)
-                let initialMessages = BuildInitialMessages(fileInfo, rootPath)
+                    .Ensure(n => n == 0, 4)
+                let initialMessages = BuildInitialMessages(fileInfo, exampleFileInfo, rootPath)
                 from response in chatService.RunSingle(
                         console.Progress(),
                         AllowedModel.Claude35Sonnet,
@@ -58,19 +69,34 @@ public sealed class CreateUnitTestCommand(
     private int HandleFindRepositoryRootError()
     {
         console.MarkupLine("[red]Error:[/] Could not locate Git repository.");
-        return 2;
+        return 3;
     }
 
     private int HandleChatServiceError(string errorMessage)
     {
         console.MarkupLineInterpolated($"[red]Error:[/] {errorMessage}");
-        return 4;
+        return 5;
     }
 
-    private IEnumerable<Message> BuildInitialMessages(IFileInfo fileInfo, IDirectoryInfo rootPath)
+    private IEnumerable<Message> BuildInitialMessages(
+        IFileInfo fileInfo,
+        IFileInfo? exampleFileInfo,
+        IDirectoryInfo rootPath)
     {
         yield return projectFilesMessageFactory.CreateWithProjectFilesContent(rootPath);
         yield return directoryStructureMessageFactory.CreateWithRepositoryStructure(rootPath);
+
+        if (exampleFileInfo is not null)
+        {
+            yield return new Message(
+                Role.User,
+                $"""
+                 Unit tests example:
+                 ```
+                 {exampleFileInfo.ReadAllText()}
+                 ```
+                 """);
+        }
 
         yield return new Message(
             Role.User,

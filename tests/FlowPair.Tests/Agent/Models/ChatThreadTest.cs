@@ -3,7 +3,6 @@ using Ciandt.FlowTools.FlowPair.Agent.Models;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using FluentAssertions;
-using FxKit;
 using JetBrains.Annotations;
 using NSubstitute;
 using Spectre.Console;
@@ -32,7 +31,7 @@ public class ChatThreadTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit.Default,
+            ValidateJson: _ => Unit(),
             Messages: [new Message(Role.User, "Initial")]);
 
         var stepInstruction = new Instruction.StepInstruction("New Message");
@@ -57,7 +56,7 @@ public class ChatThreadTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit.Default,
+            ValidateJson: _ => Unit(),
             Messages: [new Message(Role.User, "Initial")]);
 
         var multiStepInstruction = new Instruction.MultiStepInstruction(
@@ -85,7 +84,7 @@ public class ChatThreadTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit.Default,
+            ValidateJson: _ => Unit(),
             Messages: [new Message(Role.User, "Initial")]);
 
         var jsonInstruction = new Instruction.JsonConvertInstruction(
@@ -113,7 +112,7 @@ public class ChatThreadTest
         {
             0 => "First try",
             1 => "Second try",
-            _ => Unit.Default,
+            _ => Unit(),
         };
 
         var chatThread = new ChatThread(
@@ -147,7 +146,7 @@ public class ChatThreadTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit.Default,
+            ValidateJson: _ => Unit(),
             Messages: [new Message(Role.Assistant, "Interrupted <STOP>")]);
 
         var stepInstruction = new Instruction.StepInstruction("New Message");

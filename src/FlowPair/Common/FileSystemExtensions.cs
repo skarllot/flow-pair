@@ -33,13 +33,13 @@ public static class FileSystemExtensions
 
     public static string ReadAllText(this IFileInfo fileInfo)
     {
-        using var reader = new StreamReader(fileInfo.FullName, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-        return reader.ReadToEnd();
+        return fileInfo.FileSystem.File.ReadAllText(fileInfo.FullName);
     }
 
     public static void ReadAllTextTo(this IFileInfo fileInfo, StringBuilder sb)
     {
-        using var reader = new StreamReader(fileInfo.FullName, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
+        using var stream = fileInfo.OpenRead();
+        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
 
         var buffer = ArrayPool<char>.Shared.Rent(DefaultBufferSize);
         try
