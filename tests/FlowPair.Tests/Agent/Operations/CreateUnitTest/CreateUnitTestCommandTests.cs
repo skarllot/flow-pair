@@ -1,7 +1,5 @@
 ﻿using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using System.Text.Json.Serialization.Metadata;
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
 using Ciandt.FlowTools.FlowPair.Agent.Models;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
@@ -31,6 +29,7 @@ public sealed class CreateUnitTestCommandTests : IDisposable
     {
         _console = new TestConsole();
         _fileSystem = new MockFileSystem();
+        var createUnitTestChatDefinition = Substitute.For<ICreateUnitTestChatDefinition>();
         _workingDirectoryWalker = Substitute.For<IWorkingDirectoryWalker>();
         _projectFilesMessageFactory = Substitute.For<IProjectFilesMessageFactory>();
         _directoryStructureMessageFactory = Substitute.For<IDirectoryStructureMessageFactory>();
@@ -40,7 +39,7 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         _command = new CreateUnitTestCommand(
             console: _console,
             fileSystem: _fileSystem,
-            jsonContext: AgentJsonContext.Default,
+            chatDefinition: createUnitTestChatDefinition,
             workingDirectoryWalker: _workingDirectoryWalker,
             projectFilesMessageFactory: _projectFilesMessageFactory,
             directoryStructureMessageFactory: _directoryStructureMessageFactory,
@@ -75,7 +74,7 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         _console.Output.Should().Contain("Error").And.Contain("file does not exist");
         _workingDirectoryWalker.DidNotReceiveWithAnyArgs().TryFindRepositoryRoot(null);
         _loginUseCase.DidNotReceiveWithAnyArgs().Execute(false);
-        _chatService.DidNotReceiveWithAnyArgs().RunSingle<CreateUnitTestResponse>(null, default, null, null, null);
+        _chatService.DidNotReceiveWithAnyArgs().Run<CreateUnitTestResponse>(null, default, null, null);
     }
 
     [Fact]
@@ -97,7 +96,7 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         _workingDirectoryWalker.Received(1)
             .TryFindRepositoryRoot(Arg.Is<string>(s => s.Contains(_fileSystem.Path.GetDirectoryName(filePath)!)));
         _loginUseCase.DidNotReceiveWithAnyArgs().Execute(false);
-        _chatService.DidNotReceiveWithAnyArgs().RunSingle<CreateUnitTestResponse>(null, default, null, null, null);
+        _chatService.DidNotReceiveWithAnyArgs().Run<CreateUnitTestResponse>(null, default, null, null);
     }
 
     [Theory]
@@ -121,7 +120,7 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         // Assert
         result.Should().Be(4);
         _loginUseCase.Received(1).Execute(true);
-        _chatService.DidNotReceiveWithAnyArgs().RunSingle<CreateUnitTestResponse>(null, default, null, null, null);
+        _chatService.DidNotReceiveWithAnyArgs().Run<CreateUnitTestResponse>(null, default, null, null);
     }
 
     [Fact]
@@ -138,12 +137,11 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         _loginUseCase.Execute(true).Returns(0);
 
         _chatService
-            .RunSingle(
+            .Run(
                 Arg.Any<Progress>(),
                 Arg.Any<AllowedModel>(),
-                Arg.Any<ChatScript>(),
-                Arg.Any<IEnumerable<Message>>(),
-                Arg.Any<JsonTypeInfo<CreateUnitTestResponse>>())
+                Arg.Any<IChatDefinition<CreateUnitTestResponse>>(),
+                Arg.Any<IEnumerable<Message>>())
             .Returns("Chat service error");
 
         // Act
@@ -152,12 +150,11 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         // Assert
         result.Should().Be(5);
         _console.Output.Should().Contain("Error").And.Contain("Chat service error");
-        _chatService.Received(1).RunSingle(
+        _chatService.Received(1).Run(
             Arg.Any<Progress>(),
             Arg.Any<AllowedModel>(),
-            Arg.Any<ChatScript>(),
-            Arg.Any<IEnumerable<Message>>(),
-            Arg.Any<JsonTypeInfo<CreateUnitTestResponse>>());
+            Arg.Any<IChatDefinition<CreateUnitTestResponse>>(),
+            Arg.Any<IEnumerable<Message>>());
     }
 
     [Fact]
@@ -177,12 +174,11 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         var testResponse = new CreateUnitTestResponse(
             FilePath: "tests/FileTests.cs",
             Content: "// Generated unit test");
-        _chatService.RunSingle(
+        _chatService.Run(
                 Arg.Any<Progress>(),
                 Arg.Any<AllowedModel>(),
-                Arg.Any<ChatScript>(),
-                Arg.Is<IEnumerable<Message>>(x => x.Count() == 3),
-                Arg.Any<JsonTypeInfo<CreateUnitTestResponse>>())
+                Arg.Any<IChatDefinition<CreateUnitTestResponse>>(),
+                Arg.Is<IEnumerable<Message>>(x => x.Count() == 3))
             .Returns(testResponse);
 
         // Act
@@ -201,17 +197,16 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         _loginUseCase.Received(1).Execute(true);
         _projectFilesMessageFactory.Received(1).CreateWithProjectFilesContent(rootDir);
         _directoryStructureMessageFactory.Received(1).CreateWithRepositoryStructure(rootDir);
-        _chatService.Received(1).RunSingle(
+        _chatService.Received(1).Run(
             Arg.Any<Progress>(),
             Arg.Is<AllowedModel>(m => m == AllowedModel.Claude35Sonnet),
-            Arg.Is<ChatScript>(m => m == UnitTestChatScript.Default[0]),
+            Arg.Any<IChatDefinition<CreateUnitTestResponse>>(),
             Arg.Is<IEnumerable<Message>>(
                 messages =>
                     messages.Any(
                         m => m.Role == Role.User &&
                              m.Content.Contains(PathAnalyzer.Normalize("src/file.cs")) &&
-                             m.Content.Contains(fileContent))),
-            Arg.Any<JsonTypeInfo<CreateUnitTestResponse>>());
+                             m.Content.Contains(fileContent))));
     }
 
     [Fact]
@@ -230,12 +225,11 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         var testResponse = new CreateUnitTestResponse(
             FilePath: "tests/nested/directory/FileTests.cs",
             Content: "// Generated unit test");
-        _chatService.RunSingle(
+        _chatService.Run(
                 Arg.Any<Progress>(),
                 Arg.Any<AllowedModel>(),
-                Arg.Any<ChatScript>(),
-                Arg.Any<IEnumerable<Message>>(),
-                Arg.Any<JsonTypeInfo<CreateUnitTestResponse>>())
+                Arg.Any<IChatDefinition<CreateUnitTestResponse>>(),
+                Arg.Any<IEnumerable<Message>>())
             .Returns(testResponse);
 
         // Act
@@ -265,12 +259,11 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         var testResponse = new CreateUnitTestResponse(
             FilePath: "tests/FileTests.cs",
             Content: "// Generated unit test");
-        _chatService.RunSingle(
+        _chatService.Run(
                 Arg.Any<Progress>(),
                 Arg.Any<AllowedModel>(),
-                Arg.Any<ChatScript>(),
-                Arg.Any<IEnumerable<Message>>(),
-                Arg.Any<JsonTypeInfo<CreateUnitTestResponse>>())
+                Arg.Any<IChatDefinition<CreateUnitTestResponse>>(),
+                Arg.Any<IEnumerable<Message>>())
             .Returns(testResponse);
 
         // Act

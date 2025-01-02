@@ -15,6 +15,7 @@ public class ChatThreadTest
     private const string CompletionResponse = "Response";
     private readonly ProgressTask _progressTask = new(0, "description", 100);
     private readonly IProxyCompleteChatHandler _handler = Substitute.For<IProxyCompleteChatHandler>();
+    private readonly IOutputParser _outputParser = Substitute.For<IOutputParser>();
 
     public ChatThreadTest()
     {
@@ -31,7 +32,7 @@ public class ChatThreadTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit(),
+            OutputParser: _outputParser,
             Messages: [new Message(Role.User, "Initial")]);
 
         var stepInstruction = new Instruction.StepInstruction("New Message");
@@ -46,6 +47,7 @@ public class ChatThreadTest
         updatedThread.LastMessage!.Content.Should().Be(CompletionResponse);
         _progressTask.Value.Should().Be(1);
         _handler.ReceivedCalls().Should().HaveCount(1);
+        _outputParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
@@ -56,7 +58,7 @@ public class ChatThreadTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit(),
+            OutputParser: _outputParser,
             Messages: [new Message(Role.User, "Initial")]);
 
         var multiStepInstruction = new Instruction.MultiStepInstruction(
@@ -74,20 +76,27 @@ public class ChatThreadTest
         updatedThread.LastMessage!.Content.Should().Be(CompletionResponse);
         _progressTask.Value.Should().Be(1);
         _handler.ReceivedCalls().Should().HaveCount(1);
+        _outputParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
     public void RunJsonInstructionShouldAddMessageAndIncrementProgress()
     {
         // Arrange
+        const string outputKey = "TestKey";
+        _outputParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(Unit());
+
         var chatThread = new ChatThread(
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit(),
+            OutputParser: _outputParser,
             Messages: [new Message(Role.User, "Initial")]);
 
         var jsonInstruction = new Instruction.JsonConvertInstruction(
+            OutputKey: outputKey,
             Message: "JSON Message",
             JsonSchema: "{ \"schema\": \"value\" }");
 
@@ -101,28 +110,27 @@ public class ChatThreadTest
         updatedThread.LastMessage!.Content.Should().Be(CompletionResponse);
         _progressTask.Value.Should().Be(1);
         _handler.ReceivedCalls().Should().HaveCount(1);
+        _outputParser.ReceivedCalls().Should().HaveCount(1);
     }
 
     [Fact]
     public void RunJsonInstructionShouldRetryAddMessagesAndIncrementProgress()
     {
         // Arrange
-        var validateCallCount = 0;
-        Func<ReadOnlySpan<char>, Result<Unit, string>> validateJson = _ => validateCallCount++ switch
-        {
-            0 => "First try",
-            1 => "Second try",
-            _ => Unit(),
-        };
+        const string outputKey = "TestKey";
+        _outputParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns("First try", "Second try", Unit());
 
         var chatThread = new ChatThread(
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: validateJson,
+            OutputParser: _outputParser,
             Messages: [new Message(Role.User, "Initial")]);
 
         var jsonInstruction = new Instruction.JsonConvertInstruction(
+            OutputKey: outputKey,
             Message: "JSON Message",
             JsonSchema: "{ \"schema\": \"value\" }");
 
@@ -136,6 +144,7 @@ public class ChatThreadTest
         updatedThread.LastMessage!.Content.Should().Be(CompletionResponse);
         _progressTask.Value.Should().Be(1);
         _handler.ReceivedCalls().Should().HaveCount(3);
+        _outputParser.ReceivedCalls().Should().HaveCount(3);
     }
 
     [Fact]
@@ -146,7 +155,7 @@ public class ChatThreadTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit(),
+            OutputParser: _outputParser,
             Messages: [new Message(Role.Assistant, "Interrupted <STOP>")]);
 
         var stepInstruction = new Instruction.StepInstruction("New Message");
@@ -160,5 +169,6 @@ public class ChatThreadTest
         updatedThread.Messages.Should().HaveCount(1);
         _progressTask.Value.Should().Be(1);
         _handler.ReceivedCalls().Should().BeEmpty();
+        _outputParser.ReceivedCalls().Should().BeEmpty();
     }
 }

@@ -1,6 +1,5 @@
 using System.IO.Abstractions;
 using System.Text;
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.UpdateUnitTest.v1;
 using Ciandt.FlowTools.FlowPair.Agent.Services;
@@ -15,7 +14,7 @@ namespace Ciandt.FlowTools.FlowPair.Agent.Operations.UpdateUnitTest;
 public sealed class UpdateUnitTestCommand(
     IAnsiConsole console,
     IFileSystem fileSystem,
-    AgentJsonContext jsonContext,
+    IUpdateUnitTestChatDefinition chatDefinition,
     IWorkingDirectoryWalker workingDirectoryWalker,
     IProjectFilesMessageFactory projectFilesMessageFactory,
     IDirectoryStructureMessageFactory directoryStructureMessageFactory,
@@ -52,12 +51,8 @@ public sealed class UpdateUnitTestCommand(
                     .UnwrapErrOr(0)
                     .Ensure(n => n == 0, 4)
                 let initialMessages = BuildInitialMessages(sourceFileInfo, testFileInfo, rootPath)
-                from response in chatService.RunSingle(
-                        console.Progress(),
-                        AllowedModel.Claude35Sonnet,
-                        UpdateUnitTestChatScript.Default[0],
-                        initialMessages,
-                        jsonContext.UpdateUnitTestResponse)
+                from response in chatService
+                    .Run(console.Progress(), AllowedModel.Claude35Sonnet, chatDefinition, initialMessages)
                     .MapErr(HandleChatServiceError)
                 let create = RewriteUnitTestFile(testFileInfo, response)
                 select 0)

@@ -21,6 +21,10 @@ public class ChatServiceTest
     private readonly IProxyCompleteChatHandler _completeChatHandler = Substitute.For<IProxyCompleteChatHandler>();
     private readonly ITempFileWriter _tempFileWriter = Substitute.For<ITempFileWriter>();
     private readonly ChatService _chatService;
+
+    private readonly IChatDefinition<ImmutableList<ReviewerFeedbackResponse>> _chatDefinition =
+        Substitute.For<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>();
+
     private readonly Progress _progress = new(AnsiConsole.Create(new AnsiConsoleSettings()));
 
     public ChatServiceTest()
@@ -29,14 +33,25 @@ public class ChatServiceTest
     }
 
     [Fact]
-    public void RunMultipleShouldReturnValidFeedbackWhenChatScriptIsValid()
+    public void RunShouldReturnValidFeedbackWhenChatScriptIsValid()
     {
         // Arrange
-        var chatScript = new ChatScript(
-            Name: "TestScript",
-            Extensions: [".txt"],
-            SystemInstruction: "System Instruction",
-            Instructions: [new Instruction.StepInstruction("Step Message")]);
+        const string outputKey = "TestKey";
+        _chatDefinition.ChatScript.Returns(
+            new ChatScript(
+                Name: "TestScript",
+                Extensions: [".txt"],
+                SystemInstruction: "System Instruction",
+                Instructions: [new Instruction.JsonConvertInstruction(outputKey, "Step Message", "{}")]));
+        _chatDefinition
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(
+                c => ContentDeserializer
+                    .TryDeserialize((string)c[1], AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse)
+                    .Select(static object (x) => x));
+        _chatDefinition
+            .ConvertResult(Arg.Any<ChatWorkspace>())
+            .Returns(c => OutputProcessor.AggregateLists<ReviewerFeedbackResponse>(c.Arg<ChatWorkspace>(), outputKey));
 
         var feedbackResponses = ImmutableList.Create(
             new ReviewerFeedbackResponse(
@@ -56,17 +71,18 @@ public class ChatServiceTest
                     Role.Assistant,
                     $"""
                      ```json
-                     {JsonSerializer.Serialize(feedbackResponses, AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse)}
+                     {JsonSerializer.Serialize(
+                         feedbackResponses,
+                         AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse)}
                      ```
                      """));
 
         // Act
-        var result = _chatService.RunMultiple(
+        var result = _chatService.Run(
             progress: _progress,
             model: AllowedModel.Claude35Sonnet,
-            chatScript: chatScript,
-            initialMessages: [new Message(Role.User, "Initial Content")],
-            jsonTypeInfo: AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse);
+            chatDefinition: _chatDefinition,
+            initialMessages: [new Message(Role.User, "Initial Content")]);
 
         // Assert
         result.Should().BeOk()
@@ -74,41 +90,41 @@ public class ChatServiceTest
     }
 
     [Fact]
-    public void RunMultipleShouldReturnErrorWhenDeserializationFails()
+    public void RunShouldReturnErrorWhenDeserializationFails()
     {
         // Arrange
-        var chatScript = new ChatScript(
-            Name: "TestScript",
-            Extensions: [".txt"],
-            SystemInstruction: "System Instruction",
-            Instructions: [new Instruction.StepInstruction("Step Message")]);
+        _chatDefinition.ChatScript.Returns(
+            new ChatScript(
+                Name: "TestScript",
+                Extensions: [".txt"],
+                SystemInstruction: "System Instruction",
+                Instructions: [new Instruction.StepInstruction("Step Message")]));
 
         _completeChatHandler
             .ChatCompletion(AllowedModel.Claude35Sonnet, Arg.Any<ImmutableList<Message>>())
             .Returns(new Message(Role.Assistant, "Invalid Feedback Content"));
 
         // Act
-        var result = _chatService.RunMultiple(
+        var result = _chatService.Run(
             progress: _progress,
             model: AllowedModel.Claude35Sonnet,
-            chatScript: chatScript,
-            initialMessages: [new Message(Role.User, "Initial Content")],
-            jsonTypeInfo: AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse);
+            chatDefinition: _chatDefinition,
+            initialMessages: [new Message(Role.User, "Initial Content")]);
 
         // Assert
-        result.Should().BeOk()
-            .Should().BeEmpty();
+        result.Should().BeErr("Failed to produce a valid output content");
     }
 
     [Fact]
-    public void RunMultipleShouldSaveChatHistoryWhenExecutionSucceeds()
+    public void RunShouldSaveChatHistoryWhenExecutionSucceeds()
     {
         // Arrange
-        var chatScript = new ChatScript(
-            Name: "TestScript",
-            Extensions: [".txt"],
-            SystemInstruction: "System Instruction",
-            Instructions: [new Instruction.StepInstruction("Step Message")]);
+        _chatDefinition.ChatScript.Returns(
+            new ChatScript(
+                Name: "TestScript",
+                Extensions: [".txt"],
+                SystemInstruction: "System Instruction",
+                Instructions: [new Instruction.StepInstruction("Step Message")]));
 
         var initialMessages = new[] { new Message(Role.User, "Initial Content") };
 
@@ -128,12 +144,11 @@ public class ChatServiceTest
             .Returns(new Message(Role.Assistant, "Feedback Content"));
 
         // Act
-        _chatService.RunMultiple(
+        _chatService.Run(
             progress: _progress,
             model: AllowedModel.Claude35Sonnet,
-            chatScript: chatScript,
-            initialMessages: initialMessages,
-            jsonTypeInfo: AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse);
+            chatDefinition: _chatDefinition,
+            initialMessages: initialMessages);
 
         // Assert
         _tempFileWriter.Received(1).WriteJson(

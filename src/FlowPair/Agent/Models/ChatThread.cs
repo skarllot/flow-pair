@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Spectre.Console;
@@ -10,10 +9,14 @@ public sealed record ChatThread(
     ProgressTask Progress,
     AllowedModel Model,
     string StopKeyword,
-    Func<ReadOnlySpan<char>, Result<Unit, string>> ValidateJson,
-    ImmutableList<Message> Messages)
+    IOutputParser OutputParser,
+    ImmutableList<Message> Messages,
+    ImmutableDictionary<string, object>? Outputs = null)
 {
     private const int MaxJsonRetries = 3;
+
+    public ImmutableDictionary<string, object> Outputs { get; init; } =
+        Outputs ?? ImmutableDictionary<string, object>.Empty;
 
     public Message? LastMessage => Messages.Count > 0 ? Messages[^1] : null;
 
@@ -81,7 +84,7 @@ public sealed record ChatThread(
             return Enumerable.Range(0, MaxJsonRetries)
                 .TryAggregate(
                     AddMessages(instruction.ToMessage(StopKeyword)),
-                    (chat, _) => chat.CompleteChatAndDeserialize(completeChatHandler));
+                    (chat, _) => chat.CompleteChatAndDeserialize(instruction.OutputKey, completeChatHandler));
         }
         finally
         {
@@ -99,17 +102,18 @@ public sealed record ChatThread(
     }
 
     private Result<ChatThread, string> CompleteChatAndDeserialize(
+        string outputKey,
         IProxyCompleteChatHandler completeChatHandler)
     {
-        if (IsCompleted)
+        if (Outputs.ContainsKey(outputKey))
         {
             return this;
         }
 
         return (from message in completeChatHandler.ChatCompletion(Model, Messages)
-                select ValidateJson(message.Content)
+                select OutputParser.Parse(outputKey, message.Content)
                     .Match(
-                        _ => AddMessages(message),
+                        v => this with { Messages = Messages.Add(message), Outputs = Outputs.Add(outputKey, v) },
                         e => AddMessages(message, new Message(Role.User, e))))
             .MapErr(error => error.ToString());
     }

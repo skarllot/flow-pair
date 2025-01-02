@@ -22,19 +22,19 @@
       },
       "FxKit": {
         "type": "Direct",
-        "requested": "[0.8.3, )",
-        "resolved": "0.8.3",
-        "contentHash": "4Ka+j3jf2Pjb1n0L30MjiMdHd6i5tI0lKppvKKi4OqM0uO0s4s8yZUYJH4eUiaiNVY9aHPBFuUVcbOX+bfEvfg==",
+        "requested": "[0.8.4, )",
+        "resolved": "0.8.4",
+        "contentHash": "rzPMlTzQNRNYs/5eXLHC7Qx3UI+1k9X8oaSBASUi6L/Y6lFw81PA7jrxxqSX6ebhtIs0wplq/EagrTBna3+v9g==",
         "dependencies": {
-          "FxKit.CompilerServices.Annotations": "0.8.3",
+          "FxKit.CompilerServices.Annotations": "0.8.4",
           "JetBrains.Annotations": "2024.3.0"
         }
       },
       "FxKit.CompilerServices": {
         "type": "Direct",
-        "requested": "[0.8.3, )",
-        "resolved": "0.8.3",
-        "contentHash": "0YBpWO3ds1jxAr61cNWxLmaNWRVvoW52vJ9fZLyvpcOFp6PbWwpppcndRxVB03odgWloW4jkrAv8rQIqpUBLKA=="
+        "requested": "[0.8.4, )",
+        "resolved": "0.8.4",
+        "contentHash": "LlMM1NBZ9Pwkog93IMxZjTkQngphR4IDTC86PDv9P1grg6VgnFCo/rY+yMibCd7KDZ09AYfj7onieZLym+mz5A=="
       },
       "Jab": {
         "type": "Direct",
@@ -92,8 +92,8 @@
       },
       "FxKit.CompilerServices.Annotations": {
         "type": "Transitive",
-        "resolved": "0.8.3",
-        "contentHash": "VhTqB4b0G/pxPcSNJ/iR0TLK+63i3UgrJ/CZ/8VX/oN0Ck1/WdsucxUqE6wJAHEOG3LNB9yxh8MA4cHfF20o1w=="
+        "resolved": "0.8.4",
+        "contentHash": "L6IcCB4wRURS0TfUjXElNfLSQBK6sg7OLJJTStPvivJdwAMP/GNhIYbdxMel4s9Klnx9pCVh3C73XC5hwW966A=="
       },
       "JetBrains.Annotations": {
         "type": "Transitive",

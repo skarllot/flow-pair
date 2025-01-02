@@ -22,7 +22,7 @@ public partial record Instruction
                 .Replace(ChatScript.StopKeywordPlaceholder, stopKeyword));
     }
 
-    partial record JsonConvertInstruction(string Message, string JsonSchema)
+    partial record JsonConvertInstruction(string OutputKey, string Message, string JsonSchema)
     {
         public Message ToMessage(string stopKeyword) => new(
             Role.User,

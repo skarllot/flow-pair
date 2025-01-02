@@ -15,6 +15,7 @@ public class ChatWorkspaceTest
 {
     private readonly ProgressTask _progressTask = new(0, "description", 100);
     private readonly IProxyCompleteChatHandler _handler = Substitute.For<IProxyCompleteChatHandler>();
+    private readonly IOutputParser _outputParser = Substitute.For<IOutputParser>();
 
     public ChatWorkspaceTest()
     {
@@ -39,6 +40,7 @@ public class ChatWorkspaceTest
             .And.Subject.Should().ContainSingle(t => t.Messages.Count == 2);
         _progressTask.Value.Should().Be(1);
         _handler.ReceivedCalls().Should().HaveCount(1);
+        _outputParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
@@ -57,6 +59,7 @@ public class ChatWorkspaceTest
             .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
         _progressTask.Value.Should().Be(2);
         _handler.ReceivedCalls().Should().HaveCount(2);
+        _outputParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
@@ -75,6 +78,7 @@ public class ChatWorkspaceTest
         // Assert
         result.Should().BeErr("Only one multi-step instruction is supported.");
         _handler.ReceivedCalls().Should().BeEmpty();
+        _outputParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
@@ -95,14 +99,21 @@ public class ChatWorkspaceTest
             .ChatThreads.Should().HaveCount(2)
             .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
         _handler.ReceivedCalls().Should().HaveCount(2);
+        _outputParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
     public void RunJsonInstructionShouldUpdateSingleThread()
     {
         // Arrange
+        const string outputKey = "TestKey";
+        _outputParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(Unit());
+
         var workspace = new ChatWorkspace([CreateChatThread()]);
         var jsonInstruction = new Instruction.JsonConvertInstruction(
+            outputKey,
             "JSON Message",
             "{ \"schema\": \"value\" }");
 
@@ -114,14 +125,21 @@ public class ChatWorkspaceTest
             .ChatThreads.Should().HaveCount(1)
             .And.Subject.Should().ContainSingle(t => t.Messages.Count == 2);
         _handler.ReceivedCalls().Should().HaveCount(1);
+        _outputParser.ReceivedCalls().Should().HaveCount(1);
     }
 
     [Fact]
     public void RunJsonInstructionShouldUpdateAllThreads()
     {
         // Arrange
+        const string outputKey = "TestKey";
+        _outputParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(Unit());
+
         var workspace = new ChatWorkspace([CreateChatThread(), CreateChatThread()]);
         var jsonInstruction = new Instruction.JsonConvertInstruction(
+            outputKey,
             "JSON Message",
             "{ \"schema\": \"value\" }");
 
@@ -133,6 +151,7 @@ public class ChatWorkspaceTest
             .ChatThreads.Should().HaveCount(2)
             .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
         _handler.ReceivedCalls().Should().HaveCount(2);
+        _outputParser.ReceivedCalls().Should().HaveCount(2);
     }
 
     private ChatThread CreateChatThread(ImmutableList<Message>? messages = null) =>
@@ -140,6 +159,6 @@ public class ChatWorkspaceTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit(),
+            OutputParser: _outputParser,
             Messages: messages ?? []);
 }
