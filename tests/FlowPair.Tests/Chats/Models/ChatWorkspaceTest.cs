@@ -1,21 +1,22 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Agent.Models;
+using Ciandt.FlowTools.FlowPair.Chats.Models;
+using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using FluentAssertions;
-using FxKit;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Models;
+namespace Ciandt.FlowTools.FlowPair.Tests.Chats.Models;
 
 [TestSubject(typeof(ChatWorkspace))]
 public class ChatWorkspaceTest
 {
     private readonly ProgressTask _progressTask = new(0, "description", 100);
     private readonly IProxyCompleteChatHandler _handler = Substitute.For<IProxyCompleteChatHandler>();
+    private readonly IMessageParser _messageParser = Substitute.For<IMessageParser>();
 
     public ChatWorkspaceTest()
     {
@@ -40,6 +41,7 @@ public class ChatWorkspaceTest
             .And.Subject.Should().ContainSingle(t => t.Messages.Count == 2);
         _progressTask.Value.Should().Be(1);
         _handler.ReceivedCalls().Should().HaveCount(1);
+        _messageParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
@@ -58,6 +60,7 @@ public class ChatWorkspaceTest
             .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
         _progressTask.Value.Should().Be(2);
         _handler.ReceivedCalls().Should().HaveCount(2);
+        _messageParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
@@ -76,6 +79,7 @@ public class ChatWorkspaceTest
         // Assert
         result.Should().BeErr("Only one multi-step instruction is supported.");
         _handler.ReceivedCalls().Should().BeEmpty();
+        _messageParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
@@ -96,14 +100,21 @@ public class ChatWorkspaceTest
             .ChatThreads.Should().HaveCount(2)
             .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
         _handler.ReceivedCalls().Should().HaveCount(2);
+        _messageParser.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
     public void RunJsonInstructionShouldUpdateSingleThread()
     {
         // Arrange
+        const string outputKey = "TestKey";
+        _messageParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(Unit());
+
         var workspace = new ChatWorkspace([CreateChatThread()]);
         var jsonInstruction = new Instruction.JsonConvertInstruction(
+            outputKey,
             "JSON Message",
             "{ \"schema\": \"value\" }");
 
@@ -115,14 +126,21 @@ public class ChatWorkspaceTest
             .ChatThreads.Should().HaveCount(1)
             .And.Subject.Should().ContainSingle(t => t.Messages.Count == 2);
         _handler.ReceivedCalls().Should().HaveCount(1);
+        _messageParser.ReceivedCalls().Should().HaveCount(1);
     }
 
     [Fact]
     public void RunJsonInstructionShouldUpdateAllThreads()
     {
         // Arrange
+        const string outputKey = "TestKey";
+        _messageParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(Unit());
+
         var workspace = new ChatWorkspace([CreateChatThread(), CreateChatThread()]);
         var jsonInstruction = new Instruction.JsonConvertInstruction(
+            outputKey,
             "JSON Message",
             "{ \"schema\": \"value\" }");
 
@@ -134,6 +152,7 @@ public class ChatWorkspaceTest
             .ChatThreads.Should().HaveCount(2)
             .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
         _handler.ReceivedCalls().Should().HaveCount(2);
+        _messageParser.ReceivedCalls().Should().HaveCount(2);
     }
 
     private ChatThread CreateChatThread(ImmutableList<Message>? messages = null) =>
@@ -141,6 +160,6 @@ public class ChatWorkspaceTest
             Progress: _progressTask,
             Model: AllowedModel.Gpt4,
             StopKeyword: "<STOP>",
-            ValidateJson: _ => Unit.Default,
-            Messages: messages ?? []);
+            Messages: messages ?? [],
+            MessageParser: _messageParser);
 }

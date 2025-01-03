@@ -1,12 +1,12 @@
-using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Services;
+using Ciandt.FlowTools.FlowPair.Chats.Services;
 using FluentAssertions;
-using FxKit;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Services;
+namespace Ciandt.FlowTools.FlowPair.Tests.Chats.Services;
 
 [TestSubject(typeof(ContentDeserializer))]
 public class ContentDeserializerTest
@@ -18,10 +18,10 @@ public class ContentDeserializerTest
     {
         // Arrange
         var jsonContent = "{\"RiskScore\": 5, \"Feedback\": \"Valid feedback\"}";
-        var typeInfo = TestJsonContext.Default.TestObj;
+        var typeInfo = JsonSerializerOptions.Web.GetTypeInfo(typeof(TestObj));
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, typeInfo);
+        var result = ContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<TestObj>)typeInfo);
 
         // Assert
         var testObj = result.Should().BeOk();
@@ -48,10 +48,10 @@ public class ContentDeserializerTest
     {
         // Arrange
         var jsonContent = "{\"Key\": \"Value\"}";
-        var typeInfo = TestJsonContext.Default.Int32;
+        var typeInfo = JsonSerializerOptions.Web.GetTypeInfo(typeof(int));
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, typeInfo);
+        var result = ContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<int>)typeInfo);
 
         // Assert
         result.Should().BeErr("JSON value kind not supported: None");
@@ -62,10 +62,10 @@ public class ContentDeserializerTest
     {
         // Arrange
         var jsonContent = "{\"RiskScore\": 5, \"Feedback\": \"Invalid feedback }";
-        var typeInfo = TestJsonContext.Default.TestObj;
+        var typeInfo = JsonSerializerOptions.Web.GetTypeInfo(typeof(TestObj));
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, typeInfo);
+        var result = ContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<TestObj>)typeInfo);
 
         // Assert
         result.Should().BeErr()
@@ -91,10 +91,10 @@ public class ContentDeserializerTest
     {
         // Arrange
         var jsonContent = "Invalid content {\"RiskScore\": 10, \"Feedback\": \"Nested JSON\"} More invalid content";
-        var typeInfo = TestJsonContext.Default.TestObj;
+        var typeInfo = JsonSerializerOptions.Web.GetTypeInfo(typeof(TestObj));
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, typeInfo);
+        var result = ContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<TestObj>)typeInfo);
 
         // Assert
         result.IsOk.Should().BeTrue();
@@ -103,12 +103,3 @@ public class ContentDeserializerTest
         deserialized.Feedback.Should().Be("Nested JSON");
     }
 }
-
-[JsonSourceGenerationOptions(
-    GenerationMode = JsonSourceGenerationMode.Default,
-    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    PropertyNameCaseInsensitive = true,
-    RespectNullableAnnotations = true)]
-[JsonSerializable(typeof(ContentDeserializerTest.TestObj))]
-public partial class TestJsonContext : JsonSerializerContext;

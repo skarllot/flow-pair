@@ -1,9 +1,11 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Models;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
-using Ciandt.FlowTools.FlowPair.Agent.Services;
+using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
+using Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
+using Ciandt.FlowTools.FlowPair.Chats.Models;
+using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
@@ -13,7 +15,7 @@ using JetBrains.Annotations;
 using NSubstitute;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Services;
+namespace Ciandt.FlowTools.FlowPair.Tests.Chats.Services;
 
 [TestSubject(typeof(ChatService))]
 public class ChatServiceTest
@@ -21,22 +23,37 @@ public class ChatServiceTest
     private readonly IProxyCompleteChatHandler _completeChatHandler = Substitute.For<IProxyCompleteChatHandler>();
     private readonly ITempFileWriter _tempFileWriter = Substitute.For<ITempFileWriter>();
     private readonly ChatService _chatService;
+
+    private readonly IChatDefinition<ImmutableList<ReviewerFeedbackResponse>> _chatDefinition =
+        Substitute.For<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>();
+
     private readonly Progress _progress = new(AnsiConsole.Create(new AnsiConsoleSettings()));
 
     public ChatServiceTest()
     {
-        _chatService = new ChatService(AgentJsonContext.Default, _completeChatHandler, _tempFileWriter);
+        _chatService = new ChatService(ChatJsonContext.Default, _completeChatHandler, _tempFileWriter);
     }
 
     [Fact]
-    public void RunMultipleShouldReturnValidFeedbackWhenChatScriptIsValid()
+    public void RunShouldReturnValidFeedbackWhenChatScriptIsValid()
     {
         // Arrange
-        var chatScript = new ChatScript(
-            Name: "TestScript",
-            Extensions: [".txt"],
-            SystemInstruction: "System Instruction",
-            Instructions: [new Instruction.StepInstruction("Step Message")]);
+        const string outputKey = "TestKey";
+        _chatDefinition.ChatScript.Returns(
+            new ChatScript(
+                Name: "TestScript",
+                Extensions: [".txt"],
+                SystemInstruction: "System Instruction",
+                Instructions: [new Instruction.JsonConvertInstruction(outputKey, "Step Message", "{}")]));
+        _chatDefinition
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(
+                c => ContentDeserializer
+                    .TryDeserialize((string)c[1], AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse)
+                    .Select(static object (x) => x));
+        _chatDefinition
+            .ConvertResult(Arg.Any<ChatWorkspace>())
+            .Returns(c => OutputProcessor.AggregateLists<ReviewerFeedbackResponse>(c.Arg<ChatWorkspace>(), outputKey));
 
         var feedbackResponses = ImmutableList.Create(
             new ReviewerFeedbackResponse(
@@ -56,17 +73,18 @@ public class ChatServiceTest
                     Role.Assistant,
                     $"""
                      ```json
-                     {JsonSerializer.Serialize(feedbackResponses, AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse)}
+                     {JsonSerializer.Serialize(
+                         feedbackResponses,
+                         AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse)}
                      ```
                      """));
 
         // Act
-        var result = _chatService.RunMultiple(
+        var result = _chatService.Run(
             progress: _progress,
             model: AllowedModel.Claude35Sonnet,
-            chatScript: chatScript,
-            initialMessages: [new Message(Role.User, "Initial Content")],
-            jsonTypeInfo: AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse);
+            chatDefinition: _chatDefinition,
+            initialMessages: [new Message(Role.User, "Initial Content")]);
 
         // Assert
         result.Should().BeOk()
@@ -74,41 +92,41 @@ public class ChatServiceTest
     }
 
     [Fact]
-    public void RunMultipleShouldReturnErrorWhenDeserializationFails()
+    public void RunShouldReturnErrorWhenDeserializationFails()
     {
         // Arrange
-        var chatScript = new ChatScript(
-            Name: "TestScript",
-            Extensions: [".txt"],
-            SystemInstruction: "System Instruction",
-            Instructions: [new Instruction.StepInstruction("Step Message")]);
+        _chatDefinition.ChatScript.Returns(
+            new ChatScript(
+                Name: "TestScript",
+                Extensions: [".txt"],
+                SystemInstruction: "System Instruction",
+                Instructions: [new Instruction.StepInstruction("Step Message")]));
 
         _completeChatHandler
             .ChatCompletion(AllowedModel.Claude35Sonnet, Arg.Any<ImmutableList<Message>>())
             .Returns(new Message(Role.Assistant, "Invalid Feedback Content"));
 
         // Act
-        var result = _chatService.RunMultiple(
+        var result = _chatService.Run(
             progress: _progress,
             model: AllowedModel.Claude35Sonnet,
-            chatScript: chatScript,
-            initialMessages: [new Message(Role.User, "Initial Content")],
-            jsonTypeInfo: AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse);
+            chatDefinition: _chatDefinition,
+            initialMessages: [new Message(Role.User, "Initial Content")]);
 
         // Assert
-        result.Should().BeOk()
-            .Should().BeEmpty();
+        result.Should().BeErr("Failed to produce a valid output content");
     }
 
     [Fact]
-    public void RunMultipleShouldSaveChatHistoryWhenExecutionSucceeds()
+    public void RunShouldSaveChatHistoryWhenExecutionSucceeds()
     {
         // Arrange
-        var chatScript = new ChatScript(
-            Name: "TestScript",
-            Extensions: [".txt"],
-            SystemInstruction: "System Instruction",
-            Instructions: [new Instruction.StepInstruction("Step Message")]);
+        _chatDefinition.ChatScript.Returns(
+            new ChatScript(
+                Name: "TestScript",
+                Extensions: [".txt"],
+                SystemInstruction: "System Instruction",
+                Instructions: [new Instruction.StepInstruction("Step Message")]));
 
         var initialMessages = new[] { new Message(Role.User, "Initial Content") };
 
@@ -128,17 +146,16 @@ public class ChatServiceTest
             .Returns(new Message(Role.Assistant, "Feedback Content"));
 
         // Act
-        _chatService.RunMultiple(
+        _chatService.Run(
             progress: _progress,
             model: AllowedModel.Claude35Sonnet,
-            chatScript: chatScript,
-            initialMessages: initialMessages,
-            jsonTypeInfo: AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse);
+            chatDefinition: _chatDefinition,
+            initialMessages: initialMessages);
 
         // Assert
-        _tempFileWriter.WriteJson(
+        _tempFileWriter.Received(1).WriteJson(
             Arg.Any<string>(),
             Arg.Any<ImmutableList<ImmutableList<Message>>>(),
-            AgentJsonContext.Default.ImmutableListImmutableListMessage);
+            ChatJsonContext.Default.ImmutableListImmutableListMessage);
     }
 }

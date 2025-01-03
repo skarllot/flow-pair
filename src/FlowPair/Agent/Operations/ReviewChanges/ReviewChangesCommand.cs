@@ -1,9 +1,8 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Models;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
-using Ciandt.FlowTools.FlowPair.Agent.Services;
+using Ciandt.FlowTools.FlowPair.Chats.Models;
+using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.Git.GetChanges;
@@ -16,7 +15,7 @@ namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
 
 public sealed class ReviewChangesCommand(
     IAnsiConsole console,
-    AgentJsonContext jsonContext,
+    IReviewChatDefinition chatDefinition,
     IGitGetChangesHandler getChangesHandler,
     ILoginUseCase loginUseCase,
     IChatService chatService,
@@ -44,10 +43,10 @@ public sealed class ReviewChangesCommand(
     private Result<Unit, int> BuildFeedback(ImmutableList<FileChange> changes)
     {
         var feedback = changes
-            .GroupBy(c => ChatScript.FindChatScriptForFile(ReviewChatScript.Default, c.Path))
+            .GroupBy(c => ChatScript.FindChatScriptForFile([chatDefinition.ChatScript], c.Path))
             .Where(g => g.Key.IsSome)
             .Select(g => new { Script = g.Key.Unwrap(), Diff = g.AggregateToStringLines(c => c.Diff) })
-            .SelectMany(x => GetFeedback(x.Diff, x.Script))
+            .SelectMany(x => GetFeedback(x.Diff))
             .Where(f => !string.IsNullOrWhiteSpace(f.Feedback))
             .OrderByDescending(x => x.RiskScore).ThenBy(x => x.Path, StringComparer.OrdinalIgnoreCase)
             .ToImmutableList();
@@ -67,15 +66,13 @@ public sealed class ReviewChangesCommand(
     }
 
     private ImmutableList<ReviewerFeedbackResponse> GetFeedback(
-        string diff,
-        ChatScript chatScript)
+        string diff)
     {
-        return chatService.RunMultiple(
+        return chatService.Run(
                 console.Progress(),
                 AllowedModel.Claude35Sonnet,
-                chatScript,
-                [new Message(Role.User, diff)],
-                jsonContext.ImmutableListReviewerFeedbackResponse)
+                chatDefinition,
+                [new Message(Role.User, diff)])
             .DoErr(error => console.MarkupLineInterpolated($"[red]Error:[/] {error}"))
             .UnwrapOrElse(static () => []);
     }

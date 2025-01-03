@@ -1,11 +1,10 @@
 using System.Collections.Immutable;
-using System.Text.Json.Serialization.Metadata;
 using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Models;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
-using Ciandt.FlowTools.FlowPair.Agent.Services;
+using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
+using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.Git.GetChanges;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
@@ -21,14 +20,19 @@ namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Operations.ReviewChanges;
 public class ReviewChangesCommandTest
 {
     private readonly IAnsiConsole _console = Substitute.For<IAnsiConsole>();
-    private readonly AgentJsonContext _jsonContext = Substitute.For<AgentJsonContext>();
     private readonly IGitGetChangesHandler _getChangesHandler = Substitute.For<IGitGetChangesHandler>();
     private readonly ILoginUseCase _loginUseCase = Substitute.For<ILoginUseCase>();
     private readonly IChatService _chatService = Substitute.For<IChatService>();
     private readonly ITempFileWriter _tempFileWriter = Substitute.For<ITempFileWriter>();
 
     private ReviewChangesCommand CreateCommand() =>
-        new(_console, _jsonContext, _getChangesHandler, _loginUseCase, _chatService, _tempFileWriter);
+        new(
+            console: _console,
+            chatDefinition: new ReviewChatDefinition(AgentJsonContext.Default),
+            getChangesHandler: _getChangesHandler,
+            loginUseCase: _loginUseCase,
+            chatService: _chatService,
+            tempFileWriter: _tempFileWriter);
 
     [Fact]
     public void ExecuteShouldReturnZeroWhenEverythingSucceeds()
@@ -44,12 +48,11 @@ public class ReviewChangesCommandTest
         _loginUseCase.Execute(isBackground: true).Returns(0);
 
         _chatService
-            .RunMultiple(
+            .Run(
                 Arg.Any<Progress>(),
                 AllowedModel.Claude35Sonnet,
-                Arg.Any<ChatScript>(),
-                Arg.Any<IEnumerable<Message>>(),
-                Arg.Any<JsonTypeInfo<ImmutableList<ReviewerFeedbackResponse>>>())
+                Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
+                Arg.Any<IEnumerable<Message>>())
             .Returns(ImmutableList<ReviewerFeedbackResponse>.Empty);
 
         // Act
@@ -99,12 +102,11 @@ public class ReviewChangesCommandTest
             LineRange: "13-49");
 
         _chatService
-            .RunMultiple(
+            .Run(
                 Arg.Any<Progress>(),
                 AllowedModel.Claude35Sonnet,
-                Arg.Any<ChatScript>(),
-                Arg.Any<IEnumerable<Message>>(),
-                Arg.Any<JsonTypeInfo<ImmutableList<ReviewerFeedbackResponse>>>())
+                Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
+                Arg.Any<IEnumerable<Message>>())
             .Returns(ImmutableList.Create(feedbackResponse));
 
         // Act
@@ -129,12 +131,11 @@ public class ReviewChangesCommandTest
         _loginUseCase.Execute(isBackground: true).Returns(0);
 
         _chatService
-            .RunMultiple(
+            .Run(
                 Arg.Any<Progress>(),
                 AllowedModel.Claude35Sonnet,
-                Arg.Any<ChatScript>(),
-                Arg.Any<IEnumerable<Message>>(),
-                Arg.Any<JsonTypeInfo<ImmutableList<ReviewerFeedbackResponse>>>())
+                Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
+                Arg.Any<IEnumerable<Message>>())
             .Returns("Error in Chat Service");
 
         // Act

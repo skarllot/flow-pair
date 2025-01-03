@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Agent.Models;
+using Ciandt.FlowTools.FlowPair.Chats.Models;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Models;
+namespace Ciandt.FlowTools.FlowPair.Tests.Chats.Models;
 
 [TestSubject(typeof(ChatScript))]
 public class ChatScriptTest

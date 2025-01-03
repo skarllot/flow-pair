@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using FxKit.CompilerServices;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Models;
+namespace Ciandt.FlowTools.FlowPair.Chats.Models;
 
 [Union]
 public partial record Instruction
@@ -22,7 +22,7 @@ public partial record Instruction
                 .Replace(ChatScript.StopKeywordPlaceholder, stopKeyword));
     }
 
-    partial record JsonConvertInstruction(string Message, string JsonSchema)
+    partial record JsonConvertInstruction(string OutputKey, string Message, string JsonSchema)
     {
         public Message ToMessage(string stopKeyword) => new(
             Role.User,

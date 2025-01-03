@@ -1,45 +1,44 @@
 using System.Collections.Immutable;
-using System.Text.Json.Serialization.Metadata;
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Models;
+using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
+using Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
+using Ciandt.FlowTools.FlowPair.Chats.Models;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Services;
+namespace Ciandt.FlowTools.FlowPair.Chats.Services;
 
 public partial interface IChatService;
 
 [GenerateAutomaticInterface]
 public sealed class ChatService(
-    AgentJsonContext jsonContext,
+    ChatJsonContext jsonContext,
     IProxyCompleteChatHandler completeChatHandler,
     ITempFileWriter tempFileWriter)
     : IChatService
 {
-    public Result<ImmutableList<TResult>, string> RunMultiple<TResult>(
+    public Result<TResult, string> Run<TResult>(
         Progress progress,
         AllowedModel model,
-        ChatScript chatScript,
-        IEnumerable<Message> initialMessages,
-        JsonTypeInfo<ImmutableList<TResult>> jsonTypeInfo)
+        IChatDefinition<TResult> chatDefinition,
+        IEnumerable<Message> initialMessages)
         where TResult : notnull
     {
         return progress.Start(
-            context => RunMultipleInternal(context, model, chatScript, initialMessages, jsonTypeInfo));
+            context => RunInternal(context, model, chatDefinition, initialMessages));
     }
 
-    private Result<ImmutableList<TResult>, string> RunMultipleInternal<TResult>(
+    private Result<TResult, string> RunInternal<TResult>(
         ProgressContext progressContext,
         AllowedModel model,
-        ChatScript chatScript,
-        IEnumerable<Message> initialMessages,
-        JsonTypeInfo<ImmutableList<TResult>> jsonTypeInfo)
+        IChatDefinition<TResult> chatDefinition,
+        IEnumerable<Message> initialMessages)
         where TResult : notnull
     {
+        var chatScript = chatDefinition.ChatScript;
         var progress = progressContext.AddTask(
             $"Running '{chatScript.Name}'",
             maxValue: chatScript.TotalSteps);
@@ -50,14 +49,16 @@ public sealed class ChatService(
                 progress,
                 model,
                 $"<{Guid.NewGuid().ToString("N")[..8]}>",
-                str => ContentDeserializer.TryDeserialize(str, jsonTypeInfo).Select(static _ => Unit()),
-                [new Message(Role.System, chatScript.SystemInstruction), ..initialMessages])
+                [new Message(Role.System, chatScript.SystemInstruction), ..initialMessages],
+                chatDefinition)
         ]);
 
         return chatScript.Instructions
             .TryAggregate(workspace, (ws, i) => ws.RunInstruction(i, completeChatHandler))
             .Do(SaveChatHistory)
-            .Select(chatWorkspace => DeserializeList(chatWorkspace, jsonTypeInfo));
+            .SelectMany(
+                chatWorkspace => chatDefinition.ConvertResult(chatWorkspace)
+                    .OkOr("Failed to produce a valid output content"));
     }
 
     private void SaveChatHistory(ChatWorkspace workspace)
@@ -67,15 +68,4 @@ public sealed class ChatService(
             workspace.ChatThreads.Select(t => t.Messages).ToImmutableList(),
             jsonContext.ImmutableListImmutableListMessage);
     }
-
-    private static ImmutableList<TResult> DeserializeList<TResult>(
-        ChatWorkspace chatWorkspace,
-        JsonTypeInfo<ImmutableList<TResult>> jsonTypeInfo) =>
-        chatWorkspace.ChatThreads
-            .Where(t => t is { IsInterrupted: false, IsCompleted: true })
-            .SelectMany(
-                t => ContentDeserializer
-                    .TryDeserialize(t.LastMessage?.Content, jsonTypeInfo)
-                    .UnwrapOr([]))
-            .ToImmutableList();
 }
