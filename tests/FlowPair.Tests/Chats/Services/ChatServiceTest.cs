@@ -7,7 +7,6 @@ using Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
 using Ciandt.FlowTools.FlowPair.Chats.Models;
 using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
@@ -67,10 +66,10 @@ public class ChatServiceTest
                 LineRange: "LineRange"));
 
         _completeChatHandler
-            .ChatCompletion(AllowedModel.Claude35Sonnet, Arg.Any<ImmutableList<Message>>())
+            .ChatCompletion(LlmModelType.Claude35Sonnet, Arg.Any<ImmutableList<Message>>())
             .Returns(
                 new Message(
-                    Role.Assistant,
+                    SenderRole.Assistant,
                     $"""
                      ```json
                      {JsonSerializer.Serialize(
@@ -82,9 +81,9 @@ public class ChatServiceTest
         // Act
         var result = _chatService.Run(
             progress: _progress,
-            model: AllowedModel.Claude35Sonnet,
+            llmModelType: LlmModelType.Claude35Sonnet,
             chatDefinition: _chatDefinition,
-            initialMessages: [new Message(Role.User, "Initial Content")]);
+            initialMessages: [new Message(SenderRole.User, "Initial Content")]);
 
         // Assert
         result.Should().BeOk()
@@ -103,15 +102,15 @@ public class ChatServiceTest
                 Instructions: [new Instruction.StepInstruction("Step Message")]));
 
         _completeChatHandler
-            .ChatCompletion(AllowedModel.Claude35Sonnet, Arg.Any<ImmutableList<Message>>())
-            .Returns(new Message(Role.Assistant, "Invalid Feedback Content"));
+            .ChatCompletion(LlmModelType.Claude35Sonnet, Arg.Any<ImmutableList<Message>>())
+            .Returns(new Message(SenderRole.Assistant, "Invalid Feedback Content"));
 
         // Act
         var result = _chatService.Run(
             progress: _progress,
-            model: AllowedModel.Claude35Sonnet,
+            llmModelType: LlmModelType.Claude35Sonnet,
             chatDefinition: _chatDefinition,
-            initialMessages: [new Message(Role.User, "Initial Content")]);
+            initialMessages: [new Message(SenderRole.User, "Initial Content")]);
 
         // Assert
         result.Should().BeErr("Failed to produce a valid output content");
@@ -128,7 +127,7 @@ public class ChatServiceTest
                 SystemInstruction: "System Instruction",
                 Instructions: [new Instruction.StepInstruction("Step Message")]));
 
-        var initialMessages = new[] { new Message(Role.User, "Initial Content") };
+        var initialMessages = new[] { new Message(SenderRole.User, "Initial Content") };
 
         var feedbackResponses = ImmutableList.Create(
             new ReviewerFeedbackResponse(
@@ -142,13 +141,13 @@ public class ChatServiceTest
                 "LineRange"));
 
         _completeChatHandler
-            .ChatCompletion(AllowedModel.Claude35Sonnet, Arg.Any<ImmutableList<Message>>())
-            .Returns(new Message(Role.Assistant, "Feedback Content"));
+            .ChatCompletion(LlmModelType.Claude35Sonnet, Arg.Any<ImmutableList<Message>>())
+            .Returns(new Message(SenderRole.Assistant, "Feedback Content"));
 
         // Act
         _chatService.Run(
             progress: _progress,
-            model: AllowedModel.Claude35Sonnet,
+            llmModelType: LlmModelType.Claude35Sonnet,
             chatDefinition: _chatDefinition,
             initialMessages: initialMessages);
 

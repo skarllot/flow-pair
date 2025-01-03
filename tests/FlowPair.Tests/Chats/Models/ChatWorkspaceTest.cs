@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Ciandt.FlowTools.FlowPair.Chats.Models;
 using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
@@ -21,8 +20,8 @@ public class ChatWorkspaceTest
     public ChatWorkspaceTest()
     {
         _handler
-            .ChatCompletion(AllowedModel.Gpt4, Arg.Any<ImmutableList<Message>>())
-            .Returns(new Message(Role.Assistant, "Response"));
+            .ChatCompletion(LlmModelType.Gpt4, Arg.Any<ImmutableList<Message>>())
+            .Returns(new Message(SenderRole.Assistant, "Response"));
     }
 
     [Fact]
@@ -158,7 +157,7 @@ public class ChatWorkspaceTest
     private ChatThread CreateChatThread(ImmutableList<Message>? messages = null) =>
         new(
             Progress: _progressTask,
-            Model: AllowedModel.Gpt4,
+            ModelType: LlmModelType.Gpt4,
             StopKeyword: "<STOP>",
             Messages: messages ?? [],
             MessageParser: _messageParser);

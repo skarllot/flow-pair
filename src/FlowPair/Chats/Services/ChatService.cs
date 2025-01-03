@@ -5,7 +5,6 @@ using Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
 using Ciandt.FlowTools.FlowPair.Chats.Models;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 
@@ -22,18 +21,18 @@ public sealed class ChatService(
 {
     public Result<TResult, string> Run<TResult>(
         Progress progress,
-        AllowedModel model,
+        LlmModelType llmModelType,
         IChatDefinition<TResult> chatDefinition,
         IEnumerable<Message> initialMessages)
         where TResult : notnull
     {
         return progress.Start(
-            context => RunInternal(context, model, chatDefinition, initialMessages));
+            context => RunInternal(context, llmModelType, chatDefinition, initialMessages));
     }
 
     private Result<TResult, string> RunInternal<TResult>(
         ProgressContext progressContext,
-        AllowedModel model,
+        LlmModelType llmModelType,
         IChatDefinition<TResult> chatDefinition,
         IEnumerable<Message> initialMessages)
         where TResult : notnull
@@ -47,9 +46,9 @@ public sealed class ChatService(
         [
             new ChatThread(
                 progress,
-                model,
+                llmModelType,
                 $"<{Guid.NewGuid().ToString("N")[..8]}>",
-                [new Message(Role.System, chatScript.SystemInstruction), ..initialMessages],
+                [new Message(SenderRole.System, chatScript.SystemInstruction), ..initialMessages],
                 chatDefinition)
         ]);
 

@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Ciandt.FlowTools.FlowPair.Chats.Models;
 using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
@@ -124,7 +123,7 @@ public class OutputProcessorTest
     {
         return new ChatThread(
             Progress: new ProgressTask(0, "description", 100),
-            Model: AllowedModel.Gpt4,
+            ModelType: LlmModelType.Gpt4,
             StopKeyword: "<STOP>",
             Messages: ImmutableList<Message>.Empty,
             MessageParser: null!,

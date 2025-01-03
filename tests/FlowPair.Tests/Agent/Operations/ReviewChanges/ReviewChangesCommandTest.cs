@@ -4,8 +4,8 @@ using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
 using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
+using Ciandt.FlowTools.FlowPair.Chats.Models;
 using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.Git.GetChanges;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using FluentAssertions;
@@ -50,7 +50,7 @@ public class ReviewChangesCommandTest
         _chatService
             .Run(
                 Arg.Any<Progress>(),
-                AllowedModel.Claude35Sonnet,
+                LlmModelType.Claude35Sonnet,
                 Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
                 Arg.Any<IEnumerable<Message>>())
             .Returns(ImmutableList<ReviewerFeedbackResponse>.Empty);
@@ -104,7 +104,7 @@ public class ReviewChangesCommandTest
         _chatService
             .Run(
                 Arg.Any<Progress>(),
-                AllowedModel.Claude35Sonnet,
+                LlmModelType.Claude35Sonnet,
                 Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
                 Arg.Any<IEnumerable<Message>>())
             .Returns(ImmutableList.Create(feedbackResponse));
@@ -133,7 +133,7 @@ public class ReviewChangesCommandTest
         _chatService
             .Run(
                 Arg.Any<Progress>(),
-                AllowedModel.Claude35Sonnet,
+                LlmModelType.Claude35Sonnet,
                 Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
                 Arg.Any<IEnumerable<Message>>())
             .Returns("Error in Chat Service");

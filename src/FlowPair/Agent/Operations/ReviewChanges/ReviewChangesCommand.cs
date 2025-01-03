@@ -4,7 +4,6 @@ using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
 using Ciandt.FlowTools.FlowPair.Chats.Models;
 using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Ciandt.FlowTools.FlowPair.Common;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Ciandt.FlowTools.FlowPair.Git.GetChanges;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using Ciandt.FlowTools.FlowPair.Support.Presentation;
@@ -70,9 +69,9 @@ public sealed class ReviewChangesCommand(
     {
         return chatService.Run(
                 console.Progress(),
-                AllowedModel.Claude35Sonnet,
+                LlmModelType.Claude35Sonnet,
                 chatDefinition,
-                [new Message(Role.User, diff)])
+                [new Message(SenderRole.User, diff)])
             .DoErr(error => console.MarkupLineInterpolated($"[red]Error:[/] {error}"))
             .UnwrapOrElse(static () => []);
     }

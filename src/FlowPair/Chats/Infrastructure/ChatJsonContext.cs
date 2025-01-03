@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
+using Ciandt.FlowTools.FlowPair.Chats.Models;
 
 namespace Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
 

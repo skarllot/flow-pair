@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Ciandt.FlowTools.FlowPair.Chats.Models;
 using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
@@ -21,8 +20,8 @@ public class ChatThreadTest
     public ChatThreadTest()
     {
         _handler
-            .ChatCompletion(AllowedModel.Gpt4, Arg.Any<ImmutableList<Message>>())
-            .Returns(new Message(Role.Assistant, CompletionResponse));
+            .ChatCompletion(LlmModelType.Gpt4, Arg.Any<ImmutableList<Message>>())
+            .Returns(new Message(SenderRole.Assistant, CompletionResponse));
     }
 
     [Fact]
@@ -31,9 +30,9 @@ public class ChatThreadTest
         // Arrange
         var chatThread = new ChatThread(
             Progress: _progressTask,
-            Model: AllowedModel.Gpt4,
+            ModelType: LlmModelType.Gpt4,
             StopKeyword: "<STOP>",
-            Messages: [new Message(Role.User, "Initial")],
+            Messages: [new Message(SenderRole.User, "Initial")],
             MessageParser: _messageParser);
 
         var stepInstruction = new Instruction.StepInstruction("New Message");
@@ -57,9 +56,9 @@ public class ChatThreadTest
         // Arrange
         var chatThread = new ChatThread(
             Progress: _progressTask,
-            Model: AllowedModel.Gpt4,
+            ModelType: LlmModelType.Gpt4,
             StopKeyword: "<STOP>",
-            Messages: [new Message(Role.User, "Initial")],
+            Messages: [new Message(SenderRole.User, "Initial")],
             MessageParser: _messageParser);
 
         var multiStepInstruction = new Instruction.MultiStepInstruction(
@@ -91,9 +90,9 @@ public class ChatThreadTest
 
         var chatThread = new ChatThread(
             Progress: _progressTask,
-            Model: AllowedModel.Gpt4,
+            ModelType: LlmModelType.Gpt4,
             StopKeyword: "<STOP>",
-            Messages: [new Message(Role.User, "Initial")],
+            Messages: [new Message(SenderRole.User, "Initial")],
             MessageParser: _messageParser);
 
         var jsonInstruction = new Instruction.JsonConvertInstruction(
@@ -125,9 +124,9 @@ public class ChatThreadTest
 
         var chatThread = new ChatThread(
             Progress: _progressTask,
-            Model: AllowedModel.Gpt4,
+            ModelType: LlmModelType.Gpt4,
             StopKeyword: "<STOP>",
-            Messages: [new Message(Role.User, "Initial")],
+            Messages: [new Message(SenderRole.User, "Initial")],
             MessageParser: _messageParser);
 
         var jsonInstruction = new Instruction.JsonConvertInstruction(
@@ -154,9 +153,9 @@ public class ChatThreadTest
         // Arrange
         var chatThread = new ChatThread(
             Progress: _progressTask,
-            Model: AllowedModel.Gpt4,
+            ModelType: LlmModelType.Gpt4,
             StopKeyword: "<STOP>",
-            Messages: [new Message(Role.Assistant, "Interrupted <STOP>")],
+            Messages: [new Message(SenderRole.Assistant, "Interrupted <STOP>")],
             MessageParser: _messageParser);
 
         var stepInstruction = new Instruction.StepInstruction("New Message");

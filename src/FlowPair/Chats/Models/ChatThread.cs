@@ -2,14 +2,13 @@ using System.Collections.Immutable;
 using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 using Spectre.Console;
 
 namespace Ciandt.FlowTools.FlowPair.Chats.Models;
 
 public sealed record ChatThread(
     ProgressTask Progress,
-    AllowedModel Model,
+    LlmModelType ModelType,
     string StopKeyword,
     ImmutableList<Message> Messages,
     IMessageParser MessageParser,
@@ -23,7 +22,7 @@ public sealed record ChatThread(
     public Message? LastMessage => Messages.Count > 0 ? Messages[^1] : null;
 
     private bool IsInterrupted =>
-        LastMessage?.Role == Role.Assistant &&
+        LastMessage?.Role == SenderRole.Assistant &&
         LastMessage.Content.Contains(StopKeyword, StringComparison.Ordinal);
 
     public Result<ChatThread, string> RunStepInstruction(
@@ -95,7 +94,7 @@ public sealed record ChatThread(
     private Result<ChatThread, string> CompleteChat(
         IProxyCompleteChatHandler completeChatHandler)
     {
-        return completeChatHandler.ChatCompletion(Model, Messages)
+        return completeChatHandler.ChatCompletion(ModelType, Messages)
             .Match<Result<ChatThread, string>>(
                 msg => this with { Messages = Messages.Add(msg) },
                 error => error.ToString());
@@ -110,11 +109,11 @@ public sealed record ChatThread(
             return this;
         }
 
-        return (from message in completeChatHandler.ChatCompletion(Model, Messages)
+        return (from message in completeChatHandler.ChatCompletion(ModelType, Messages)
                 select MessageParser.Parse(outputKey, message.Content)
                     .Match(
                         v => this with { Messages = Messages.Add(message), Outputs = Outputs.Add(outputKey, v) },
-                        e => AddMessages(message, new Message(Role.User, e))))
+                        e => AddMessages(message, new Message(SenderRole.User, e))))
             .MapErr(error => error.ToString());
     }
 }
