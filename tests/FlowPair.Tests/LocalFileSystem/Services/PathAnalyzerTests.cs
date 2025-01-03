@@ -14,6 +14,7 @@ public class PathAnalyzerTests
     [InlineData("", "")]
     [InlineData(@"a:\file.txt", "/file.txt")]
     [InlineData("Z:\\", "/")]
+    [InlineData("C:", "/")]
     public void NormalizeOnNonWindowsShouldConvertToUnixStyle(string input, string expected)
     {
         // Arrange
