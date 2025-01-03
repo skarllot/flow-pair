@@ -5,6 +5,7 @@ using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
+using static Ciandt.FlowTools.FlowPair.LocalFileSystem.Services.PathAnalyzer;
 
 namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Services;
 
@@ -22,15 +23,9 @@ public class ProjectFilesMessageFactoryTest
         _mockFileSystem = new MockFileSystem(
             new Dictionary<string, MockFileData>
             {
-                { PathAnalyzer.Normalize($@"{RootPath}\project.csproj"), new MockFileData("<Project></Project>") },
-                {
-                    PathAnalyzer.Normalize($@"{RootPath}\package.json"),
-                    new MockFileData("{ \"name\": \"test-project\" }")
-                },
-                {
-                    PathAnalyzer.Normalize($@"{RootPath}\src\Program.cs"),
-                    new MockFileData("public class Program {}")
-                },
+                { Normalize($@"{RootPath}\project.csproj"), new MockFileData("<Project></Project>") },
+                { Normalize($@"{RootPath}\package.json"), new MockFileData("{ \"name\": \"test-project\" }") },
+                { Normalize($@"{RootPath}\src\Program.cs"), new MockFileData("public class Program {}") }
             });
         _factory = new ProjectFilesMessageFactory(_mockWorkingDirectoryWalker);
     }
@@ -39,13 +34,13 @@ public class ProjectFilesMessageFactoryTest
     public void CreateWithProjectFilesContentShouldReturnCorrectMessage()
     {
         // Arrange
-        var rootDirectory = _mockFileSystem.DirectoryInfo.New(RootPath);
+        var rootDirectory = _mockFileSystem.DirectoryInfo.New(Normalize(RootPath));
         _mockWorkingDirectoryWalker
             .FindFilesByExtension(rootDirectory, Arg.Any<IEnumerable<string>>())
-            .Returns([_mockFileSystem.FileInfo.New($@"{RootPath}\project.csproj")]);
+            .Returns([_mockFileSystem.FileInfo.New(Normalize($@"{RootPath}\project.csproj"))]);
         _mockWorkingDirectoryWalker
             .FindFilesByName(rootDirectory, Arg.Any<IEnumerable<string>>())
-            .Returns([_mockFileSystem.FileInfo.New($@"{RootPath}\package.json")]);
+            .Returns([_mockFileSystem.FileInfo.New(Normalize($@"{RootPath}\package.json"))]);
 
         // Act
         var result = _factory.CreateWithProjectFilesContent(rootDirectory);
@@ -63,7 +58,7 @@ public class ProjectFilesMessageFactoryTest
     public void CreateWithProjectFilesContentShouldUseProvidedExtensions()
     {
         // Arrange
-        var rootDirectory = _mockFileSystem.DirectoryInfo.New(RootPath);
+        var rootDirectory = _mockFileSystem.DirectoryInfo.New(Normalize(RootPath));
         var customExtensions = new[] { ".cs" };
 
         // Act
@@ -78,7 +73,7 @@ public class ProjectFilesMessageFactoryTest
     public void CreateWithProjectFilesContentShouldUseProvidedFilenames()
     {
         // Arrange
-        var rootDirectory = _mockFileSystem.DirectoryInfo.New(RootPath);
+        var rootDirectory = _mockFileSystem.DirectoryInfo.New(Normalize(RootPath));
         var customFilenames = new[] { "Program.cs" };
 
         // Act
@@ -93,7 +88,7 @@ public class ProjectFilesMessageFactoryTest
     public void CreateWithProjectFilesContentShouldUseDefaultExtensionsAndFilenames()
     {
         // Arrange
-        var rootDirectory = _mockFileSystem.DirectoryInfo.New(RootPath);
+        var rootDirectory = _mockFileSystem.DirectoryInfo.New(Normalize(RootPath));
 
         // Act
         var result = _factory.CreateWithProjectFilesContent(rootDirectory);
@@ -108,7 +103,7 @@ public class ProjectFilesMessageFactoryTest
     public void CreateWithProjectFilesContentShouldHandleAllDefaultExtensions()
     {
         // Arrange
-        var rootDirectory = _mockFileSystem.DirectoryInfo.New(RootPath);
+        var rootDirectory = _mockFileSystem.DirectoryInfo.New(Normalize(RootPath));
 
         // Act
         var result = _factory.CreateWithProjectFilesContent(rootDirectory);
@@ -124,7 +119,7 @@ public class ProjectFilesMessageFactoryTest
     public void CreateWithProjectFilesContentShouldHandleAllDefaultFilenames()
     {
         // Arrange
-        var rootDirectory = _mockFileSystem.DirectoryInfo.New(RootPath);
+        var rootDirectory = _mockFileSystem.DirectoryInfo.New(Normalize(RootPath));
 
         // Act
         var result = _factory.CreateWithProjectFilesContent(rootDirectory);

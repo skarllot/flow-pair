@@ -24,7 +24,7 @@ public class FileSystemExtensionsTest
         var result = directory.GetRelativePath(path);
 
         // Assert
-        result.Should().Be("SubDir\\File.txt");
+        result.Should().Be(Normalize("SubDir\\File.txt"));
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class FileSystemExtensionsTest
         var result = directory.NewFile(fileName);
 
         // Assert
-        result.FullName.Should().Be(@"C:\Base\File.txt");
+        result.FullName.Should().Be(Normalize(@"C:\Base\File.txt"));
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class FileSystemExtensionsTest
 
         // Assert
         result.Should().BeSome()
-            .FullName.Should().Be(@"C:\Base\ExistingFile.txt");
+            .FullName.Should().Be(Normalize(@"C:\Base\ExistingFile.txt"));
     }
 
     [Fact]
