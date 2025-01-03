@@ -40,7 +40,7 @@ public class PathAnalyzerTests
     [InlineData(@"C:\path\to\file", @"C:\path\to\file")]
     [InlineData(@"\path\to\file", @"\path\to\file")]
     [InlineData("", "")]
-    [InlineData("a:file.txt", "a:file.txt")]
+    [InlineData("a:/file.txt", @"a:\file.txt")]
     [InlineData("Z:\\", "Z:\\")]
     public void NormalizeOnWindowsShouldConvertToWindowsStyle(string input, string expected)
     {
@@ -60,7 +60,7 @@ public class PathAnalyzerTests
     [InlineData("C:/path/to/file", "/path/to/file")]
     [InlineData(@"D:\path\to\file", "/path/to/file")]
     [InlineData("Z:/some/path", "/some/path")]
-    [InlineData("a:file.txt", "/file.txt")]
+    [InlineData(@"a:\file.txt", "/file.txt")]
     public void NormalizeWithDriveLetterOnNonWindowsShouldRemoveDriveLetter(string input, string expected)
     {
         // Arrange
