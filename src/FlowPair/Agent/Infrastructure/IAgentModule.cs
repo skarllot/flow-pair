@@ -1,5 +1,6 @@
 using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
 using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
+using Ciandt.FlowTools.FlowPair.Agent.Services;
 using Jab;
 
 namespace Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
@@ -8,6 +9,10 @@ namespace Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
 
 // Infrastructure
 [Singleton(typeof(AgentJsonContext), Factory = nameof(GetJsonContext))]
+
+// Services
+[Singleton(typeof(IDirectoryStructureMessageFactory), typeof(DirectoryStructureMessageFactory))]
+[Singleton(typeof(IProjectFilesMessageFactory), typeof(ProjectFilesMessageFactory))]
 
 // Chat definitions
 [Singleton(typeof(IReviewChatDefinition), typeof(ReviewChatDefinition))]

@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Spectre.Console;
 

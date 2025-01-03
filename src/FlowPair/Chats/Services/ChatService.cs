@@ -3,7 +3,6 @@ using AutomaticInterface;
 using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
 using Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
 using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Common;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;

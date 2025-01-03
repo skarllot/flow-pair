@@ -6,28 +6,6 @@ namespace Ciandt.FlowTools.FlowPair.Common;
 
 public static class FunctionalExtensions
 {
-    public static Result<TAccumulate, TError> TryAggregate<TSource, TAccumulate, TError>(
-        this IEnumerable<TSource> source,
-        TAccumulate seed,
-        [InstantHandle] Func<TAccumulate, TSource, Result<TAccumulate, TError>> func)
-        where TAccumulate : notnull
-        where TError : notnull
-    {
-        var result = Ok<TAccumulate, TError>(seed);
-
-        foreach (var item in source)
-        {
-            if (!result.TryGet(out var value, out var error))
-            {
-                return error;
-            }
-
-            result = func(value, item);
-        }
-
-        return result;
-    }
-
     /// <summary>
     /// Returns a failure result if the predicate is false. Otherwise, returns a result with the specified value.
     /// </summary>
