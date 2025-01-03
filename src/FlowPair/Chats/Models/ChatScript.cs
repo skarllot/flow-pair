@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Models;
+namespace Ciandt.FlowTools.FlowPair.Chats.Models;
 
 public sealed record ChatScript(
     string Name,

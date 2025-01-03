@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Services;
+namespace Ciandt.FlowTools.FlowPair.Chats.Services;
 
 public static class ContentDeserializer
 {

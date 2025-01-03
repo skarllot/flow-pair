@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
     <Using Include="Xunit" />
   </ItemGroup>
 
