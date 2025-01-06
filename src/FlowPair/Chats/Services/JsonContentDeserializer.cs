@@ -3,7 +3,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace Ciandt.FlowTools.FlowPair.Chats.Services;
 
-public static class ContentDeserializer
+public static class JsonContentDeserializer
 {
     public static Result<T, string> TryDeserialize<T>(
         ReadOnlySpan<char> content,

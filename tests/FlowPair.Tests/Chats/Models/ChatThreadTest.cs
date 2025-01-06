@@ -171,4 +171,97 @@ public class ChatThreadTest
         _handler.ReceivedCalls().Should().BeEmpty();
         _messageParser.ReceivedCalls().Should().BeEmpty();
     }
+
+    [Fact]
+    public void RunCodeInstructionShouldAddMessageAndIncrementProgress()
+    {
+        // Arrange
+        const string outputKey = "CodeKey";
+        _messageParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(Unit());
+
+        var chatThread = new ChatThread(
+            Progress: _progressTask,
+            ModelType: LlmModelType.Gpt4,
+            StopKeyword: "<STOP>",
+            Messages: [new Message(SenderRole.User, "Initial")],
+            MessageParser: _messageParser);
+
+        var codeInstruction = new Instruction.CodeExtractInstruction(
+            OutputKey: outputKey,
+            Message: "Extract Code");
+
+        // Act
+        var result = chatThread.RunCodeInstruction(codeInstruction, _handler);
+
+        // Assert
+        result.IsOk.Should().BeTrue();
+        var updatedThread = result.Unwrap();
+        updatedThread.Messages.Should().HaveCount(3);
+        updatedThread.LastMessage!.Content.Should().Be(CompletionResponse);
+        _progressTask.Value.Should().Be(1);
+        _handler.ReceivedCalls().Should().HaveCount(1);
+        _messageParser.ReceivedCalls().Should().HaveCount(1);
+    }
+
+    [Fact]
+    public void RunCodeInstructionShouldRetryAddMessagesAndIncrementProgress()
+    {
+        // Arrange
+        const string outputKey = "CodeKey";
+        _messageParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns("First try", "Second try", Unit());
+
+        var chatThread = new ChatThread(
+            Progress: _progressTask,
+            ModelType: LlmModelType.Gpt4,
+            StopKeyword: "<STOP>",
+            Messages: [new Message(SenderRole.User, "Initial")],
+            MessageParser: _messageParser);
+
+        var codeInstruction = new Instruction.CodeExtractInstruction(
+            OutputKey: outputKey,
+            Message: "Extract Code");
+
+        // Act
+        var result = chatThread.RunCodeInstruction(codeInstruction, _handler);
+
+        // Assert
+        result.IsOk.Should().BeTrue();
+        var updatedThread = result.Unwrap();
+        updatedThread.Messages.Should().HaveCount(7);
+        updatedThread.LastMessage!.Content.Should().Be(CompletionResponse);
+        _progressTask.Value.Should().Be(1);
+        _handler.ReceivedCalls().Should().HaveCount(3);
+        _messageParser.ReceivedCalls().Should().HaveCount(3);
+    }
+
+    [Fact]
+    public void RunCodeInstructionShouldNotAddMessageWhenInterrupted()
+    {
+        // Arrange
+        var chatThread = new ChatThread(
+            Progress: _progressTask,
+            ModelType: LlmModelType.Gpt4,
+            StopKeyword: "<STOP>",
+            Messages: [new Message(SenderRole.Assistant, "Interrupted <STOP>")],
+            MessageParser: _messageParser);
+
+        var codeInstruction = new Instruction.CodeExtractInstruction(
+            OutputKey: "CodeKey",
+            Message: "Extract Code");
+
+        // Act
+        var result = chatThread.RunCodeInstruction(codeInstruction, _handler);
+
+        // Assert
+        result.IsOk.Should().BeTrue();
+        var updatedThread = result.Unwrap();
+        updatedThread.Messages.Should().HaveCount(1);
+        _progressTask.Value.Should().Be(1);
+        _handler.ReceivedCalls().Should().BeEmpty();
+        _messageParser.ReceivedCalls().Should().BeEmpty();
+    }
 }

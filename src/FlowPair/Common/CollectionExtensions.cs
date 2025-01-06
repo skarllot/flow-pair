@@ -15,4 +15,36 @@ public static class CollectionExtensions
                         : curr.Append(selector(item)))
             .ToString();
     }
+
+    public static Result<TSource, SingleElementProblem> TrySingle<TSource>(this IEnumerable<TSource> source)
+        where TSource : notnull
+    {
+        if (source is IList<TSource> list)
+        {
+            switch (list.Count)
+            {
+                case 0:
+                    return SingleElementProblem.Empty;
+                case 1:
+                    return list[0];
+            }
+        }
+        else
+        {
+            using var e = source.GetEnumerator();
+
+            if (!e.MoveNext())
+            {
+                return SingleElementProblem.Empty;
+            }
+
+            var result = e.Current;
+            if (!e.MoveNext())
+            {
+                return result;
+            }
+        }
+
+        return SingleElementProblem.MoreThanOneElement;
+    }
 }

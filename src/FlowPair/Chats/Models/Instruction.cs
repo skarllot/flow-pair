@@ -32,4 +32,11 @@ public partial record Instruction
              ```
              """);
     }
+
+    partial record CodeExtractInstruction(string OutputKey, string Message)
+    {
+        public Message ToMessage(string stopKeyword) => new(
+            SenderRole.User,
+            Message.Replace(ChatScript.StopKeywordPlaceholder, stopKeyword));
+    }
 }
