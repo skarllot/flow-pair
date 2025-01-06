@@ -22,7 +22,7 @@ public sealed class ChatService(
         Progress progress,
         LlmModelType llmModelType,
         IChatDefinition<TResult> chatDefinition,
-        IEnumerable<Message> initialMessages)
+        IReadOnlyList<Message> initialMessages)
         where TResult : notnull
     {
         return progress.Start(
