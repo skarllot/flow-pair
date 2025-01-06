@@ -68,27 +68,29 @@ public class MarkdownCodeExtractorTest
         result.Should().BeOk().Should().BeEmpty();
     }
 
-    [Fact]
-    public void TryExtractSingleWithValidSingleCodeBlockShouldReturnCodeSnippet()
+    [Theory]
+    [InlineData("javascript")]
+    [InlineData("")]
+    public void TryExtractSingleWithValidSingleCodeBlockShouldReturnCodeSnippet(string language)
     {
         // Arrange
-        const string markdown =
-            """
-            Some text
+        var markdown =
+            $"""
+             Some text
 
-            ```javascript
-            console.log('Hello, World!');
-            ```
+             ```{language}
+             console.log('Hello, World!');
+             ```
 
-            More text
-            """;
+             More text
+             """;
 
         // Act
         var result = MarkdownCodeExtractor.TryExtractSingle(markdown);
 
         // Assert
         result.Should().BeOk().Should().BeEquivalentTo(
-            new CodeSnippet("console.log('Hello, World!');", "javascript")
+            new CodeSnippet("console.log('Hello, World!');", language)
         );
     }
 
