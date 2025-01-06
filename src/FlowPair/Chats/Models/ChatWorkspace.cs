@@ -13,7 +13,8 @@ public sealed record ChatWorkspace(
         return instruction.Match(
             StepInstruction: x => RunStepInstruction(x, completeChatHandler),
             MultiStepInstruction: x => RunMultiStepInstruction(x, completeChatHandler),
-            JsonConvertInstruction: x => RunJsonInstruction(x, completeChatHandler));
+            JsonConvertInstruction: x => RunJsonInstruction(x, completeChatHandler),
+            CodeExtractInstruction: x => RunCodeInstruction(x, completeChatHandler));
     }
 
     private Result<ChatWorkspace, string> RunStepInstruction(
@@ -48,6 +49,16 @@ public sealed record ChatWorkspace(
     {
         return ChatThreads.AsParallel()
             .Select(thread => thread.RunJsonInstruction(instruction, completeChatHandler))
+            .Sequence()
+            .Select(list => new ChatWorkspace(ChatThreads: list.ToImmutableList()));
+    }
+
+    private Result<ChatWorkspace, string> RunCodeInstruction(
+        Instruction.CodeExtractInstruction instruction,
+        IProxyCompleteChatHandler completeChatHandler)
+    {
+        return ChatThreads.AsParallel()
+            .Select(thread => thread.RunCodeInstruction(instruction, completeChatHandler))
             .Sequence()
             .Select(list => new ChatWorkspace(ChatThreads: list.ToImmutableList()));
     }

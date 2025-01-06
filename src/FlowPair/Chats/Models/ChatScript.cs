@@ -17,7 +17,8 @@ public sealed record ChatScript(
                 StepInstruction: _ => curr.Select(v => v + 1),
                 MultiStepInstruction: x => Enumerable.Range(0, x.Messages.Count)
                     .Select((_, i) => i == 0 ? curr.First() + 1 : 1),
-                JsonConvertInstruction: _ => curr.Select(v => v + 1)))
+                JsonConvertInstruction: _ => curr.Select(v => v + 1),
+                CodeExtractInstruction: _ => curr.Select(v => v + 1)))
         .Sum();
 
     public static Option<ChatScript> FindChatScriptForFile(

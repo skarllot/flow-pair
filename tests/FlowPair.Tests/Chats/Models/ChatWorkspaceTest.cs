@@ -154,6 +154,56 @@ public class ChatWorkspaceTest
         _messageParser.ReceivedCalls().Should().HaveCount(2);
     }
 
+    [Fact]
+    public void RunCodeInstructionShouldUpdateSingleThread()
+    {
+        // Arrange
+        const string outputKey = "TestKey";
+        _messageParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(Unit());
+
+        var workspace = new ChatWorkspace([CreateChatThread()]);
+        var codeInstruction = new Instruction.CodeExtractInstruction(
+            outputKey,
+            "Code Message");
+
+        // Act
+        var result = workspace.RunInstruction(codeInstruction, _handler);
+
+        // Assert
+        result.Should().BeOk()
+            .ChatThreads.Should().HaveCount(1)
+            .And.Subject.Should().ContainSingle(t => t.Messages.Count == 2);
+        _handler.ReceivedCalls().Should().HaveCount(1);
+        _messageParser.ReceivedCalls().Should().HaveCount(1);
+    }
+
+    [Fact]
+    public void RunCodeInstructionShouldUpdateAllThreads()
+    {
+        // Arrange
+        const string outputKey = "TestKey";
+        _messageParser
+            .Parse(outputKey, Arg.Any<string>())
+            .Returns(Unit());
+
+        var workspace = new ChatWorkspace([CreateChatThread(), CreateChatThread()]);
+        var codeInstruction = new Instruction.CodeExtractInstruction(
+            outputKey,
+            "Code Message");
+
+        // Act
+        var result = workspace.RunInstruction(codeInstruction, _handler);
+
+        // Assert
+        result.Should().BeOk()
+            .ChatThreads.Should().HaveCount(2)
+            .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
+        _handler.ReceivedCalls().Should().HaveCount(2);
+        _messageParser.ReceivedCalls().Should().HaveCount(2);
+    }
+
     private ChatThread CreateChatThread(ImmutableList<Message>? messages = null) =>
         new(
             Progress: _progressTask,

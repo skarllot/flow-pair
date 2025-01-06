@@ -87,6 +87,28 @@ public sealed record ChatThread(
         }
     }
 
+    public Result<ChatThread, string> RunCodeInstruction(
+        Instruction.CodeExtractInstruction instruction,
+        IProxyCompleteChatHandler completeChatHandler)
+    {
+        try
+        {
+            if (IsInterrupted)
+            {
+                return this;
+            }
+
+            return Enumerable.Range(0, MaxJsonRetries)
+                .TryAggregate(
+                    AddMessages(instruction.ToMessage(StopKeyword)),
+                    (chat, _) => chat.CompleteChatAndDeserialize(instruction.OutputKey, completeChatHandler));
+        }
+        finally
+        {
+            Progress.Increment(1);
+        }
+    }
+
     private ChatThread AddMessages(params ReadOnlySpan<Message> newMessages) =>
         this with { Messages = [..Messages, ..newMessages] };
 

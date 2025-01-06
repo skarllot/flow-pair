@@ -120,7 +120,7 @@ public class ChatScriptTest
                     Preamble: "Preamble",
                     Messages: ImmutableList.Create("Step1", "Step2", "Step3"),
                     Ending: "Ending"),
-                new Instruction.StepInstruction("Message2"),
+                new Instruction.CodeExtractInstruction("Key1", "Message2"),
             ]);
 
         // Act

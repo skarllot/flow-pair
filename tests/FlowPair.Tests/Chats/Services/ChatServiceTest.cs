@@ -47,7 +47,7 @@ public class ChatServiceTest
         _chatDefinition
             .Parse(outputKey, Arg.Any<string>())
             .Returns(
-                c => ContentDeserializer
+                c => JsonContentDeserializer
                     .TryDeserialize((string)c[1], AgentJsonContext.Default.ImmutableListReviewerFeedbackResponse)
                     .Select(static object (x) => x));
         _chatDefinition

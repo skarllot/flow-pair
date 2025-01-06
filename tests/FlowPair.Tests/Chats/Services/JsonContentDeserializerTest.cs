@@ -8,8 +8,8 @@ using JetBrains.Annotations;
 
 namespace Ciandt.FlowTools.FlowPair.Tests.Chats.Services;
 
-[TestSubject(typeof(ContentDeserializer))]
-public class ContentDeserializerTest
+[TestSubject(typeof(JsonContentDeserializer))]
+public class JsonContentDeserializerTest
 {
     public sealed record TestObj(int RiskScore, string Feedback);
 
@@ -21,7 +21,7 @@ public class ContentDeserializerTest
         var typeInfo = JsonSerializerOptions.Web.GetTypeInfo(typeof(TestObj));
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<TestObj>)typeInfo);
+        var result = JsonContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<TestObj>)typeInfo);
 
         // Assert
         var testObj = result.Should().BeOk();
@@ -37,7 +37,7 @@ public class ContentDeserializerTest
         var typeInfo = AgentJsonContext.Default.ReviewerFeedbackResponse;
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, typeInfo);
+        var result = JsonContentDeserializer.TryDeserialize(jsonContent, typeInfo);
 
         // Assert
         result.Should().BeErr("JSON not found on empty content");
@@ -51,7 +51,7 @@ public class ContentDeserializerTest
         var typeInfo = JsonSerializerOptions.Web.GetTypeInfo(typeof(int));
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<int>)typeInfo);
+        var result = JsonContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<int>)typeInfo);
 
         // Assert
         result.Should().BeErr("JSON value kind not supported: None");
@@ -65,7 +65,7 @@ public class ContentDeserializerTest
         var typeInfo = JsonSerializerOptions.Web.GetTypeInfo(typeof(TestObj));
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<TestObj>)typeInfo);
+        var result = JsonContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<TestObj>)typeInfo);
 
         // Assert
         result.Should().BeErr()
@@ -80,7 +80,7 @@ public class ContentDeserializerTest
         var typeInfo = AgentJsonContext.Default.ReviewerFeedbackResponse;
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, typeInfo);
+        var result = JsonContentDeserializer.TryDeserialize(jsonContent, typeInfo);
 
         // Assert
         result.Should().BeErr("Invalid JSON: '{' not found");
@@ -94,7 +94,7 @@ public class ContentDeserializerTest
         var typeInfo = JsonSerializerOptions.Web.GetTypeInfo(typeof(TestObj));
 
         // Act
-        var result = ContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<TestObj>)typeInfo);
+        var result = JsonContentDeserializer.TryDeserialize(jsonContent, (JsonTypeInfo<TestObj>)typeInfo);
 
         // Assert
         result.IsOk.Should().BeTrue();
