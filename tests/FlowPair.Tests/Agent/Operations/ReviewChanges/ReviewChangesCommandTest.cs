@@ -52,7 +52,7 @@ public class ReviewChangesCommandTest
                 Arg.Any<Progress>(),
                 LlmModelType.Claude35Sonnet,
                 Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-                Arg.Any<IEnumerable<Message>>())
+                Arg.Any<IReadOnlyList<Message>>())
             .Returns(ImmutableList<ReviewerFeedbackResponse>.Empty);
 
         // Act
@@ -106,7 +106,7 @@ public class ReviewChangesCommandTest
                 Arg.Any<Progress>(),
                 LlmModelType.Claude35Sonnet,
                 Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-                Arg.Any<IEnumerable<Message>>())
+                Arg.Any<IReadOnlyList<Message>>())
             .Returns(ImmutableList.Create(feedbackResponse));
 
         // Act
@@ -135,7 +135,7 @@ public class ReviewChangesCommandTest
                 Arg.Any<Progress>(),
                 LlmModelType.Claude35Sonnet,
                 Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-                Arg.Any<IEnumerable<Message>>())
+                Arg.Any<IReadOnlyList<Message>>())
             .Returns("Error in Chat Service");
 
         // Act

@@ -1,6 +1,6 @@
 # FlowPair
 
-_FlowPair provides automated code review and feedback using CI&T Flow AI through a command-line interface._
+_FlowPair is a command-line interface tool that leverages CI&T Flow AI to enhance software development processes._
 
 [![Build status](https://github.com/skarllot/flow-pair/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/skarllot/flow-pair/actions)
 [![GitHub release](https://img.shields.io/github/v/release/skarllot/flow-pair)](https://github.com/skarllot/flow-pair/releases)
@@ -11,14 +11,20 @@ _FlowPair provides automated code review and feedback using CI&T Flow AI through
 
 ## About
 
-FlowPair is a CLI tool that leverages CI&T's Flow AI to provide automated code reviews. It detects Git staged (or unstaged) changes and generates insightful feedback, enhancing your development process with AI-powered assistance.
+FlowPair is a powerful command-line tool designed to enhance your software development workflow. By integrating CI&T's Flow AI, FlowPair provides intelligent assistance for various development tasks, including:
 
-## Features
+- Automated code reviews
+- Unit test generation
+- AI-powered feedback on code changes
 
-- Automated code review for Git changes
-- AI-powered feedback generation
-- HTML report output for easy review
-- Simple configuration and usage
+With FlowPair, developers can:
+
+- Improve code quality through AI-assisted reviews
+- Save time on routine tasks like unit test creation
+- Receive instant, actionable feedback on their work
+- Streamline the development process with easy-to-use commands
+
+Whether you're working on a small project or a large-scale application, FlowPair offers the tools you need to develop more efficiently and maintain high code standards.
 
 ## Installation
 
@@ -52,23 +58,54 @@ These credentials are necessary for authenticating with the CI&T Flow AI service
 
 ## Usage
 
-To review your Git changes and receive feedback, simply run:
+### Code Review
+
+To review your Git changes and receive feedback, use the `review` command:
 
 ```bash
-flowpair review
+flowpair review [path] [options]
 ```
 
+Arguments:
+- `[path]`: Optional. Path to the repository. If not specified, the current directory is used.
+
+Options:
+- `-c` or `--commit`: Optional. Specify a commit hash to review changes from that specific commit.
+
+Examples:
+1. Review changes in the current directory:
+   ```bash
+   flowpair review
+   ```
+
+2. Review changes in a specific repository:
+   ```bash
+   flowpair review /path/to/your/repo
+   ```
+
+3. Review changes from a specific commit:
+   ```bash
+   flowpair review -c abc123
+   ```
+
 This command will:
-1. Detect Git staged (or unstaged) changes in your current repository
+1. Detect Git changes in the specified repository (or current directory)
 2. Send the changes to CI&T Flow AI for review
 3. Generate an HTML file with the feedback
 4. Automatically open the HTML report in your default web browser
 
-This streamlined process allows you to quickly view and act on the AI-generated feedback for your code changes.
+### Creating Unit Tests
 
-## Documentation
+To create a unit test for a specific code file, use the create-unittest command:
 
-For more detailed information on how to use FlowPair and its features, please refer to our [GitHub wiki](https://github.com/skarllot/flow-pair/wiki).
+```bash
+flowpair create-unittest -f <file-path> [-e <example-file-path>]
+```
+
+Options:
+- `-f` or `--file-path`: The file path of the code to test (Required)
+- `-e` or `--example-file-path`: The example unit test file path (Optional)
+This command will generate a unit test for the specified code file, optionally using an example unit test file as a reference.
 
 ## Contributing
 

@@ -7,7 +7,7 @@ public static class OutputProcessor
 {
     public static Option<TResult> GetFirst<TResult>(ChatWorkspace chatWorkspace, string key)
         where TResult : class => chatWorkspace.ChatThreads
-        .Select(t => CollectionExtensions.GetValueOrDefault(t.Outputs, key) as TResult)
+        .Select(t => t.Outputs.GetValueOrDefault(key) as TResult)
         .WhereNotNull()
         .FirstOrNone();
 
