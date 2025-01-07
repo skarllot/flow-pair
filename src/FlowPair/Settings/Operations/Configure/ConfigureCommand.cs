@@ -1,10 +1,10 @@
-using Ciandt.FlowTools.FlowPair.Common;
-using Ciandt.FlowTools.FlowPair.Settings.Contracts.v1;
-using Ciandt.FlowTools.FlowPair.Settings.Services;
 using ConsoleAppFramework;
+using Raiqub.LlmTools.FlowPair.Common;
+using Raiqub.LlmTools.FlowPair.Settings.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.Settings.Services;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Settings.Operations.Configure;
+namespace Raiqub.LlmTools.FlowPair.Settings.Operations.Configure;
 
 public class ConfigureCommand(
     IAnsiConsole console,

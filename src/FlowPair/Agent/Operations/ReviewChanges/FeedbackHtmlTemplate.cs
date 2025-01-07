@@ -7,13 +7,13 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges
+namespace Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges
 {
     using System.Collections.Immutable;
     using System.Text;
-    using Ciandt.FlowTools.FlowPair.Common;
+    using Common;
     using Raiqub.Generators.T4CodeWriter;
-    using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
+    using v1;
     using System;
     
     /// <summary>

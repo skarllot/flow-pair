@@ -1,22 +1,22 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Flow.Contracts;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
-using Ciandt.FlowTools.FlowPair.Tests.Testing;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
+using Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Flow.Contracts;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
+using Raiqub.LlmTools.FlowPair.Tests.Testing;
 using Spectre.Console;
 using Spectre.Console.Testing;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Operations.CreateUnitTest;
+namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Operations.CreateUnitTest;
 
 [TestSubject(typeof(CreateUnitTestChatDefinition))]
 public class CreateUnitTestChatDefinitionTest

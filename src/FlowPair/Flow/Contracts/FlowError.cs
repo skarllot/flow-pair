@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Contracts;
+namespace Raiqub.LlmTools.FlowPair.Flow.Contracts;
 
 public sealed record FlowError(
     HttpStatusCode StatusCode,

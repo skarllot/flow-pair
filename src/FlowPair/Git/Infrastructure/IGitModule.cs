@@ -1,7 +1,7 @@
-using Ciandt.FlowTools.FlowPair.Git.GetChanges;
 using Jab;
+using Raiqub.LlmTools.FlowPair.Git.GetChanges;
 
-namespace Ciandt.FlowTools.FlowPair.Git.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.Git.Infrastructure;
 
 [ServiceProviderModule]
 [Singleton(typeof(IGitGetChangesHandler), typeof(GitGetChangesHandler))]

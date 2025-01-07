@@ -1,7 +1,7 @@
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
+namespace Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
 
 public interface IChatDefinition<TResult> : IMessageParser
     where TResult : notnull

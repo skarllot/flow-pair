@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Raiqub.Generators.EnumUtilities;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
 
 public partial class AllowedAnthropicModelsJsonConverter : JsonConverter<AllowedAnthropicModels>;
 

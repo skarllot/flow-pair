@@ -1,7 +1,7 @@
 using System.IO.Abstractions;
 using AutomaticInterface;
 
-namespace Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
+namespace Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 
 public partial interface IWorkingDirectoryWalker;
 

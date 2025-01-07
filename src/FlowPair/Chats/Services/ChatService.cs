@@ -1,13 +1,13 @@
 using System.Collections.Immutable;
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
+using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Services;
+namespace Raiqub.LlmTools.FlowPair.Chats.Services;
 
 public partial interface IChatService;
 

@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace Ciandt.FlowTools.FlowPair.Common;
+namespace Raiqub.LlmTools.FlowPair.Common;
 
 public static partial class HtmlFormatter
 {

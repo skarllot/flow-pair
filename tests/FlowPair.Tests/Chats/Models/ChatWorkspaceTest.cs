@@ -1,14 +1,14 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Chats.Models;
+namespace Raiqub.LlmTools.FlowPair.Tests.Chats.Models;
 
 [TestSubject(typeof(ChatWorkspace))]
 public class ChatWorkspaceTest

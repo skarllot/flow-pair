@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Flow.Contracts;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.AnthropicCompleteChat;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.OpenAiCompleteChat;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Flow.Contracts;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.AnthropicCompleteChat;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.OpenAiCompleteChat;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 
 public partial interface IProxyCompleteChatHandler;
 

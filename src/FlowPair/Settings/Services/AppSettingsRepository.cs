@@ -1,10 +1,10 @@
 using System.IO.Abstractions;
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Settings.Contracts.v1;
-using Ciandt.FlowTools.FlowPair.Settings.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Support.Persistence;
+using Raiqub.LlmTools.FlowPair.Settings.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.Settings.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Support.Persistence;
 
-namespace Ciandt.FlowTools.FlowPair.Settings.Services;
+namespace Raiqub.LlmTools.FlowPair.Settings.Services;
 
 public partial interface IAppSettingsRepository;
 

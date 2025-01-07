@@ -1,20 +1,20 @@
 using System.Collections.Immutable;
 using System.Text.Json;
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
+using Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Chats.Services;
+namespace Raiqub.LlmTools.FlowPair.Tests.Chats.Services;
 
 [TestSubject(typeof(ChatService))]
 public class ChatServiceTest

@@ -1,6 +1,6 @@
-using Ciandt.FlowTools.FlowPair.Support.Persistence;
+using Raiqub.LlmTools.FlowPair.Support.Persistence;
 
-namespace Ciandt.FlowTools.FlowPair.UserSessions.Contracts.v1;
+namespace Raiqub.LlmTools.FlowPair.UserSessions.Contracts.v1;
 
 public sealed record UserSession(
     Version Version,

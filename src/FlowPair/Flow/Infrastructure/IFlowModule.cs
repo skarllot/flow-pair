@@ -1,10 +1,10 @@
-using Ciandt.FlowTools.FlowPair.Flow.Operations.AnthropicCompleteChat;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.GenerateToken;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.OpenAiCompleteChat;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Jab;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.AnthropicCompleteChat;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.GenerateToken;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.OpenAiCompleteChat;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.Flow.Infrastructure;
 
 [ServiceProviderModule]
 

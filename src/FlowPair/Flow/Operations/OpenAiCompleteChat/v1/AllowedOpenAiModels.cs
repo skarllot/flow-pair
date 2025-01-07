@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Raiqub.Generators.EnumUtilities;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
 
 public partial class AllowedOpenAiModelsJsonConverter : JsonConverter<AllowedOpenAiModels>;
 

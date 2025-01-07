@@ -1,12 +1,12 @@
 using System.IO.Abstractions.TestingHelpers;
 using System.Runtime.CompilerServices;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
-using static Ciandt.FlowTools.FlowPair.LocalFileSystem.Services.PathAnalyzer;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
+using static Raiqub.LlmTools.FlowPair.LocalFileSystem.Services.PathAnalyzer;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.LocalFileSystem.Services;
+namespace Raiqub.LlmTools.FlowPair.Tests.LocalFileSystem.Services;
 
 [TestSubject(typeof(WorkingDirectoryWalker))]
 public class WorkingDirectoryWalkerTest

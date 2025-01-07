@@ -1,6 +1,6 @@
 using System.IO.Abstractions;
 
-namespace Ciandt.FlowTools.FlowPair.Support.Persistence;
+namespace Raiqub.LlmTools.FlowPair.Support.Persistence;
 
 public static class ApplicationData
 {

@@ -1,20 +1,20 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Git.GetChanges;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
+using Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Git.GetChanges;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Operations.ReviewChanges;
+namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Operations.ReviewChanges;
 
 [TestSubject(typeof(ReviewChangesCommand))]
 public class ReviewChangesCommandTest

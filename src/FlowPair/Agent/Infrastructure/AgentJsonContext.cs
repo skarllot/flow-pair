@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
 
 [JsonSourceGenerationOptions(
     GenerationMode = JsonSourceGenerationMode.Default,

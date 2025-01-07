@@ -1,10 +1,10 @@
 using System.IO.Abstractions.TestingHelpers;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using FluentAssertions;
 using JetBrains.Annotations;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.LocalFileSystem.GetDirectoryStructure;
+namespace Raiqub.LlmTools.FlowPair.Tests.LocalFileSystem.GetDirectoryStructure;
 
 [TestSubject(typeof(GetDirectoryStructureHandler))]
 public class GetDirectoryStructureHandlerTest

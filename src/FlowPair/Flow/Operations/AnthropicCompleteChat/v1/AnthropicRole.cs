@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using FxKit.CompilerServices;
 using Raiqub.Generators.EnumUtilities;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
 
 public partial class AnthropicRoleJsonConverter : JsonConverter<AnthropicRole>;
 

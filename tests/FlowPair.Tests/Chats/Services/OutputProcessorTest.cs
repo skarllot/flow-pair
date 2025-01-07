@@ -1,12 +1,12 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Chats.Services;
+namespace Raiqub.LlmTools.FlowPair.Tests.Chats.Services;
 
 [TestSubject(typeof(OutputProcessor))]
 public class OutputProcessorTest

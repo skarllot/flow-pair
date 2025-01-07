@@ -1,10 +1,10 @@
-using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
-using Ciandt.FlowTools.FlowPair.Agent.Services;
 using Jab;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
+using Raiqub.LlmTools.FlowPair.Agent.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
 
 [ServiceProviderModule]
 

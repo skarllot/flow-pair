@@ -1,16 +1,16 @@
 using System.IO.Abstractions;
 using System.Text;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
-using Ciandt.FlowTools.FlowPair.Agent.Services;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Common;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using ConsoleAppFramework;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
+using Raiqub.LlmTools.FlowPair.Agent.Services;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Common;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest;
+namespace Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
 
 public sealed class CreateUnitTestCommand(
     IAnsiConsole console,

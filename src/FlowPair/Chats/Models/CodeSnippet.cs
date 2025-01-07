@@ -1,4 +1,4 @@
-namespace Ciandt.FlowTools.FlowPair.Chats.Models;
+namespace Raiqub.LlmTools.FlowPair.Chats.Models;
 
 public sealed record CodeSnippet(
     string Content,

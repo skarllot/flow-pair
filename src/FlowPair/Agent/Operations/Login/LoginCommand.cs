@@ -1,7 +1,7 @@
-using Ciandt.FlowTools.FlowPair.Common;
 using ConsoleAppFramework;
+using Raiqub.LlmTools.FlowPair.Common;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
+namespace Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
 
 public class LoginCommand(
     ILoginUseCase loginUseCase)

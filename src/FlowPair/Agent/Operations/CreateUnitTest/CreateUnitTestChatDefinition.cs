@@ -1,10 +1,10 @@
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest;
+namespace Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
 
 public interface ICreateUnitTestChatDefinition : IChatDefinition<CreateUnitTestResponse>;
 

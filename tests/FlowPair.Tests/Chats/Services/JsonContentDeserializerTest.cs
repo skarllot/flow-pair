@@ -1,12 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
+using Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Chats.Services;
+namespace Raiqub.LlmTools.FlowPair.Tests.Chats.Services;
 
 [TestSubject(typeof(JsonContentDeserializer))]
 public class JsonContentDeserializerTest

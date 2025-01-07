@@ -1,4 +1,4 @@
-namespace Ciandt.FlowTools.FlowPair.Support.Persistence;
+namespace Raiqub.LlmTools.FlowPair.Support.Persistence;
 
 public interface IVersionedJsonValue
 {

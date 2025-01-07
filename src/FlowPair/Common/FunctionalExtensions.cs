@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
-namespace Ciandt.FlowTools.FlowPair.Common;
+namespace Raiqub.LlmTools.FlowPair.Common;
 
 public static class FunctionalExtensions
 {

@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.GenerateToken.v1;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.GenerateToken.v1;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.Flow.Infrastructure;
 
 [JsonSourceGenerationOptions(
     GenerationMode = JsonSourceGenerationMode.Default,

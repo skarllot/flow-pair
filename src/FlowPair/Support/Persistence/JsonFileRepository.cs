@@ -1,9 +1,9 @@
 using System.IO.Abstractions;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using Ciandt.FlowTools.FlowPair.Common;
+using Raiqub.LlmTools.FlowPair.Common;
 
-namespace Ciandt.FlowTools.FlowPair.Support.Persistence;
+namespace Raiqub.LlmTools.FlowPair.Support.Persistence;
 
 public abstract class JsonFileRepository<TValue>(
     IFileSystem fileSystem,

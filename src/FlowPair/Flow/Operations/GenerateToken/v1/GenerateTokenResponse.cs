@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.GenerateToken.v1;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.GenerateToken.v1;
 
 public sealed record GenerateTokenResponse(
     [property: JsonPropertyName("access_token")] string AccessToken,

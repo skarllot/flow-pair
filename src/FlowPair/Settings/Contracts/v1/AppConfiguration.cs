@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Support.Persistence;
+using Raiqub.LlmTools.FlowPair.Support.Persistence;
 
-namespace Ciandt.FlowTools.FlowPair.Settings.Contracts.v1;
+namespace Raiqub.LlmTools.FlowPair.Settings.Contracts.v1;
 
 public sealed record AppConfiguration(
     Version Version,

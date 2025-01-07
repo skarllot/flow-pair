@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using FxKit.CompilerServices;
 using Raiqub.Generators.EnumUtilities;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Models;
+namespace Raiqub.LlmTools.FlowPair.Chats.Models;
 
 public partial class SenderRoleJsonConverter : JsonConverter<SenderRole>;
 

@@ -1,4 +1,4 @@
-namespace Ciandt.FlowTools.FlowPair.Chats.Services;
+namespace Raiqub.LlmTools.FlowPair.Chats.Services;
 
 public interface IMessageParser
 {

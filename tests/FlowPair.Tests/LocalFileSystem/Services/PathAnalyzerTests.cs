@@ -1,7 +1,7 @@
-﻿using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.LocalFileSystem.Services;
+namespace Raiqub.LlmTools.FlowPair.Tests.LocalFileSystem.Services;
 
 public class PathAnalyzerTests
 {

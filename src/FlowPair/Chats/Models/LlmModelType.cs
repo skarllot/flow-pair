@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using FxKit.CompilerServices;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Models;
+namespace Raiqub.LlmTools.FlowPair.Chats.Models;
 
 [EnumMatch]
 public enum LlmModelType

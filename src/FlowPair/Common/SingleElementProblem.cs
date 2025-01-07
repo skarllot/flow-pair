@@ -1,6 +1,6 @@
 using FxKit.CompilerServices;
 
-namespace Ciandt.FlowTools.FlowPair.Common;
+namespace Raiqub.LlmTools.FlowPair.Common;
 
 [EnumMatch]
 public enum SingleElementProblem

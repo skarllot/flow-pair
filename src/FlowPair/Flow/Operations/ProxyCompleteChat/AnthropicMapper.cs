@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Common;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Common;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 
 public static class AnthropicMapper
 {
