@@ -27,7 +27,7 @@ public sealed class CreateUnitTestCommand(
     /// </summary>
     /// <param name="filePath">-f, The file path of the code to test.</param>
     /// <param name="exampleFilePath">-e, The example unit test file path.</param>
-    [Command("create-unittest")]
+    [Command("unittest create")]
     public int Execute(
         string filePath,
         string? exampleFilePath = null)

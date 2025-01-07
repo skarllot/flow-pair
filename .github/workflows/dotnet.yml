@@ -34,6 +34,10 @@ jobs:
         exclude:
           - os: win
             arch: arm64
+          - os: linux
+            arch: arm64
+          - os: osx
+            arch: x64
 
     runs-on: ${{ matrix.image }}
     defaults:
@@ -95,3 +99,4 @@ jobs:
       run: |
         dotnet publish --no-restore -r ${{ matrix.os }}-${{ matrix.arch }} -c Debug
         7z a -tzip -mx9 flowpair-${{ matrix.os }}-${{ matrix.arch }}.zip $PWD/publish/*
+      if: (matrix.os == 'linux' && matrix.arch == 'x64') || (matrix.os == 'osx' && matrix.arch == 'arm64')
