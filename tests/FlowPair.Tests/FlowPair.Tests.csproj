@@ -24,13 +24,20 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Spectre.Console.Testing" />
     <PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="**\*.json" />
+    <EmbeddedResource Include="**\*.json" Exclude="bin\**;obj\**" />
   </ItemGroup>
 
 </Project>

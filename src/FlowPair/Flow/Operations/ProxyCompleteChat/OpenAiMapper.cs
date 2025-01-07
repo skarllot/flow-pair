@@ -1,11 +1,11 @@
+using Ciandt.FlowTools.FlowPair.Chats.Models;
 using Ciandt.FlowTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat.v1;
 
 namespace Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 
 public static class OpenAiMapper
 {
-    public static Option<AllowedOpenAiModels> ToOpenAi(this AllowedModel allowedModel) => allowedModel.Match(
+    public static Option<AllowedOpenAiModels> ToOpenAi(this LlmModelType llmModelType) => llmModelType.Match(
         Gpt4: () => AllowedOpenAiModels.Gpt4,
         Gpt4o: () => AllowedOpenAiModels.Gpt4o,
         Gpt4oMini: () => AllowedOpenAiModels.Gpt4oMini,
@@ -18,7 +18,7 @@ public static class OpenAiMapper
         Claude35Sonnet: () => Option<AllowedOpenAiModels>.None,
         Llama370b: () => Option<AllowedOpenAiModels>.None);
 
-    public static OpenAiRole ToOpenAi(this Role role) => role.Match(
+    public static OpenAiRole ToOpenAi(this SenderRole role) => role.Match(
         System: OpenAiRole.System,
         User: OpenAiRole.User,
         Assistant: OpenAiRole.Assistant,
@@ -28,11 +28,11 @@ public static class OpenAiMapper
         Role: message.Role.ToOpenAi(),
         Content: message.Content);
 
-    public static Role ToProxy(this OpenAiRole role) => role.Match(
-        System: Role.System,
-        User: Role.User,
-        Assistant: Role.Assistant,
-        Function: Role.Function);
+    public static SenderRole ToProxy(this OpenAiRole role) => role.Match(
+        System: SenderRole.System,
+        User: SenderRole.User,
+        Assistant: SenderRole.Assistant,
+        Function: SenderRole.Function);
 
     public static Message ToProxy(this OpenAiMessage message) => new(
         Role: message.Role.ToProxy(),
