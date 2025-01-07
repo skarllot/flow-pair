@@ -96,15 +96,16 @@ This command will:
 
 ### Creating Unit Tests
 
-To create a unit test for a specific code file, use the create-unittest command:
+To create a unit test for a specific code file, use the `unittest create` command:
 
 ```bash
-flowpair create-unittest -f <file-path> [-e <example-file-path>]
+flowpair unittest create -f <file-path> [-e <example-file-path>]
 ```
 
 Options:
 - `-f` or `--file-path`: The file path of the code to test (Required)
 - `-e` or `--example-file-path`: The example unit test file path (Optional)
+
 This command will generate a unit test for the specified code file, optionally using an example unit test file as a reference.
 
 ## Contributing
