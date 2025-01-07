@@ -1,12 +1,12 @@
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Common;
-using Ciandt.FlowTools.FlowPair.Flow.Contracts;
-using Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.GenerateToken.v1;
-using Ciandt.FlowTools.FlowPair.Settings.Contracts.v1;
-using Ciandt.FlowTools.FlowPair.UserSessions.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.Common;
+using Raiqub.LlmTools.FlowPair.Flow.Contracts;
+using Raiqub.LlmTools.FlowPair.Flow.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.GenerateToken.v1;
+using Raiqub.LlmTools.FlowPair.Settings.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.UserSessions.Contracts.v1;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.GenerateToken;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.GenerateToken;
 
 public partial interface IFlowGenerateTokenHandler;
 

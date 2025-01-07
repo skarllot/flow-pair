@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
 
 public sealed record OpenAiChatCompletionResponse(
     [property: JsonPropertyName("id")] string Id,

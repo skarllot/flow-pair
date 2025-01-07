@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
 
 /// <param name="AllowedModels">The list of models to use for this request.</param>
 /// <param name="Messages">The input messages.</param>

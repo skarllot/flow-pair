@@ -1,16 +1,16 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Common;
-using Ciandt.FlowTools.FlowPair.Git.GetChanges;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
-using Ciandt.FlowTools.FlowPair.Support.Presentation;
 using ConsoleAppFramework;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Common;
+using Raiqub.LlmTools.FlowPair.Git.GetChanges;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
+using Raiqub.LlmTools.FlowPair.Support.Presentation;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
+namespace Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
 
 public sealed class ReviewChangesCommand(
     IAnsiConsole console,

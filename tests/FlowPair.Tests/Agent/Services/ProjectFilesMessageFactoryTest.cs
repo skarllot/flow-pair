@@ -1,13 +1,13 @@
 using System.IO.Abstractions.TestingHelpers;
-using Ciandt.FlowTools.FlowPair.Agent.Services;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
-using static Ciandt.FlowTools.FlowPair.LocalFileSystem.Services.PathAnalyzer;
+using Raiqub.LlmTools.FlowPair.Agent.Services;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
+using static Raiqub.LlmTools.FlowPair.LocalFileSystem.Services.PathAnalyzer;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Services;
+namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Services;
 
 [TestSubject(typeof(ProjectFilesMessageFactory))]
 public class ProjectFilesMessageFactoryTest

@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
-namespace Ciandt.FlowTools.FlowPair.Common;
+namespace Raiqub.LlmTools.FlowPair.Common;
 
 public static class HttpBlockingExtensions
 {

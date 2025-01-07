@@ -1,7 +1,7 @@
-using Ciandt.FlowTools.FlowPair.UserSessions.Services;
 using Jab;
+using Raiqub.LlmTools.FlowPair.UserSessions.Services;
 
-namespace Ciandt.FlowTools.FlowPair.UserSessions.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.UserSessions.Infrastructure;
 
 [ServiceProviderModule]
 

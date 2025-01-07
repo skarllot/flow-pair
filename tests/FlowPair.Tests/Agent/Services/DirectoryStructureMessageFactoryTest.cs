@@ -1,12 +1,12 @@
 using System.IO.Abstractions;
-using Ciandt.FlowTools.FlowPair.Agent.Services;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
+using Raiqub.LlmTools.FlowPair.Agent.Services;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Services;
+namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Services;
 
 [TestSubject(typeof(DirectoryStructureMessageFactory))]
 public class DirectoryStructureMessageFactoryTest

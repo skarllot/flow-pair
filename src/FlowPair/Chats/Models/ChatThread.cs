@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Models;
+namespace Raiqub.LlmTools.FlowPair.Chats.Models;
 
 public sealed record ChatThread(
     ProgressTask Progress,

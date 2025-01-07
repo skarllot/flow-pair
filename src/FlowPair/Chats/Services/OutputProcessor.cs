@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Services;
+namespace Raiqub.LlmTools.FlowPair.Chats.Services;
 
 public static class OutputProcessor
 {

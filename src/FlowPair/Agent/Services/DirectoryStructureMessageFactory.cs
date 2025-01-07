@@ -1,9 +1,9 @@
 using System.IO.Abstractions;
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Services;
+namespace Raiqub.LlmTools.FlowPair.Agent.Services;
 
 public partial interface IDirectoryStructureMessageFactory;
 

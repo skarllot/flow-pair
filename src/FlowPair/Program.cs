@@ -1,9 +1,9 @@
-﻿using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
-using Ciandt.FlowTools.FlowPair.DependencyInjection;
-using Ciandt.FlowTools.FlowPair.Settings.Operations.Configure;
-using ConsoleAppFramework;
+﻿using ConsoleAppFramework;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
+using Raiqub.LlmTools.FlowPair.DependencyInjection;
+using Raiqub.LlmTools.FlowPair.Settings.Operations.Configure;
 
 using var container = new AppContainer();
 ConsoleApp.ServiceProvider = container;

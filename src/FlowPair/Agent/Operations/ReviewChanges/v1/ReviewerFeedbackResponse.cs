@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
+namespace Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
 
 public sealed record ReviewerFeedbackResponse(
     int RiskScore,

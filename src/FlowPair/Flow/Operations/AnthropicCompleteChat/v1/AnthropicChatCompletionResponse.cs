@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.AnthropicCompleteChat.v1;
 
 public sealed record AnthropicChatCompletionResponse(
     [property: JsonPropertyName("id")] string Id,

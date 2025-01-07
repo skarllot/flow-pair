@@ -1,19 +1,19 @@
 ﻿using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.Login;
-using Ciandt.FlowTools.FlowPair.Agent.Services;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using FluentAssertions;
 using NSubstitute;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
+using Raiqub.LlmTools.FlowPair.Agent.Services;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 using Spectre.Console.Testing;
-using static Ciandt.FlowTools.FlowPair.LocalFileSystem.Services.PathAnalyzer;
+using static Raiqub.LlmTools.FlowPair.LocalFileSystem.Services.PathAnalyzer;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Agent.Operations.CreateUnitTest;
+namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Operations.CreateUnitTest;
 
 public sealed class CreateUnitTestCommandTests : IDisposable
 {

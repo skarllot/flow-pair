@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Ciandt.FlowTools.FlowPair.Common;
+namespace Raiqub.LlmTools.FlowPair.Common;
 
 public static class CollectionExtensions
 {

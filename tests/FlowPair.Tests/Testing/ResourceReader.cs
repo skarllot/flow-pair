@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Text;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Testing;
+namespace Raiqub.LlmTools.FlowPair.Tests.Testing;
 
 public sealed class ResourceReader(Assembly assembly)
 {

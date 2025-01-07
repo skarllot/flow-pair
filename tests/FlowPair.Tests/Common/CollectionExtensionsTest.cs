@@ -1,10 +1,10 @@
-using Ciandt.FlowTools.FlowPair.Common;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
-using CollectionExtensions = Ciandt.FlowTools.FlowPair.Common.CollectionExtensions;
+using Raiqub.LlmTools.FlowPair.Common;
+using CollectionExtensions = Raiqub.LlmTools.FlowPair.Common.CollectionExtensions;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Common;
+namespace Raiqub.LlmTools.FlowPair.Tests.Common;
 
 [TestSubject(typeof(CollectionExtensions))]
 public class CollectionExtensionsTest

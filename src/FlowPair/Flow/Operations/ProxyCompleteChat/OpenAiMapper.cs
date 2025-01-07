@@ -1,7 +1,7 @@
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 
 public static class OpenAiMapper
 {

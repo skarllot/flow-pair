@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.IO.Abstractions;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Support.Presentation;
+namespace Raiqub.LlmTools.FlowPair.Support.Presentation;
 
 public static class FileLauncher
 {

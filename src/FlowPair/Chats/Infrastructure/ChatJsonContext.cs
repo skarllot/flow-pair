@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.Chats.Infrastructure;
 
 [JsonSourceGenerationOptions(
     GenerationMode = JsonSourceGenerationMode.Default,

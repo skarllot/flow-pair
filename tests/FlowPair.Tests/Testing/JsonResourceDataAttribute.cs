@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text.Json;
 using Xunit.Sdk;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Testing;
+namespace Raiqub.LlmTools.FlowPair.Tests.Testing;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public sealed class JsonResourceDataAttribute : DataAttribute

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using FxKit.CompilerServices;
 
-namespace Ciandt.FlowTools.FlowPair.Support.Persistence;
+namespace Raiqub.LlmTools.FlowPair.Support.Persistence;
 
 [Union]
 public partial record GetJsonFileValueError

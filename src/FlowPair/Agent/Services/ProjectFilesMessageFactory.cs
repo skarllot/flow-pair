@@ -1,11 +1,11 @@
 using System.IO.Abstractions;
 using System.Text;
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Common;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Common;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Services;
+namespace Raiqub.LlmTools.FlowPair.Agent.Services;
 
 public partial interface IProjectFilesMessageFactory;
 

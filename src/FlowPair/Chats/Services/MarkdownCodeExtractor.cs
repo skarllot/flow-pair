@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Common;
 using FxKit.Parsers;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Common;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Services;
+namespace Raiqub.LlmTools.FlowPair.Chats.Services;
 
 public static partial class MarkdownCodeExtractor
 {

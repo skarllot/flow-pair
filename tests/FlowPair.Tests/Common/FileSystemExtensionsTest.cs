@@ -1,12 +1,12 @@
 using System.IO.Abstractions.TestingHelpers;
 using System.Text;
-using Ciandt.FlowTools.FlowPair.Common;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
-using static Ciandt.FlowTools.FlowPair.LocalFileSystem.Services.PathAnalyzer;
+using Raiqub.LlmTools.FlowPair.Common;
+using static Raiqub.LlmTools.FlowPair.LocalFileSystem.Services.PathAnalyzer;
 
-namespace Ciandt.FlowTools.FlowPair.Tests.Common;
+namespace Raiqub.LlmTools.FlowPair.Tests.Common;
 
 [TestSubject(typeof(FileSystemExtensions))]
 public class FileSystemExtensionsTest

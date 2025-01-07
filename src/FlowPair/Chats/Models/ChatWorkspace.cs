@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Flow.Operations.ProxyCompleteChat;
+using Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Models;
+namespace Raiqub.LlmTools.FlowPair.Chats.Models;
 
 public sealed record ChatWorkspace(
     ImmutableList<ChatThread> ChatThreads)

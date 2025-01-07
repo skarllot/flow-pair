@@ -1,8 +1,8 @@
-using Ciandt.FlowTools.FlowPair.Settings.Operations.Configure;
-using Ciandt.FlowTools.FlowPair.Settings.Services;
 using Jab;
+using Raiqub.LlmTools.FlowPair.Settings.Operations.Configure;
+using Raiqub.LlmTools.FlowPair.Settings.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Settings.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.Settings.Infrastructure;
 
 [ServiceProviderModule]
 

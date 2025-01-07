@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <RootNamespace>Ciandt.FlowTools.$(MSBuildProjectName)</RootNamespace>
+    <RootNamespace>Raiqub.LlmTools.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>$(RootNamespace)</AssemblyName>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)</SolutionDir>
     <PackageOutputPath>$(SolutionDir)artifacts</PackageOutputPath>

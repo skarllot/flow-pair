@@ -1,4 +1,4 @@
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.GenerateToken.v1;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.GenerateToken.v1;
 
 /// <remarks>
 /// See <a href="https://flow.ciandt.com/auth-engine-api#/api-key/generate-token">/FLOW Auth Engine API</a>.

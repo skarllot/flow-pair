@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Ciandt.FlowTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
+namespace Raiqub.LlmTools.FlowPair.Flow.Operations.OpenAiCompleteChat.v1;
 
 public sealed record OpenAiMessage(
     [property: JsonPropertyName("role")] OpenAiRole Role,

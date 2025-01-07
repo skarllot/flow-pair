@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Common;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using LibGit2Sharp;
+using Raiqub.LlmTools.FlowPair.Common;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.Git.GetChanges;
+namespace Raiqub.LlmTools.FlowPair.Git.GetChanges;
 
 public partial interface IGitGetChangesHandler;
 

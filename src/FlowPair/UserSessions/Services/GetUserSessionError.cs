@@ -1,7 +1,7 @@
 using System.Text.Json;
 using FxKit.CompilerServices;
 
-namespace Ciandt.FlowTools.FlowPair.UserSessions.Services;
+namespace Raiqub.LlmTools.FlowPair.UserSessions.Services;
 
 [Union]
 public partial record GetUserSessionError

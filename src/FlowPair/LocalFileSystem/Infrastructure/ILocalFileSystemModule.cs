@@ -1,8 +1,8 @@
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
 using Jab;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 
-namespace Ciandt.FlowTools.FlowPair.LocalFileSystem.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.LocalFileSystem.Infrastructure;
 
 [ServiceProviderModule]
 [Singleton(typeof(IWorkingDirectoryWalker), typeof(WorkingDirectoryWalker))]

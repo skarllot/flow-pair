@@ -4,7 +4,7 @@ using System.IO.Abstractions;
 using System.Text;
 using AutomaticInterface;
 
-namespace Ciandt.FlowTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
+namespace Raiqub.LlmTools.FlowPair.LocalFileSystem.GetDirectoryStructure;
 
 public partial interface IGetDirectoryStructureHandler;
 

@@ -1,4 +1,4 @@
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
+namespace Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
 
 public sealed record FilePathResponse(
     string FilePath)

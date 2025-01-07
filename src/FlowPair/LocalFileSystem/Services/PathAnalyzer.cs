@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Ciandt.FlowTools.FlowPair.LocalFileSystem.Services;
+namespace Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 
 public static partial class PathAnalyzer
 {

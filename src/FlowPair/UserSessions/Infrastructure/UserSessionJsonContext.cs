@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using Ciandt.FlowTools.FlowPair.UserSessions.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.UserSessions.Contracts.v1;
 
-namespace Ciandt.FlowTools.FlowPair.UserSessions.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.UserSessions.Infrastructure;
 
 [JsonSourceGenerationOptions(
     GenerationMode = JsonSourceGenerationMode.Default,

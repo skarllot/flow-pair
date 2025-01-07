@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Services;
+namespace Raiqub.LlmTools.FlowPair.Agent.Services;
 
 public static class FileNaming
 {

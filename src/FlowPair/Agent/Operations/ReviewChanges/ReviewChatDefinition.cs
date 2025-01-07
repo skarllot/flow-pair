@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Contracts.v1;
-using Ciandt.FlowTools.FlowPair.Chats.Models;
-using Ciandt.FlowTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Models;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Agent.Operations.ReviewChanges;
+namespace Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
 
 public interface IReviewChatDefinition : IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>;
 

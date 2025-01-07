@@ -1,13 +1,13 @@
-using Ciandt.FlowTools.FlowPair.Agent.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Flow.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Git.Infrastructure;
-using Ciandt.FlowTools.FlowPair.LocalFileSystem.Infrastructure;
-using Ciandt.FlowTools.FlowPair.Settings.Infrastructure;
-using Ciandt.FlowTools.FlowPair.UserSessions.Infrastructure;
 using Jab;
+using Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Chats.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Flow.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Git.Infrastructure;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Settings.Infrastructure;
+using Raiqub.LlmTools.FlowPair.UserSessions.Infrastructure;
 
-namespace Ciandt.FlowTools.FlowPair.DependencyInjection;
+namespace Raiqub.LlmTools.FlowPair.DependencyInjection;
 
 [ServiceProvider]
 [Import(typeof(IAgentModule))]

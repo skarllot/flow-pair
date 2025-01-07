@@ -1,10 +1,10 @@
 using System.IO.Abstractions;
 using AutomaticInterface;
-using Ciandt.FlowTools.FlowPair.Support.Persistence;
-using Ciandt.FlowTools.FlowPair.UserSessions.Contracts.v1;
-using Ciandt.FlowTools.FlowPair.UserSessions.Infrastructure;
+using Raiqub.LlmTools.FlowPair.Support.Persistence;
+using Raiqub.LlmTools.FlowPair.UserSessions.Contracts.v1;
+using Raiqub.LlmTools.FlowPair.UserSessions.Infrastructure;
 
-namespace Ciandt.FlowTools.FlowPair.UserSessions.Services;
+namespace Raiqub.LlmTools.FlowPair.UserSessions.Services;
 
 public partial interface IUserSessionRepository;
 

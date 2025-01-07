@@ -2,7 +2,7 @@ using System.IO.Abstractions;
 using Jab;
 using Spectre.Console;
 
-namespace Ciandt.FlowTools.FlowPair.DependencyInjection;
+namespace Raiqub.LlmTools.FlowPair.DependencyInjection;
 
 [ServiceProviderModule]
 [Singleton(typeof(TimeProvider), Factory = nameof(GetTimeProvider))]

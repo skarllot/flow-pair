@@ -1,7 +1,7 @@
-using Ciandt.FlowTools.FlowPair.Chats.Services;
 using Jab;
+using Raiqub.LlmTools.FlowPair.Chats.Services;
 
-namespace Ciandt.FlowTools.FlowPair.Chats.Infrastructure;
+namespace Raiqub.LlmTools.FlowPair.Chats.Infrastructure;
 
 [ServiceProviderModule]
 
