@@ -28,6 +28,8 @@ jobs:
         allowed-endpoints: >
           aka.ms:443
           api.nuget.org:443
+          builds.dotnet.microsoft.com:443
+          ci.dot.net:443
           dotnetbuilds.azureedge.net:443
           dotnetcli.azureedge.net:443
           github.com:443
