@@ -108,7 +108,7 @@ Options:
 
 This command will generate a unit test for the specified code file, optionally using an example unit test file as a reference.
 
-#### Updating Unit Tests
+### Updating Unit Tests
 
 To update an existing unit test with code changes, use the `unittest update` command:
 
