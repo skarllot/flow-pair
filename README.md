@@ -108,6 +108,20 @@ Options:
 
 This command will generate a unit test for the specified code file, optionally using an example unit test file as a reference.
 
+#### Updating Unit Tests
+
+To update an existing unit test with code changes, use the `unittest update` command:
+
+```bash
+flowpair unittest update [options]
+```
+
+Options:
+- `-s` or `--source-file`: The file path of the code to test (Required)
+- `-t` or `--test-file`: The file path of the existing unit tests (Required)
+
+This command will update the existing unit test file to reflect changes made in the source code file.
+
 ## Contributing
 
 We welcome contributions to FlowPair! If you have suggestions for improvements or encounter any issues, please feel free to:
