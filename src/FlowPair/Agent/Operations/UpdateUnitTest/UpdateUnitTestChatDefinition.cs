@@ -42,14 +42,18 @@ public sealed class UpdateUnitTestChatDefinition
             Instruction.StepInstruction.Of(
                 "Update the unit tests for the specified source code"),
             Instruction.StepInstruction.Of(
-                "Ensure the unit test cover every path"),
+                "Ensure the unit tests cover every possible execution path in the code"),
             Instruction.StepInstruction.Of(
-                "Ensure the unit test does not create any mutants on mutation analysis"),
+                "Ensure the unit tests are sensitive to mutations in the source code. " +
+                "When mutation testing introduces small changes to the implementation (mutants), " +
+                "at least one test should fail. " +
+                "This verifies that the tests can detect potential bugs or behavioral changes."),
             Instruction.StepInstruction.Of(
-                "If any test is redundant remove it"),
+                "Remove any redundant tests while maintaining full coverage"),
             Instruction.CodeExtractInstruction.Of(
                 CodeResponseKey,
-                "Return the entire updated unit tests file content inside of a code block (```)"),
+                "Return the entire final version of the updated unit tests file content, " +
+                "incorporating all the above improvements, inside a code block (```)"),
         ]);
 
     public Result<object, string> Parse(string key, string input) => key switch

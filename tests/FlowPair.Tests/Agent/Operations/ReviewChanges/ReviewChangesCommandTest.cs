@@ -1,8 +1,7 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
-using Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
@@ -12,14 +11,15 @@ using Raiqub.LlmTools.FlowPair.Chats.Services;
 using Raiqub.LlmTools.FlowPair.Git.GetChanges;
 using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
-using Spectre.Console.Rendering;
+using Spectre.Console.Testing;
 
 namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Operations.ReviewChanges;
 
 [TestSubject(typeof(ReviewChangesCommand))]
-public class ReviewChangesCommandTest
+public sealed class ReviewChangesCommandTest : IDisposable
 {
-    private readonly IAnsiConsole _console = Substitute.For<IAnsiConsole>();
+    private readonly TestConsole _console = new();
+    private readonly IReviewChatDefinition _chatDefinition = Substitute.For<IReviewChatDefinition>();
     private readonly IGitGetChangesHandler _getChangesHandler = Substitute.For<IGitGetChangesHandler>();
     private readonly ILoginUseCase _loginUseCase = Substitute.For<ILoginUseCase>();
     private readonly IChatService _chatService = Substitute.For<IChatService>();
@@ -28,38 +28,30 @@ public class ReviewChangesCommandTest
     private ReviewChangesCommand CreateCommand() =>
         new(
             console: _console,
-            chatDefinition: new ReviewChatDefinition(AgentJsonContext.Default),
+            chatDefinition: _chatDefinition,
             getChangesHandler: _getChangesHandler,
             loginUseCase: _loginUseCase,
             chatService: _chatService,
             tempFileWriter: _tempFileWriter);
 
+    public void Dispose() => _console.Dispose();
+
     [Fact]
-    public void ExecuteShouldReturnZeroWhenEverythingSucceeds()
+    public void ExecuteShouldNotFailWhenGetChangesHandlerFails()
     {
         // Arrange
         var command = CreateCommand();
-        var fileChanges = ImmutableList.Create(new FileChange("path/to/file", "diff content"));
 
         _getChangesHandler
             .Extract(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(fileChanges);
-
-        _loginUseCase.Execute(isBackground: true).Returns(0);
-
-        _chatService
-            .Run(
-                Arg.Any<Progress>(),
-                LlmModelType.Claude35Sonnet,
-                Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-                Arg.Any<IReadOnlyList<Message>>())
-            .Returns(ImmutableList<ReviewerFeedbackResponse>.Empty);
+            .Returns(None);
 
         // Act
         var result = command.Execute("repo/path", "commitHash");
 
         // Assert
         result.Should().Be(0);
+        _loginUseCase.DidNotReceiveWithAnyArgs().Execute(false);
     }
 
     [Fact]
@@ -68,53 +60,81 @@ public class ReviewChangesCommandTest
         // Arrange
         var command = CreateCommand();
 
-        _getChangesHandler.Extract(Arg.Any<string>(), Arg.Any<string>())
+        _getChangesHandler
+            .Extract(Arg.Any<string>(), Arg.Any<string>())
             .Returns(ImmutableList.Create<FileChange>());
 
-        _loginUseCase.Execute(isBackground: true).Returns(1);
+        _loginUseCase
+            .Execute(isBackground: true)
+            .Returns(1);
 
         // Act
         var result = command.Execute("repo/path", "commitHash");
 
         // Assert
         result.Should().Be(1);
+        _chatService.DidNotReceiveWithAnyArgs().Run<ReviewerFeedbackResponse>(null, default, null, null);
     }
 
     [Fact]
-    public void BuildFeedbackShouldCreateFeedbackFileWhenFeedbackIsGenerated()
+    public void ExecuteShouldHandleMultipleFileChangesAndFeedback()
     {
         // Arrange
         var command = CreateCommand();
+        var fileChanges = ImmutableList.Create(
+            new FileChange("path/to/file1.cs", "diff content 1"),
+            new FileChange("path/to/file2.cs", "diff content 2"));
 
         _getChangesHandler
-            .Extract("repo/path", "commitHash")
-            .Returns(ImmutableList.Create(new FileChange("path/to/file.cs", "diff content")));
+            .Extract(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(fileChanges);
 
-        var feedbackResponse = new ReviewerFeedbackResponse(
-            RiskScore: 2,
-            RiskDescription: "Medium priority adjustments",
-            Title: "Refactor ProxyClient using factory pattern",
-            Category: "Design Pattern",
-            Language: "C#",
-            Feedback: "The ProxyClient class has too many dependencies and responsibilities. " +
-                      "Consider refactoring using a factory pattern to improve maintainability and scalability",
-            Path: "/src/FlowReviewer/Flow/ProxyCompleteChat/ProxyClient.cs",
-            LineRange: "13-49");
+        _loginUseCase
+            .Execute(isBackground: true)
+            .Returns(0);
+
+        _chatDefinition.ChatScript
+            .Returns(new ChatScript("test", [".cs"], "system", [Instruction.StepInstruction.Of("Review changes")]));
+
+        var feedbackResponses = ImmutableList.Create(
+            new ReviewerFeedbackResponse(
+                RiskScore: 1,
+                RiskDescription: "Low risk",
+                Title: "Feedback 1",
+                Category: "Category 1",
+                Language: "C#",
+                Feedback: "Feedback content 1",
+                Path: "path/to/file1.cs",
+                LineRange: "1-10"),
+            new ReviewerFeedbackResponse(
+                RiskScore: 2,
+                RiskDescription: "Medium risk",
+                Title: "Feedback 2",
+                Category: "Category 2",
+                Language: "C#",
+                Feedback: "Feedback content 2",
+                Path: "path/to/file2.cs",
+                LineRange: "5-15"));
 
         _chatService
             .Run(
-                Arg.Any<Progress>(),
-                LlmModelType.Claude35Sonnet,
-                Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-                Arg.Any<IReadOnlyList<Message>>())
-            .Returns(ImmutableList.Create(feedbackResponse));
+                progress: Arg.Any<Progress>(),
+                llmModelType: LlmModelType.Claude35Sonnet,
+                chatDefinition: Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
+                initialMessages: Arg.Is<IReadOnlyList<Message>>(
+                    m => m.Count == 1 && m[0].Content.Contains("diff content 1") &&
+                         m[0].Content.Contains("diff content 2")))
+            .Returns(feedbackResponses);
 
         // Act
         var result = command.Execute("repo/path", "commitHash");
 
         // Assert
         result.Should().Be(0);
-        _tempFileWriter.Received().Write(Arg.Any<string>(), Arg.Is<string>(x => x.Contains(feedbackResponse.Title)));
+        _tempFileWriter.Received(1).Write(
+            Arg.Is<string>(s => s.EndsWith("-feedback.html")),
+            Arg.Is<string>(s => s.Contains("Feedback 1") && s.Contains("Feedback 2")));
+        _console.Output.Should().Contain("Created 2 comments");
     }
 
     [Fact]
@@ -122,20 +142,25 @@ public class ReviewChangesCommandTest
     {
         // Arrange
         var command = CreateCommand();
-        var fileChanges = ImmutableList.Create(new FileChange("path/to/file", "diff content"));
+        var fileChanges = ImmutableList.Create(new FileChange("path/to/file.cs", "diff content"));
 
         _getChangesHandler
             .Extract(Arg.Any<string>(), Arg.Any<string>())
             .Returns(fileChanges);
 
-        _loginUseCase.Execute(isBackground: true).Returns(0);
+        _loginUseCase
+            .Execute(isBackground: true)
+            .Returns(0);
+
+        _chatDefinition.ChatScript
+            .Returns(new ChatScript("test", [".cs"], "system", [Instruction.StepInstruction.Of("Review changes")]));
 
         _chatService
             .Run(
-                Arg.Any<Progress>(),
-                LlmModelType.Claude35Sonnet,
-                Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-                Arg.Any<IReadOnlyList<Message>>())
+                progress: Arg.Any<Progress>(),
+                llmModelType: LlmModelType.Claude35Sonnet,
+                chatDefinition: Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
+                initialMessages: Arg.Any<IReadOnlyList<Message>>())
             .Returns("Error in Chat Service");
 
         // Act
@@ -143,6 +168,51 @@ public class ReviewChangesCommandTest
 
         // Assert
         result.Should().Be(0);
-        _console.Received().Write(Arg.Any<IRenderable>());
+        _console.Output.Should()
+            .Contain("Error: Error in Chat Service")
+            .And.Contain("Created 0 comments");
+        _tempFileWriter.DidNotReceiveWithAnyArgs().Write(null!, null!);
+    }
+
+    [Fact]
+    public void ExecuteShouldIgnoreFilesThatDontMatchChatScript()
+    {
+        // Arrange
+        var command = CreateCommand();
+        var fileChanges = ImmutableList.Create(
+            new FileChange("path/to/file.cs", "diff content cs"),
+            new FileChange("path/to/file.js", "diff content js"));
+
+        _getChangesHandler
+            .Extract(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(fileChanges);
+
+        _loginUseCase
+            .Execute(isBackground: true)
+            .Returns(0);
+
+        _chatDefinition.ChatScript
+            .Returns(new ChatScript("test", [".cs"], "system", [Instruction.StepInstruction.Of("Review changes")]));
+
+        _chatService
+            .Run(
+                progress: Arg.Any<Progress>(),
+                llmModelType: LlmModelType.Claude35Sonnet,
+                chatDefinition: Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
+                initialMessages: Arg.Is<IReadOnlyList<Message>>(m => m.Count == 1 && m[0].Content == "diff content cs"))
+            .Returns(ImmutableList<ReviewerFeedbackResponse>.Empty);
+
+        // Act
+        var result = command.Execute("repo/path", "commitHash");
+
+        // Assert
+        result.Should().Be(0);
+        _chatService.Received(1).Run(
+            Arg.Any<Progress>(),
+            LlmModelType.Claude35Sonnet,
+            Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
+            Arg.Is<IReadOnlyList<Message>>(m => m.Count == 1 && m[0].Content == "diff content cs"));
+        _console.Output.Should().Contain("Created 0 comments");
+        _tempFileWriter.DidNotReceiveWithAnyArgs().Write(null!, null!);
     }
 }
