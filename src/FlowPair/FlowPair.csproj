@@ -39,6 +39,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Raiqub.LlmTools.FlowPair.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Agent\Operations\ReviewChanges\FeedbackHtmlTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
