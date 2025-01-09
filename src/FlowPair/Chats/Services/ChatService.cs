@@ -5,6 +5,7 @@ using Raiqub.LlmTools.FlowPair.Chats.Infrastructure;
 using Raiqub.LlmTools.FlowPair.Chats.Models;
 using Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
+using Raiqub.LlmTools.FlowPair.Support.Console;
 using Spectre.Console;
 
 namespace Raiqub.LlmTools.FlowPair.Chats.Services;
@@ -25,8 +26,14 @@ public sealed class ChatService(
         IReadOnlyList<Message> initialMessages)
         where TResult : notnull
     {
-        return progress.Start(
-            context => RunInternal(context, llmModelType, chatDefinition, initialMessages));
+        return progress
+            .Columns(
+                new SpinnerColumn(Spinner.Known.Star),
+                new TaskDescriptionColumn(),
+                new ProgressBarColumn(),
+                new PercentageColumn(),
+                new LongRemainingTimeColumn())
+            .Start(context => RunInternal(context, llmModelType, chatDefinition, initialMessages));
     }
 
     private Result<TResult, string> RunInternal<TResult>(
