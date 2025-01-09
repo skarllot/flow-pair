@@ -68,20 +68,16 @@ public sealed class LoginUseCase(
         UserSession userSession,
         bool verbose)
     {
-        if (verbose)
+        if (!verbose)
         {
-            console.Write("Signing in to Flow...");
+            return generateTokenHandler.Execute(configuration, userSession);
         }
 
-        var result = generateTokenHandler.Execute(configuration, userSession);
-        if (verbose)
-        {
-            result
-                .Do(_ => console.WriteLine(" OK"))
-                .DoErr(_ => console.WriteLine(" FAIL"));
-        }
-
-        return result;
+        return console.Status()
+            .Start(
+                "Generating access token",
+                _ => generateTokenHandler.Execute(configuration, userSession))
+            .Do(_ => console.WriteLine("New access token generated"));
     }
 
     private int HandleFlowError(FlowError error)
