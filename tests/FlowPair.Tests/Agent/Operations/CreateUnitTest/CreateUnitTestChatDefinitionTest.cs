@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;

@@ -1,7 +1,7 @@
 using Raiqub.LlmTools.FlowPair.Agent.Operations.UpdateUnitTest.v1;
-using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
 using Raiqub.LlmTools.FlowPair.Chats.Models;
 using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 
 namespace Raiqub.LlmTools.FlowPair.Agent.Operations.UpdateUnitTest;
 
@@ -14,26 +14,7 @@ public sealed class UpdateUnitTestChatDefinition
 
     public ChatScript ChatScript { get; } = new(
         "Update unit tests chat script",
-        [
-            /* Python          */".py", ".pyw", ".pyx", ".pxd", ".pxi",
-            /* JavaScript      */".js", ".jsx", ".mjs", ".cjs",
-            /* Java            */".java",
-            /* C#              */".cs", ".csx",
-            /* C++             */".cpp", ".cxx", ".cc", ".c++", ".hpp", ".hxx", ".h", ".hh", ".h++",
-            /* PHP             */".php", ".phtml", ".phps",
-            /* Ruby            */".rb", ".rbw", ".rake",
-            /* Swift           */".swift",
-            /* R               */".r",
-            /* SQL             */".sql",
-            /* Kotlin          */".kt", ".kts",
-            /* TypeScript      */".ts", ".tsx",
-            /* Go (Golang)     */".go",
-            /* Rust            */".rs",
-            /* Scala           */".scala", ".sc",
-            /* Dart            */".dart",
-            /* Perl            */".pl", ".pm", ".t", ".pod",
-            /* MATLAB          */".m",
-        ],
+        KnownFileExtension.UnitTestable,
         """
         You are an expert developer, your task is to create unit tests following the best practices.
         You are given a set of project files, containing the filenames and their contents.

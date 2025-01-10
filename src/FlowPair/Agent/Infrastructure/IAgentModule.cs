@@ -16,10 +16,11 @@ namespace Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
 [Singleton(typeof(IDirectoryStructureMessageFactory), typeof(DirectoryStructureMessageFactory))]
 [Singleton(typeof(IProjectFilesMessageFactory), typeof(ProjectFilesMessageFactory))]
 
-// Chat definitions
-[Singleton(typeof(IReviewChatDefinition), typeof(ReviewChatDefinition))]
+// Chat scripts
+[Singleton(typeof(IReviewChatScript), typeof(ReviewChatScript))]
 [Singleton(typeof(ICreateUnitTestChatDefinition), typeof(CreateUnitTestChatDefinition))]
 [Singleton(typeof(IUpdateUnitTestChatDefinition), typeof(UpdateUnitTestChatDefinition))]
+[Singleton(typeof(IDistributeReviewChatDefinitionFactory), typeof(DistributeReviewChatDefinitionFactory))]
 
 // Operations
 [Singleton(typeof(ILoginUseCase), typeof(LoginUseCase))]

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using FxKit.CompilerServices;
+using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
 
 namespace Raiqub.LlmTools.FlowPair.Chats.Models;
 
@@ -10,7 +11,7 @@ public partial record Instruction
     {
         public Message ToMessage(string stopKeyword) => new(
             SenderRole.User,
-            Message.Replace(ChatScript.StopKeywordPlaceholder, stopKeyword));
+            Message.Replace(IChatScript.StopKeywordPlaceholder, stopKeyword));
     }
 
     partial record MultiStepInstruction(string Preamble, ImmutableList<string> Messages, string Ending)
@@ -18,7 +19,7 @@ public partial record Instruction
         public Message ToMessage(int index, string stopKeyword) => new(
             SenderRole.User,
             $"{Preamble}{Messages[index]}{Ending}"
-                .Replace(ChatScript.StopKeywordPlaceholder, stopKeyword));
+                .Replace(IChatScript.StopKeywordPlaceholder, stopKeyword));
     }
 
     partial record JsonConvertInstruction(string OutputKey, string Message, string JsonSchema)
@@ -26,7 +27,7 @@ public partial record Instruction
         public Message ToMessage(string stopKeyword) => new(
             SenderRole.User,
             $"""
-             {Message.Replace(ChatScript.StopKeywordPlaceholder, stopKeyword)}
+             {Message.Replace(IChatScript.StopKeywordPlaceholder, stopKeyword)}
              ```
              {JsonSchema}
              ```
@@ -37,6 +38,6 @@ public partial record Instruction
     {
         public Message ToMessage(string stopKeyword) => new(
             SenderRole.User,
-            Message.Replace(ChatScript.StopKeywordPlaceholder, stopKeyword));
+            Message.Replace(IChatScript.StopKeywordPlaceholder, stopKeyword));
     }
 }

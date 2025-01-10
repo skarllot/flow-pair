@@ -5,7 +5,6 @@ using NSubstitute;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
-using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
 using Raiqub.LlmTools.FlowPair.Chats.Models;
 using Raiqub.LlmTools.FlowPair.Chats.Services;
 using Raiqub.LlmTools.FlowPair.Git.GetChanges;
@@ -28,7 +27,7 @@ public sealed class ReviewChangesCommandTest : IDisposable
     private ReviewChangesCommand CreateCommand() =>
         new(
             console: _console,
-            chatDefinition: _chatDefinition,
+            chatScript: _chatDefinition,
             getChangesHandler: _getChangesHandler,
             loginUseCase: _loginUseCase,
             chatService: _chatService,
