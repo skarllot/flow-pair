@@ -68,6 +68,7 @@ public class ChatScriptTest
             Name: "TestScript",
             Extensions: [".txt"],
             SystemInstruction: "SystemInstruction",
+            InitialMessages: [],
             Instructions:
             [
                 new Instruction.StepInstruction("Message1"),
@@ -89,6 +90,7 @@ public class ChatScriptTest
             Name: "TestScript",
             Extensions: [".txt"],
             SystemInstruction: "SystemInstruction",
+            InitialMessages: [],
             Instructions:
             [
                 new Instruction.StepInstruction("Message1"),
@@ -113,6 +115,7 @@ public class ChatScriptTest
             Name: "TestScript",
             Extensions: [".txt"],
             SystemInstruction: "SystemInstruction",
+            InitialMessages: [],
             Instructions:
             [
                 new Instruction.StepInstruction("Message1"),

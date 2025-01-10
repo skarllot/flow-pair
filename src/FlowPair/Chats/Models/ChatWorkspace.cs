@@ -31,6 +31,11 @@ public sealed record ChatWorkspace(
         Instruction.MultiStepInstruction instruction,
         IProxyCompleteChatHandler completeChatHandler)
     {
+        if (ChatThreads.Count == 0)
+        {
+            return this;
+        }
+
         if (ChatThreads.Count != 1)
         {
             return "Only one multi-step instruction is supported.";
