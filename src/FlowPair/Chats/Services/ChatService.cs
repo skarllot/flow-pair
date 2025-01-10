@@ -22,6 +22,19 @@ public sealed class ChatService(
     public Result<TResult, string> Run<TResult>(
         Progress progress,
         LlmModelType llmModelType,
+        IChatDefinition<TResult> chatDefinition)
+        where TResult : notnull
+    {
+        return Run(
+            progress,
+            llmModelType,
+            chatDefinition,
+            chatDefinition.ChatScript.InitialMessages);
+    }
+
+    public Result<TResult, string> Run<TResult>(
+        Progress progress,
+        LlmModelType llmModelType,
         IChatDefinition<TResult> chatDefinition,
         IReadOnlyList<Message> initialMessages)
         where TResult : notnull
@@ -53,7 +66,7 @@ public sealed class ChatService(
             new ChatThread(
                 progress,
                 llmModelType,
-                $"<{Guid.NewGuid().ToString("N")[..8]}>",
+                ChatThread.CreateStopKeyword(),
                 [new Message(SenderRole.System, chatScript.SystemInstruction), ..initialMessages],
                 chatDefinition)
         ]);

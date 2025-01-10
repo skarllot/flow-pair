@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Raiqub.LlmTools.FlowPair.Chats.Services;
+using Raiqub.LlmTools.FlowPair.Common;
 using Raiqub.LlmTools.FlowPair.Flow.Operations.ProxyCompleteChat;
 using Spectre.Console;
 
@@ -24,24 +25,18 @@ public sealed record ChatThread(
         LastMessage?.Role == SenderRole.Assistant &&
         LastMessage.Content.Contains(StopKeyword, StringComparison.Ordinal);
 
+    public static string CreateStopKeyword() => $"<{Guid.NewGuid().ToString("N")[..8]}>";
+
     public Result<ChatThread, string> RunStepInstruction(
         Instruction.StepInstruction instruction,
         IProxyCompleteChatHandler completeChatHandler)
     {
-        try
-        {
-            if (IsInterrupted)
-            {
-                return this;
-            }
-
-            return AddMessages(instruction.ToMessage(StopKeyword))
-                .CompleteChat(completeChatHandler);
-        }
-        finally
-        {
-            Progress.Increment(1);
-        }
+        return
+            (IsInterrupted
+                ? this
+                : AddMessages(instruction.ToMessage(StopKeyword))
+                    .CompleteChat(completeChatHandler))
+            .DoBoth(_ => Progress.Increment(1));
     }
 
     public Result<ChatThread, string> RunMultiStepInstruction(
@@ -49,64 +44,40 @@ public sealed record ChatThread(
         int index,
         IProxyCompleteChatHandler completeChatHandler)
     {
-        try
-        {
-            if (IsInterrupted)
-            {
-                return this;
-            }
-
-            return AddMessages(instruction.ToMessage(index, StopKeyword))
-                .CompleteChat(completeChatHandler);
-        }
-        finally
-        {
-            Progress.Increment(1);
-        }
+        return
+            (IsInterrupted
+                ? this
+                : AddMessages(instruction.ToMessage(index, StopKeyword))
+                    .CompleteChat(completeChatHandler))
+            .DoBoth(_ => Progress.Increment(1));
     }
 
     public Result<ChatThread, string> RunJsonInstruction(
         Instruction.JsonConvertInstruction instruction,
         IProxyCompleteChatHandler completeChatHandler)
     {
-        try
-        {
-            if (IsInterrupted)
-            {
-                return this;
-            }
-
-            return Enumerable.Range(0, MaxJsonRetries)
-                .TryAggregate(
-                    AddMessages(instruction.ToMessage(StopKeyword)),
-                    (chat, _) => chat.CompleteChatAndDeserialize(instruction.OutputKey, completeChatHandler));
-        }
-        finally
-        {
-            Progress.Increment(1);
-        }
+        return
+            (IsInterrupted
+                ? this
+                : Enumerable.Range(0, MaxJsonRetries)
+                    .TryAggregate(
+                        AddMessages(instruction.ToMessage(StopKeyword)),
+                        (chat, _) => chat.CompleteChatAndDeserialize(instruction.OutputKey, completeChatHandler)))
+            .DoBoth(_ => Progress.Increment(1));
     }
 
     public Result<ChatThread, string> RunCodeInstruction(
         Instruction.CodeExtractInstruction instruction,
         IProxyCompleteChatHandler completeChatHandler)
     {
-        try
-        {
-            if (IsInterrupted)
-            {
-                return this;
-            }
-
-            return Enumerable.Range(0, MaxJsonRetries)
-                .TryAggregate(
-                    AddMessages(instruction.ToMessage(StopKeyword)),
-                    (chat, _) => chat.CompleteChatAndDeserialize(instruction.OutputKey, completeChatHandler));
-        }
-        finally
-        {
-            Progress.Increment(1);
-        }
+        return
+            (IsInterrupted
+                ? this
+                : Enumerable.Range(0, MaxJsonRetries)
+                    .TryAggregate(
+                        AddMessages(instruction.ToMessage(StopKeyword)),
+                        (chat, _) => chat.CompleteChatAndDeserialize(instruction.OutputKey, completeChatHandler)))
+            .DoBoth(_ => Progress.Increment(1));
     }
 
     private ChatThread AddMessages(params ReadOnlySpan<Message> newMessages) =>

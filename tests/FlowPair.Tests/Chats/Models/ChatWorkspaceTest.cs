@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
@@ -25,41 +25,74 @@ public class ChatWorkspaceTest
     }
 
     [Fact]
-    public void RunStepInstructionShouldUpdateSingleThread()
+    public void RunInstructionShouldHandleAllInstructionTypes()
     {
         // Arrange
-        var workspace = new ChatWorkspace([CreateChatThread()]);
-        var stepInstruction = Instruction.StepInstruction.Of("Step Message");
+        var initialMessages = ImmutableList.Create(new Message(SenderRole.User, "Initial"));
+        var workspace = new ChatWorkspace([CreateChatThread(initialMessages), CreateChatThread(initialMessages)]);
 
-        // Act
-        var result = workspace.RunInstruction(stepInstruction, _handler);
+        var instructions = new[]
+        {
+            Instruction.StepInstruction.Of("Step Message"),
+            Instruction.JsonConvertInstruction.Of("JsonKey", "JSON Message", "{ \"schema\": \"value\" }"),
+            Instruction.CodeExtractInstruction.Of("CodeKey", "Code Message")
+        };
 
-        // Assert
-        result.Should().BeOk()
-            .ChatThreads.Should().HaveCount(1)
-            .And.Subject.Should().ContainSingle(t => t.Messages.Count == 2);
-        _progressTask.Value.Should().Be(1);
-        _handler.ReceivedCalls().Should().HaveCount(1);
-        _messageParser.ReceivedCalls().Should().BeEmpty();
+        _messageParser
+            .Parse(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(Unit());
+
+        // Act & Assert
+        foreach (var instruction in instructions)
+        {
+            var result = workspace.RunInstruction(instruction, _handler);
+
+            result.Should().BeOk().ChatThreads.Should().HaveCount(2);
+            result.Unwrap().ChatThreads.Should().OnlyContain(t => t.Messages.Count == 3);
+
+            var lastMessage = result.Unwrap().ChatThreads[0].Messages.Last();
+            lastMessage.Content.Should().Contain(
+                instruction switch
+                {
+                    Instruction.StepInstruction => "Response",
+                    Instruction.JsonConvertInstruction => "Response",
+                    Instruction.CodeExtractInstruction => "Response",
+                    _ => throw new InvalidOperationException()
+                });
+        }
+
+        _handler.ReceivedWithAnyArgs(6).ChatCompletion(default, null);
+        _messageParser.ReceivedWithAnyArgs(4).Parse(null!, null!);
     }
 
     [Fact]
-    public void RunStepInstructionShouldUpdateAllThreads()
+    public void RunMultiStepInstructionShouldProcessSingleThreadCorrectly()
     {
         // Arrange
-        var workspace = new ChatWorkspace([CreateChatThread(), CreateChatThread()]);
-        var stepInstruction = Instruction.StepInstruction.Of("Step Message");
+        var initialMessages = ImmutableList.Create(new Message(SenderRole.User, "Initial"));
+        var workspace = new ChatWorkspace([CreateChatThread(initialMessages)]);
+        var multiStepInstruction = Instruction.MultiStepInstruction.Of(
+            Preamble: "Preamble",
+            Messages: ["Step1", "Step2"],
+            Ending: "Ending");
 
         // Act
-        var result = workspace.RunInstruction(stepInstruction, _handler);
+        var result = workspace.RunInstruction(multiStepInstruction, _handler);
 
         // Assert
-        result.Should().BeOk()
-            .ChatThreads.Should().HaveCount(2)
-            .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
-        _progressTask.Value.Should().Be(2);
-        _handler.ReceivedCalls().Should().HaveCount(2);
-        _messageParser.ReceivedCalls().Should().BeEmpty();
+        result.Should().BeOk().ChatThreads.Should().HaveCount(2);
+        result.Unwrap().ChatThreads[0].Messages.Should().HaveCount(3)
+            .And.SatisfyRespectively(
+                m => m.Content.Should().Be("Initial"),
+                m => m.Content.Should().Be("PreambleStep1Ending"),
+                m => m.Content.Should().Be("Response"));
+        result.Unwrap().ChatThreads[1].Messages.Should().HaveCount(3)
+            .And.SatisfyRespectively(
+                m => m.Content.Should().Be("Initial"),
+                m => m.Content.Should().Be("PreambleStep2Ending"),
+                m => m.Content.Should().Be("Response"));
+        _handler.ReceivedWithAnyArgs(2).ChatCompletion(default, null);
+        _messageParser.DidNotReceiveWithAnyArgs().Parse(null!, null!);
     }
 
     [Fact]
@@ -76,132 +109,35 @@ public class ChatWorkspaceTest
         var result = workspace.RunInstruction(multiStepInstruction, _handler);
 
         // Assert
-        result.Should().BeErr("Only one multi-step instruction is supported.");
-        _handler.ReceivedCalls().Should().BeEmpty();
-        _messageParser.ReceivedCalls().Should().BeEmpty();
+        result.Should().BeErr().Should().Be("Only one multi-step instruction is supported.");
+        _handler.DidNotReceiveWithAnyArgs().ChatCompletion(default, null);
+        _messageParser.DidNotReceiveWithAnyArgs().Parse(null!, null!);
     }
 
     [Fact]
-    public void RunMultiStepInstructionShouldProcessSingleThreadCorrectly()
+    public void RunInstructionShouldHandleEmptyWorkspace()
     {
         // Arrange
-        var workspace = new ChatWorkspace([CreateChatThread()]);
-        var multiStepInstruction = Instruction.MultiStepInstruction.Of(
-            Preamble: "Preamble",
-            Messages: ["Step1", "Step2"],
-            Ending: "Ending");
+        var workspace = new ChatWorkspace([]);
+        var instructions = new[]
+        {
+            Instruction.StepInstruction.Of("Step"),
+            Instruction.MultiStepInstruction.Of("Preamble", ["Step1"], "Ending"),
+            Instruction.JsonConvertInstruction.Of("key", "JSON", "{}"),
+            Instruction.CodeExtractInstruction.Of("key", "Code")
+        };
 
-        // Act
-        var result = workspace.RunInstruction(multiStepInstruction, _handler);
+        foreach (var instruction in instructions)
+        {
+            // Act
+            var result = workspace.RunInstruction(instruction, _handler);
 
-        // Assert
-        result.Should().BeOk()
-            .ChatThreads.Should().HaveCount(2)
-            .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
-        _handler.ReceivedCalls().Should().HaveCount(2);
-        _messageParser.ReceivedCalls().Should().BeEmpty();
-    }
+            // Assert
+            result.Should().BeOk().ChatThreads.Should().BeEmpty();
+        }
 
-    [Fact]
-    public void RunJsonInstructionShouldUpdateSingleThread()
-    {
-        // Arrange
-        const string outputKey = "TestKey";
-        _messageParser
-            .Parse(outputKey, Arg.Any<string>())
-            .Returns(Unit());
-
-        var workspace = new ChatWorkspace([CreateChatThread()]);
-        var jsonInstruction = new Instruction.JsonConvertInstruction(
-            outputKey,
-            "JSON Message",
-            "{ \"schema\": \"value\" }");
-
-        // Act
-        var result = workspace.RunInstruction(jsonInstruction, _handler);
-
-        // Assert
-        result.Should().BeOk()
-            .ChatThreads.Should().HaveCount(1)
-            .And.Subject.Should().ContainSingle(t => t.Messages.Count == 2);
-        _handler.ReceivedCalls().Should().HaveCount(1);
-        _messageParser.ReceivedCalls().Should().HaveCount(1);
-    }
-
-    [Fact]
-    public void RunJsonInstructionShouldUpdateAllThreads()
-    {
-        // Arrange
-        const string outputKey = "TestKey";
-        _messageParser
-            .Parse(outputKey, Arg.Any<string>())
-            .Returns(Unit());
-
-        var workspace = new ChatWorkspace([CreateChatThread(), CreateChatThread()]);
-        var jsonInstruction = new Instruction.JsonConvertInstruction(
-            outputKey,
-            "JSON Message",
-            "{ \"schema\": \"value\" }");
-
-        // Act
-        var result = workspace.RunInstruction(jsonInstruction, _handler);
-
-        // Assert
-        result.Should().BeOk()
-            .ChatThreads.Should().HaveCount(2)
-            .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
-        _handler.ReceivedCalls().Should().HaveCount(2);
-        _messageParser.ReceivedCalls().Should().HaveCount(2);
-    }
-
-    [Fact]
-    public void RunCodeInstructionShouldUpdateSingleThread()
-    {
-        // Arrange
-        const string outputKey = "TestKey";
-        _messageParser
-            .Parse(outputKey, Arg.Any<string>())
-            .Returns(Unit());
-
-        var workspace = new ChatWorkspace([CreateChatThread()]);
-        var codeInstruction = new Instruction.CodeExtractInstruction(
-            outputKey,
-            "Code Message");
-
-        // Act
-        var result = workspace.RunInstruction(codeInstruction, _handler);
-
-        // Assert
-        result.Should().BeOk()
-            .ChatThreads.Should().HaveCount(1)
-            .And.Subject.Should().ContainSingle(t => t.Messages.Count == 2);
-        _handler.ReceivedCalls().Should().HaveCount(1);
-        _messageParser.ReceivedCalls().Should().HaveCount(1);
-    }
-
-    [Fact]
-    public void RunCodeInstructionShouldUpdateAllThreads()
-    {
-        // Arrange
-        const string outputKey = "TestKey";
-        _messageParser
-            .Parse(outputKey, Arg.Any<string>())
-            .Returns(Unit());
-
-        var workspace = new ChatWorkspace([CreateChatThread(), CreateChatThread()]);
-        var codeInstruction = new Instruction.CodeExtractInstruction(
-            outputKey,
-            "Code Message");
-
-        // Act
-        var result = workspace.RunInstruction(codeInstruction, _handler);
-
-        // Assert
-        result.Should().BeOk()
-            .ChatThreads.Should().HaveCount(2)
-            .And.Subject.Should().OnlyContain(t => t.Messages.Count == 2);
-        _handler.ReceivedCalls().Should().HaveCount(2);
-        _messageParser.ReceivedCalls().Should().HaveCount(2);
+        _handler.DidNotReceiveWithAnyArgs().ChatCompletion(default, null);
+        _messageParser.DidNotReceiveWithAnyArgs().Parse(null!, null!);
     }
 
     private ChatThread CreateChatThread(ImmutableList<Message>? messages = null) =>

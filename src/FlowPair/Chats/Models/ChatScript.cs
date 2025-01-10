@@ -6,9 +6,19 @@ public sealed record ChatScript(
     string Name,
     ImmutableArray<string> Extensions,
     string SystemInstruction,
+    ImmutableList<Message> InitialMessages,
     ImmutableList<Instruction> Instructions)
 {
     public const string StopKeywordPlaceholder = "<NO FEEDBACK>";
+
+    public ChatScript(
+        string Name,
+        ImmutableArray<string> Extensions,
+        string SystemInstruction,
+        ImmutableList<Instruction> Instructions)
+        : this(Name, Extensions, SystemInstruction, [], Instructions)
+    {
+    }
 
     public double TotalSteps => Instructions
         .Aggregate(
