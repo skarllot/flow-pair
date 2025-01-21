@@ -76,7 +76,7 @@ public sealed class ReviewChatScript(
              ============
              {input.Diff}
              ============
-             """)
+             """),
     ];
 
     public Result<object, string> Parse(string key, string input) => key switch
@@ -84,7 +84,7 @@ public sealed class ReviewChatScript(
         JsonResponseKey => JsonContentDeserializer
             .TryDeserialize(input, jsonContext.ImmutableListReviewerFeedbackResponse)
             .Select(static object (x) => x),
-        _ => $"Unknown output key '{key}'"
+        _ => $"Unknown output key '{key}'",
     };
 
     public Option<ImmutableList<ReviewerFeedbackResponse>> CompileOutputs(ChatWorkspace chatWorkspace) =>

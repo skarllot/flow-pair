@@ -104,6 +104,9 @@ public class ChatServiceTest
             .Returns([new Message(SenderRole.User, "Initial Content")]);
         _chatScript.Instructions
             .Returns([new Instruction.StepInstruction("Step Message")]);
+        _chatScript
+            .CompileOutputs(Arg.Is<ChatWorkspace>(w => w.ChatThreads[0].LastMessage!.Content == "Feedback Content"))
+            .Returns(Unit());
 
         _completeChatHandler
             .ChatCompletion(LlmModelType.Claude35Sonnet, Arg.Any<ImmutableList<Message>>())

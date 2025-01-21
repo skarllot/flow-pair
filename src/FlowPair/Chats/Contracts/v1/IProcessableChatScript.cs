@@ -33,9 +33,9 @@ public static class ProcessableChatScriptExtensions
                 Messages:
                 [
                     new Message(SenderRole.System, chatScript.SystemInstruction),
-                    ..chatScript.GetInitialMessages(input)
+                    ..chatScript.GetInitialMessages(input),
                 ],
-                MessageParser: chatScript)
+                MessageParser: chatScript),
         ]);
     }
 }

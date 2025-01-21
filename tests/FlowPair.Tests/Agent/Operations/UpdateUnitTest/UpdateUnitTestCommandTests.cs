@@ -18,7 +18,7 @@ public sealed class UpdateUnitTestCommandTests : IDisposable
 {
     private readonly TestConsole _console = new();
     private readonly MockFileSystem _fileSystem = new();
-    private readonly IUpdateUnitTestChatDefinition _chatDefinition = Substitute.For<IUpdateUnitTestChatDefinition>();
+    private readonly IUpdateUnitTestChatScript _chatScript = Substitute.For<IUpdateUnitTestChatScript>();
     private readonly IWorkingDirectoryWalker _workingDirectoryWalker = Substitute.For<IWorkingDirectoryWalker>();
 
     private readonly IProjectFilesMessageFactory _projectFilesMessageFactory =
@@ -35,10 +35,8 @@ public sealed class UpdateUnitTestCommandTests : IDisposable
     private UpdateUnitTestCommand CreateCommand() => new(
         _console,
         _fileSystem,
-        _chatDefinition,
+        _chatScript,
         _workingDirectoryWalker,
-        _projectFilesMessageFactory,
-        _directoryStructureMessageFactory,
         _loginUseCase,
         _chatService);
 
@@ -113,7 +111,8 @@ public sealed class UpdateUnitTestCommandTests : IDisposable
         var result = command.Execute(sourceFile, testFile);
 
         result.Should().Be(4);
-        _chatService.DidNotReceiveWithAnyArgs().Run<UpdateUnitTestResponse>(null!, default, null!, null!);
+        _chatService.DidNotReceiveWithAnyArgs()
+            .Run<UpdateUnitTestRequest, UpdateUnitTestResponse>(null!, null!, default, null!);
     }
 
     [Fact]
@@ -132,10 +131,10 @@ public sealed class UpdateUnitTestCommandTests : IDisposable
         _loginUseCase.Execute(true).Returns(0);
         _chatService
             .Run(
+                input: Arg.Any<UpdateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<IUpdateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
+                chatScript: Arg.Any<IUpdateUnitTestChatScript>())
             .Returns("Chat service error");
 
         var result = command.Execute(sourceFile, testFile);
@@ -163,10 +162,10 @@ public sealed class UpdateUnitTestCommandTests : IDisposable
 
         const string updatedContent = "// Updated test content";
         _chatService.Run(
+                input: Arg.Any<UpdateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<IUpdateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
+                chatScript: Arg.Any<IUpdateUnitTestChatScript>())
             .Returns(new UpdateUnitTestResponse(updatedContent));
 
         var result = command.Execute(sourceFile, testFile);
@@ -198,28 +197,20 @@ public sealed class UpdateUnitTestCommandTests : IDisposable
             .Returns(new Message(SenderRole.User, "Directory structure"));
 
         _chatService.Run(
-                Arg.Any<Progress>(),
-                Arg.Any<LlmModelType>(),
-                Arg.Any<IUpdateUnitTestChatDefinition>(),
-                Arg.Any<IReadOnlyList<Message>>())
-            .Returns(Result<UpdateUnitTestResponse, string>.Ok(new UpdateUnitTestResponse("// Updated test content")));
+                input: Arg.Any<UpdateUnitTestRequest>(),
+                progress: Arg.Any<Progress>(),
+                llmModelType: Arg.Any<LlmModelType>(),
+                chatScript: Arg.Any<IUpdateUnitTestChatScript>())
+            .Returns(new UpdateUnitTestResponse("// Updated test content"));
 
         var result = command.Execute(sourceFile, testFile);
 
         result.Should().Be(0);
         _chatService.Received(1).Run(
-            Arg.Any<Progress>(),
-            Arg.Is<LlmModelType>(m => m == LlmModelType.Claude35Sonnet),
-            Arg.Any<IUpdateUnitTestChatDefinition>(),
-            Arg.Is<IReadOnlyList<Message>>(
-                messages =>
-                    messages.Count == 4 &&
-                    messages[0].Content == "Project files content" &&
-                    messages[1].Content == "Directory structure" &&
-                    messages[2].Content.Contains("// Source content") &&
-                    messages[3].Content.Contains("// Test content")
-            )
-        );
+            input: Arg.Any<UpdateUnitTestRequest>(),
+            progress: Arg.Any<Progress>(),
+            llmModelType: Arg.Any<LlmModelType>(),
+            chatScript: Arg.Any<IUpdateUnitTestChatScript>());
     }
 
     [Fact]
@@ -237,11 +228,11 @@ public sealed class UpdateUnitTestCommandTests : IDisposable
             .Returns(Some(_fileSystem.DirectoryInfo.New("/")));
         _loginUseCase.Execute(true).Returns(0);
         _chatService.Run(
+                input: Arg.Any<UpdateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<IUpdateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
-            .Returns(Result<UpdateUnitTestResponse, string>.Ok(new UpdateUnitTestResponse("// Updated test content")));
+                chatScript: Arg.Any<IUpdateUnitTestChatScript>())
+            .Returns(new UpdateUnitTestResponse("// Updated test content"));
 
         var result = command.Execute(sourceFile, testFile);
 
@@ -267,7 +258,8 @@ public sealed class UpdateUnitTestCommandTests : IDisposable
         var result = command.Execute(sourceFile, testFile);
 
         result.Should().Be(4);
-        _chatService.DidNotReceiveWithAnyArgs().Run<UpdateUnitTestResponse>(null!, default, null!, null!);
+        _chatService.DidNotReceiveWithAnyArgs()
+            .Run<UpdateUnitTestRequest, UpdateUnitTestResponse>(null!, null!, default, null!);
     }
 
     [Fact]
@@ -288,10 +280,10 @@ public sealed class UpdateUnitTestCommandTests : IDisposable
 
         const string updatedContent = "// Updated test content";
         _chatService.Run(
+                input: Arg.Any<UpdateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<IUpdateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
+                chatScript: Arg.Any<IUpdateUnitTestChatScript>())
             .Returns(new UpdateUnitTestResponse(updatedContent));
 
         var result = command.Execute(sourceFile, testFile);

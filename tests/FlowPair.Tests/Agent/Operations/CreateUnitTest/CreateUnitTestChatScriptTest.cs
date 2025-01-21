@@ -1,10 +1,13 @@
 using System.Collections.Immutable;
+using System.IO.Abstractions;
+using FluentAssertions;
 using FxKit.Testing.FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
 using Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
+using Raiqub.LlmTools.FlowPair.Agent.Services;
 using Raiqub.LlmTools.FlowPair.Chats.Infrastructure;
 using Raiqub.LlmTools.FlowPair.Chats.Models;
 using Raiqub.LlmTools.FlowPair.Chats.Services;
@@ -17,21 +20,41 @@ using Spectre.Console.Testing;
 
 namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Operations.CreateUnitTest;
 
-[TestSubject(typeof(CreateUnitTestChatDefinition))]
-public class CreateUnitTestChatDefinitionTest
+[TestSubject(typeof(CreateUnitTestChatScript))]
+public class CreateUnitTestChatScriptTest
 {
-    private readonly CreateUnitTestChatDefinition _chatDefinition = new(AgentJsonContext.Default);
+    private readonly TimeProvider _timeProvider = Substitute.For<TimeProvider>();
+
+    private readonly IProjectFilesMessageFactory _projectFilesMessageFactory;
+    private readonly IDirectoryStructureMessageFactory _directoryStructureMessageFactory;
+    private readonly CreateUnitTestChatScript _chatScript;
+
+    public CreateUnitTestChatScriptTest()
+    {
+        _projectFilesMessageFactory = Substitute.For<IProjectFilesMessageFactory>();
+        _directoryStructureMessageFactory = Substitute.For<IDirectoryStructureMessageFactory>();
+
+        _chatScript = new CreateUnitTestChatScript(
+            AgentJsonContext.Default,
+            _projectFilesMessageFactory,
+            _directoryStructureMessageFactory);
+    }
 
     [Theory]
     [JsonResourceData("20250106175550-history.json")]
     public void ConvertResultShouldExtractOutputs(ImmutableList<Message> messages)
     {
         // Arrange
-        var initialMessages = messages
-            .SkipWhile(m => m.Role != SenderRole.User)
-            .TakeWhile(m => m.Role == SenderRole.User)
-            .SkipLast(1)
-            .ToImmutableList();
+        _projectFilesMessageFactory
+            .CreateWithProjectFilesContent(
+                Arg.Any<IDirectoryInfo>(),
+                Arg.Any<IEnumerable<string>?>(),
+                Arg.Any<IEnumerable<string>?>())
+            .Returns(new Message(SenderRole.User, "// Projects"));
+
+        _directoryStructureMessageFactory
+            .CreateWithRepositoryStructure(Arg.Any<IDirectoryInfo>())
+            .Returns(new Message(SenderRole.User, "// Structure"));
 
         var assistantMessages = messages
             .Where(m => m.Role == SenderRole.Assistant)
@@ -42,6 +65,7 @@ public class CreateUnitTestChatDefinitionTest
         var tempFileWriter = Substitute.For<ITempFileWriter>();
 
         var chatService = new ChatService(
+            timeProvider: _timeProvider,
             jsonContext: ChatJsonContext.Default,
             completeChatHandler: completeChatHandler,
             tempFileWriter: tempFileWriter);
@@ -52,10 +76,10 @@ public class CreateUnitTestChatDefinitionTest
 
         // Act
         var result = chatService.Run(
+            input: new CreateUnitTestRequest(Substitute.For<IFileInfo>(), null, Substitute.For<IDirectoryInfo>()),
             progress: new Progress(new TestConsole()),
             llmModelType: LlmModelType.Gpt4o,
-            chatDefinition: _chatDefinition,
-            initialMessages: initialMessages);
+            chatScript: _chatScript);
 
         // Assert
         result.Should().BeOk().Should()

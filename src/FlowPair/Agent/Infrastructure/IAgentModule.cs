@@ -18,9 +18,8 @@ namespace Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
 
 // Chat scripts
 [Singleton(typeof(IReviewChatScript), typeof(ReviewChatScript))]
-[Singleton(typeof(ICreateUnitTestChatDefinition), typeof(CreateUnitTestChatDefinition))]
-[Singleton(typeof(IUpdateUnitTestChatDefinition), typeof(UpdateUnitTestChatDefinition))]
-[Singleton(typeof(IDistributeReviewChatDefinitionFactory), typeof(DistributeReviewChatDefinitionFactory))]
+[Singleton(typeof(ICreateUnitTestChatScript), typeof(CreateUnitTestChatScript))]
+[Singleton(typeof(IUpdateUnitTestChatScript), typeof(UpdateUnitTestChatScript))]
 
 // Operations
 [Singleton(typeof(ILoginUseCase), typeof(LoginUseCase))]
