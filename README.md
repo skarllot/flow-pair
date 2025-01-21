@@ -139,4 +139,4 @@ If you need help, have any questions, or want to report issues:
 
 ## License
 
-FlowPair is licensed under the [MIT License](./LICENSE).
+FlowPair is licensed under the [GNU GPLv3](./LICENSE).
