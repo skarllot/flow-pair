@@ -35,11 +35,7 @@ public sealed class ProjectFilesMessageFactory(
         IFileInfo fileInfo,
         IDirectoryInfo rootDirectory)
     {
-        if (sb.Length > 0)
-        {
-            sb.AppendLine();
-        }
-
+        sb.AppendLine();
         sb.Append("* File: ");
         sb.Append(rootDirectory.GetRelativePath(fileInfo.FullName));
         sb.AppendLine();
