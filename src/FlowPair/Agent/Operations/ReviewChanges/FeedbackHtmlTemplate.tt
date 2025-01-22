@@ -1,9 +1,9 @@
-<#@ template language="C#" debug="false" linePragmas="false" hostspecific="false" inherits="CodeWriterBase<ImmutableList<ReviewerFeedbackResponse>>" #>
+<#@ template language="C#" debug="false" linePragmas="false" hostspecific="false" inherits="T4TemplateBase<ImmutableList<ReviewerFeedbackResponse>>" #>
 <#@ import namespace="System.Collections.Immutable" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="Common" #>
-<#@ import namespace="Raiqub.Generators.T4CodeWriter" #>
 <#@ import namespace="v1" #>
+<#@ import namespace="T4Template" #>
 <!DOCTYPE html>
 <html>
   <head>
@@ -47,8 +47,6 @@
     {
         Model = model;
     }
-
-    public override string GetFileName() => Guid.NewGuid().ToString("N");
 
     private static string GetRiskLevelCssClass(int number) => number switch{
         0 => " is-white",
