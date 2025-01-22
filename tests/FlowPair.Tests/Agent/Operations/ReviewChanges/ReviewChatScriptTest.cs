@@ -93,7 +93,7 @@ public class ReviewChatScriptTest
             .Index()
             .Where(
                 t => t.Item.Zip(list).All(
-                    x => x.First.Content == x.Second.Content ||
+                    x => x.First.Content.ReplaceLineEndings() == x.Second.Content.ReplaceLineEndings() ||
                          (x.First.Content.Contains("Follow below a set of changes for review") &&
                           x.Second.Content.Contains("Follow below a set of changes for review"))))
             .Select(x => x.Index)
