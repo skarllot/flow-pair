@@ -27,12 +27,26 @@ public sealed class ReviewChangesCommand(
     /// </summary>
     /// <param name="path">Path to the repository.</param>
     /// <param name="commit">-c, Commit hash.</param>
+    /// <param name="sourceBranch">-sb, The name of the source branch (e.g. main).</param>
+    /// <param name="targetBranch">-tb, The name of the target branch (e.g. feature-1).</param>
     [Command("review")]
     public int Execute(
         [Argument] string? path = null,
-        string? commit = null)
+        string? commit = null,
+        string? sourceBranch = null,
+        string? targetBranch = null)
     {
-        return (from diff in getChangesHandler.Extract(path, commit).OkOr(0)
+        if (commit is not null && (sourceBranch is not null || targetBranch is not null))
+        {
+            console.MarkupLine("[red]Error:[/] Specify a commit or source/target branch.");
+            return 1;
+        }
+
+        var extract = sourceBranch is not null || targetBranch is not null
+            ? getChangesHandler.ExtractFromBranchesDiff(path, sourceBranch, targetBranch)
+            : getChangesHandler.Extract(path, commit);
+
+        return (from diff in extract.OkOr(0)
                 from session in loginUseCase.Execute(isBackground: true)
                     .UnwrapErrOr(0)
                     .Ensure(n => n == 0, 1)

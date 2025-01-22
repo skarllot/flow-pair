@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using AutomaticInterface;
 using LibGit2Sharp;
 using Raiqub.LlmTools.FlowPair.Common;
+using Raiqub.LlmTools.FlowPair.Git.Services;
 using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
 using Spectre.Console;
 
@@ -12,7 +13,8 @@ public partial interface IGitGetChangesHandler;
 [GenerateAutomaticInterface]
 public class GitGetChangesHandler(
     IAnsiConsole console,
-    IWorkingDirectoryWalker workingDirectoryWalker)
+    IWorkingDirectoryWalker workingDirectoryWalker,
+    IGitRepositoryFactory repositoryFactory)
     : IGitGetChangesHandler
 {
     public Option<ImmutableList<FileChange>> Extract(string? path, string? commit)
@@ -24,7 +26,7 @@ public class GitGetChangesHandler(
             return None;
         }
 
-        using var repo = new Repository(gitRootDir.FullName);
+        using var repo = repositoryFactory.Create(gitRootDir);
         var builder = ImmutableList.CreateBuilder<FileChange>();
 
         if (!string.IsNullOrEmpty(commit))
@@ -43,7 +45,49 @@ public class GitGetChangesHandler(
         return Some(builder.ToImmutable());
     }
 
-    private bool FillChangesFromCommit(Repository repo, ImmutableList<FileChange>.Builder builder, string commit)
+    public Option<ImmutableList<FileChange>> ExtractFromBranchesDiff(
+        string? path,
+        string? sourceBranch,
+        string? targetBranch)
+    {
+        var gitRootDir = workingDirectoryWalker.TryFindRepositoryRoot(path).UnwrapOrNull();
+        if (gitRootDir is null)
+        {
+            console.MarkupLine("[red]Error:[/] Could not locate Git repository.");
+            return None;
+        }
+
+        using var repo = repositoryFactory.Create(gitRootDir);
+        var builder = ImmutableList.CreateBuilder<FileChange>();
+
+        var repoSourceBranch = sourceBranch is not null
+            ? repo.Branches
+                .FirstOrDefault(b => b.FriendlyName.Equals(sourceBranch, StringComparison.OrdinalIgnoreCase))
+            : repo.Branches
+                .FirstOrDefault(b => b.FriendlyName is "main" or "master");
+        if (repoSourceBranch is null)
+        {
+            console.MarkupLine("[red]Error:[/] Could not locate source branch.");
+            return None;
+        }
+
+        var repoTargetBranch = targetBranch is not null
+            ? repo.Branches
+                .FirstOrDefault(b => b.FriendlyName.Equals(targetBranch, StringComparison.OrdinalIgnoreCase))
+            : repo.Head;
+        if (repoTargetBranch is null)
+        {
+            console.MarkupLine("[red]Error:[/] Could not locate target branch.");
+            return None;
+        }
+
+        FillChangesBetweenCommits(builder, repo, repoSourceBranch.Tip, repoTargetBranch.Tip);
+
+        console.MarkupLine($"Found {builder.Count} changed files");
+        return Some(builder.ToImmutable());
+    }
+
+    private bool FillChangesFromCommit(IRepository repo, ImmutableList<FileChange>.Builder builder, string commit)
     {
         var foundCommit = repo.Commits
             .FirstOrDefault(c => c.Sha.StartsWith(commit, StringComparison.OrdinalIgnoreCase));
@@ -53,19 +97,16 @@ public class GitGetChangesHandler(
             return false;
         }
 
-        var parentCommit = foundCommit.Parents.FirstOrDefault();
-
-        foreach (var changes in repo.Diff
-                     .Compare<Patch>(parentCommit?.Tree, foundCommit.Tree)
-                     .Where(p => !p.IsBinaryComparison && p.Status != ChangeKind.Deleted && p.Mode != Mode.Directory))
+        if (!FillChangesBetweenCommits(builder, repo, null, foundCommit))
         {
-            builder.Add(new FileChange(changes.Path, changes.Patch));
+            console.MarkupLine("[red]Error:[/] The specified commit has multiple parents.");
+            return false;
         }
 
         return true;
     }
 
-    private static void FillChangesFallback(Repository repo, ImmutableList<FileChange>.Builder builder)
+    private static void FillChangesFallback(IRepository repo, ImmutableList<FileChange>.Builder builder)
     {
         FillChanges(repo, builder, DiffTargets.Index);
 
@@ -76,30 +117,54 @@ public class GitGetChangesHandler(
 
         if (builder.Count == 0)
         {
-            FillChangesFromLastCommit(repo, builder);
+            FillChangesBetweenCommits(builder, repo, null, repo.Head.Tip);
         }
     }
 
-    private static void FillChanges(Repository repo, ImmutableList<FileChange>.Builder builder, DiffTargets diffTargets)
+    private static void FillChanges(
+        IRepository repo,
+        ImmutableList<FileChange>.Builder builder,
+        DiffTargets diffTargets)
     {
         foreach (var changes in repo.Diff
                      .Compare<Patch>(repo.Head.Tip?.Tree, diffTargets)
-                     .Where(p => !p.IsBinaryComparison && p.Status != ChangeKind.Deleted && p.Mode != Mode.Directory))
+                     .Where(PatchSpecs.IsChangedCode))
         {
             builder.Add(new FileChange(changes.Path, changes.Patch));
         }
     }
 
-    private static void FillChangesFromLastCommit(Repository repo, ImmutableList<FileChange>.Builder builder)
+    private static bool FillChangesBetweenCommits(
+        ImmutableList<FileChange>.Builder builder,
+        IRepository repo,
+        Commit? sourceCommit,
+        Commit targetCommit)
     {
-        var lastCommit = repo.Head.Tip;
-        var parentCommit = lastCommit.Parents.FirstOrDefault();
+        Patch? patch;
+        if (sourceCommit is null)
+        {
+            patch = targetCommit.Parents.TrySingle()
+                .Match(
+                    p => repo.Diff.Compare<Patch>(p.Tree, targetCommit.Tree),
+                    e => e == SingleElementProblem.Empty
+                        ? repo.Diff.Compare<Patch>(null, targetCommit.Tree)
+                        : null);
+        }
+        else
+        {
+            patch = repo.Diff.Compare<Patch>(sourceCommit.Tree, targetCommit.Tree);
+        }
 
-        foreach (var changes in repo.Diff
-                     .Compare<Patch>(parentCommit?.Tree, lastCommit.Tree)
-                     .Where(p => !p.IsBinaryComparison && p.Status != ChangeKind.Deleted && p.Mode != Mode.Directory))
+        if (patch is null)
+        {
+            return false;
+        }
+
+        foreach (var changes in patch.Where(PatchSpecs.IsChangedCode))
         {
             builder.Add(new FileChange(changes.Path, changes.Patch));
         }
+
+        return true;
     }
 }
