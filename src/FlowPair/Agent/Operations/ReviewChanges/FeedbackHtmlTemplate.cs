@@ -12,15 +12,15 @@ namespace Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges
     using System.Collections.Immutable;
     using System.Text;
     using Common;
-    using Raiqub.Generators.T4CodeWriter;
     using v1;
+    using T4Template;
     using System;
     
     /// <summary>
     /// Class to produce the template output
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    public partial class FeedbackHtmlTemplate : CodeWriterBase<ImmutableList<ReviewerFeedbackResponse>>
+    public partial class FeedbackHtmlTemplate : T4TemplateBase<ImmutableList<ReviewerFeedbackResponse>>
     {
         /// <summary>
         /// Create the template output
@@ -80,8 +80,6 @@ namespace Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges
     {
         Model = model;
     }
-
-    public override string GetFileName() => Guid.NewGuid().ToString("N");
 
     private static string GetRiskLevelCssClass(int number) => number switch{
         0 => " is-white",
