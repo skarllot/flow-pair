@@ -24,7 +24,9 @@ public sealed class ProjectFilesMessageFactory(
             workingDirectoryWalker
                 .FindFilesByExtension(rootDirectory, extensions ?? FileNaming.ProjectExtensions)
                 .Concat(workingDirectoryWalker.FindFilesByName(rootDirectory, filenames ?? FileNaming.ProjectFiles))
-                .Aggregate(new StringBuilder(), (curr, next) => AggregateFileContent(curr, next, rootDirectory))
+                .Aggregate(
+                    new StringBuilder("The repository has the following project files:").AppendLine(),
+                    (curr, next) => AggregateFileContent(curr, next, rootDirectory))
                 .ToString());
     }
 
@@ -33,12 +35,8 @@ public sealed class ProjectFilesMessageFactory(
         IFileInfo fileInfo,
         IDirectoryInfo rootDirectory)
     {
-        if (sb.Length > 0)
-        {
-            sb.AppendLine();
-        }
-
-        sb.Append("File: ");
+        sb.AppendLine();
+        sb.Append("* File: ");
         sb.Append(rootDirectory.GetRelativePath(fileInfo.FullName));
         sb.AppendLine();
         sb.AppendLine("```");

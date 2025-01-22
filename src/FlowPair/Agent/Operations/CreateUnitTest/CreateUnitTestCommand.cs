@@ -3,7 +3,6 @@ using System.Text;
 using ConsoleAppFramework;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
-using Raiqub.LlmTools.FlowPair.Agent.Services;
 using Raiqub.LlmTools.FlowPair.Chats.Models;
 using Raiqub.LlmTools.FlowPair.Chats.Services;
 using Raiqub.LlmTools.FlowPair.Common;
@@ -15,10 +14,8 @@ namespace Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
 public sealed class CreateUnitTestCommand(
     IAnsiConsole console,
     IFileSystem fileSystem,
-    ICreateUnitTestChatDefinition chatDefinition,
+    ICreateUnitTestChatScript chatScript,
     IWorkingDirectoryWalker workingDirectoryWalker,
-    IProjectFilesMessageFactory projectFilesMessageFactory,
-    IDirectoryStructureMessageFactory directoryStructureMessageFactory,
     ILoginUseCase loginUseCase,
     IChatService chatService)
 {
@@ -53,9 +50,9 @@ public sealed class CreateUnitTestCommand(
                 from session in loginUseCase.Execute(isBackground: true)
                     .UnwrapErrOr(0)
                     .Ensure(n => n == 0, 4)
-                let initialMessages = BuildInitialMessages(fileInfo, exampleFileInfo, rootPath).ToList()
+                let input = new CreateUnitTestRequest(fileInfo, exampleFileInfo, rootPath)
                 from response in chatService
-                    .Run(console.Progress(), LlmModelType.Claude35Sonnet, chatDefinition, initialMessages)
+                    .Run(input, console.Progress(), LlmModelType.Claude35Sonnet, chatScript)
                     .MapErr(HandleChatServiceError)
                 let testFile = CreateUnitTestFile(rootPath, response)
                 select 0)
@@ -72,36 +69,6 @@ public sealed class CreateUnitTestCommand(
     {
         console.MarkupLineInterpolated($"[red]Error:[/] {errorMessage}");
         return 5;
-    }
-
-    private IEnumerable<Message> BuildInitialMessages(
-        IFileInfo fileInfo,
-        IFileInfo? exampleFileInfo,
-        IDirectoryInfo rootPath)
-    {
-        yield return projectFilesMessageFactory.CreateWithProjectFilesContent(rootPath);
-        yield return directoryStructureMessageFactory.CreateWithRepositoryStructure(rootPath);
-
-        if (exampleFileInfo is not null)
-        {
-            yield return new Message(
-                SenderRole.User,
-                $"""
-                 Unit tests example:
-                 ```
-                 {exampleFileInfo.ReadAllText()}
-                 ```
-                 """);
-        }
-
-        yield return new Message(
-            SenderRole.User,
-            $"""
-             The source file to be tested is located at '{rootPath.GetRelativePath(fileInfo.FullName)}' and its content is:
-             ```
-             {fileInfo.ReadAllText()}
-             ```
-             """);
     }
 
     private Unit CreateUnitTestFile(IDirectoryInfo rootPath, CreateUnitTestResponse response)

@@ -3,7 +3,6 @@ using System.Text;
 using ConsoleAppFramework;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.UpdateUnitTest.v1;
-using Raiqub.LlmTools.FlowPair.Agent.Services;
 using Raiqub.LlmTools.FlowPair.Chats.Models;
 using Raiqub.LlmTools.FlowPair.Chats.Services;
 using Raiqub.LlmTools.FlowPair.Common;
@@ -15,10 +14,8 @@ namespace Raiqub.LlmTools.FlowPair.Agent.Operations.UpdateUnitTest;
 public sealed class UpdateUnitTestCommand(
     IAnsiConsole console,
     IFileSystem fileSystem,
-    IUpdateUnitTestChatDefinition chatDefinition,
+    IUpdateUnitTestChatScript chatScript,
     IWorkingDirectoryWalker workingDirectoryWalker,
-    IProjectFilesMessageFactory projectFilesMessageFactory,
-    IDirectoryStructureMessageFactory directoryStructureMessageFactory,
     ILoginUseCase loginUseCase,
     IChatService chatService)
 {
@@ -51,9 +48,9 @@ public sealed class UpdateUnitTestCommand(
                 from session in loginUseCase.Execute(isBackground: true)
                     .UnwrapErrOr(0)
                     .Ensure(n => n == 0, 4)
-                let initialMessages = BuildInitialMessages(sourceFileInfo, testFileInfo, rootPath).ToList()
+                let input = new UpdateUnitTestRequest(sourceFileInfo, testFileInfo, rootPath)
                 from response in chatService
-                    .Run(console.Progress(), LlmModelType.Claude35Sonnet, chatDefinition, initialMessages)
+                    .Run(input, console.Progress(), LlmModelType.Claude35Sonnet, chatScript)
                     .MapErr(HandleChatServiceError)
                 let create = RewriteUnitTestFile(rootPath, testFileInfo, response)
                 select 0)
@@ -70,33 +67,6 @@ public sealed class UpdateUnitTestCommand(
     {
         console.MarkupLineInterpolated($"[red]Error:[/] {errorMessage}");
         return 5;
-    }
-
-    private IEnumerable<Message> BuildInitialMessages(
-        IFileInfo sourceFileInfo,
-        IFileInfo testFileInfo,
-        IDirectoryInfo rootPath)
-    {
-        yield return projectFilesMessageFactory.CreateWithProjectFilesContent(rootPath);
-        yield return directoryStructureMessageFactory.CreateWithRepositoryStructure(rootPath);
-
-        yield return new Message(
-            SenderRole.User,
-            $"""
-             The source file updated content is:
-             ```
-             {sourceFileInfo.ReadAllText()}
-             ```
-             """);
-
-        yield return new Message(
-            SenderRole.User,
-            $"""
-             The existing test file content is:
-             ```
-             {testFileInfo.ReadAllText()}
-             ```
-             """);
     }
 
     private Unit RewriteUnitTestFile(IDirectoryInfo rootPath, IFileInfo testFileInfo, UpdateUnitTestResponse response)

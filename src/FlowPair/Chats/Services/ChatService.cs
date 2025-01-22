@@ -14,29 +14,18 @@ public partial interface IChatService;
 
 [GenerateAutomaticInterface]
 public sealed class ChatService(
+    TimeProvider timeProvider,
     ChatJsonContext jsonContext,
     IProxyCompleteChatHandler completeChatHandler,
     ITempFileWriter tempFileWriter)
     : IChatService
 {
-    public Result<TResult, string> Run<TResult>(
+    public Result<TResult, string> Run<TInput, TResult>(
+        TInput input,
         Progress progress,
         LlmModelType llmModelType,
-        IChatDefinition<TResult> chatDefinition)
-        where TResult : notnull
-    {
-        return Run(
-            progress,
-            llmModelType,
-            chatDefinition,
-            chatDefinition.ChatScript.InitialMessages);
-    }
-
-    public Result<TResult, string> Run<TResult>(
-        Progress progress,
-        LlmModelType llmModelType,
-        IChatDefinition<TResult> chatDefinition,
-        IReadOnlyList<Message> initialMessages)
+        IProcessableChatScript<TInput, TResult> chatScript)
+        where TInput : notnull
         where TResult : notnull
     {
         return progress
@@ -46,43 +35,35 @@ public sealed class ChatService(
                 new ProgressBarColumn(),
                 new PercentageColumn(),
                 new LongRemainingTimeColumn())
-            .Start(context => RunInternal(context, llmModelType, chatDefinition, initialMessages));
+            .Start(context => RunInternal(input, context, llmModelType, chatScript));
     }
 
-    private Result<TResult, string> RunInternal<TResult>(
+    private Result<TResult, string> RunInternal<TInput, TResult>(
+        TInput input,
         ProgressContext progressContext,
         LlmModelType llmModelType,
-        IChatDefinition<TResult> chatDefinition,
-        IEnumerable<Message> initialMessages)
+        IProcessableChatScript<TInput, TResult> chatScript)
+        where TInput : notnull
         where TResult : notnull
     {
-        var chatScript = chatDefinition.ChatScript;
         var progress = progressContext.AddTask(
             $"Running '{chatScript.Name}'",
-            maxValue: chatScript.TotalSteps);
+            maxValue: chatScript.GetTotalSteps());
 
-        var workspace = new ChatWorkspace(
-        [
-            new ChatThread(
-                progress,
-                llmModelType,
-                ChatThread.CreateStopKeyword(),
-                [new Message(SenderRole.System, chatScript.SystemInstruction), ..initialMessages],
-                chatDefinition)
-        ]);
+        var workspace = chatScript.CreateChatWorkspace(input, progress, llmModelType);
 
         return chatScript.Instructions
             .TryAggregate(workspace, (ws, i) => ws.RunInstruction(i, completeChatHandler))
             .Do(SaveChatHistory)
             .SelectMany(
-                chatWorkspace => chatDefinition.ConvertResult(chatWorkspace)
+                chatWorkspace => chatScript.CompileOutputs(chatWorkspace)
                     .OkOr("Failed to produce a valid output content"));
     }
 
     private void SaveChatHistory(ChatWorkspace workspace)
     {
         tempFileWriter.WriteJson(
-            $"{DateTime.UtcNow:yyyyMMddHHmmss}-history.json",
+            $"{timeProvider.GetUtcNow():yyyyMMddHHmmss}-history.json",
             workspace.ChatThreads.Select(t => t.Messages).ToImmutableList(),
             jsonContext.ImmutableListImmutableListMessage);
     }

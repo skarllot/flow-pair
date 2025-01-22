@@ -1,11 +1,9 @@
-﻿using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
+﻿using System.IO.Abstractions.TestingHelpers;
 using FluentAssertions;
 using NSubstitute;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest.v1;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
-using Raiqub.LlmTools.FlowPair.Agent.Services;
 using Raiqub.LlmTools.FlowPair.Chats.Models;
 using Raiqub.LlmTools.FlowPair.Chats.Services;
 using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
@@ -19,14 +17,8 @@ public sealed class CreateUnitTestCommandTests : IDisposable
 {
     private readonly TestConsole _console = new();
     private readonly MockFileSystem _fileSystem = new();
-    private readonly ICreateUnitTestChatDefinition _chatDefinition = Substitute.For<ICreateUnitTestChatDefinition>();
+    private readonly ICreateUnitTestChatScript _chatScript = Substitute.For<ICreateUnitTestChatScript>();
     private readonly IWorkingDirectoryWalker _workingDirectoryWalker = Substitute.For<IWorkingDirectoryWalker>();
-
-    private readonly IProjectFilesMessageFactory _projectFilesMessageFactory =
-        Substitute.For<IProjectFilesMessageFactory>();
-
-    private readonly IDirectoryStructureMessageFactory _directoryStructureMessageFactory =
-        Substitute.For<IDirectoryStructureMessageFactory>();
 
     private readonly ILoginUseCase _loginUseCase = Substitute.For<ILoginUseCase>();
     private readonly IChatService _chatService = Substitute.For<IChatService>();
@@ -36,10 +28,8 @@ public sealed class CreateUnitTestCommandTests : IDisposable
     private CreateUnitTestCommand CreateCommand() => new(
         _console,
         _fileSystem,
-        _chatDefinition,
+        _chatScript,
         _workingDirectoryWalker,
-        _projectFilesMessageFactory,
-        _directoryStructureMessageFactory,
         _loginUseCase,
         _chatService);
 
@@ -121,10 +111,10 @@ public sealed class CreateUnitTestCommandTests : IDisposable
         if (loginResult != 0)
         {
             _chatService.DidNotReceiveWithAnyArgs().Run(
+                input: Arg.Any<CreateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<ICreateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>());
+                chatScript: Arg.Any<ICreateUnitTestChatScript>());
         }
     }
 
@@ -142,10 +132,10 @@ public sealed class CreateUnitTestCommandTests : IDisposable
             .Execute(true)
             .Returns(0);
         _chatService.Run(
+                input: Arg.Any<CreateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<ICreateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
+                chatScript: Arg.Any<ICreateUnitTestChatScript>())
             .Returns("Chat service error");
 
         var result = command.Execute(filePath);
@@ -171,10 +161,10 @@ public sealed class CreateUnitTestCommandTests : IDisposable
 
         var response = new CreateUnitTestResponse("path/to/tests/FileTests.cs", "// Generated unit test content");
         _chatService.Run(
+                input: Arg.Any<CreateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<ICreateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
+                chatScript: Arg.Any<ICreateUnitTestChatScript>())
             .Returns(response);
 
         var result = command.Execute(filePath);
@@ -201,37 +191,22 @@ public sealed class CreateUnitTestCommandTests : IDisposable
             .Execute(true)
             .Returns(0);
 
-        _projectFilesMessageFactory
-            .CreateWithProjectFilesContent(
-                Arg.Any<IDirectoryInfo>(),
-                Arg.Any<IEnumerable<string>?>(),
-                Arg.Any<IEnumerable<string>?>())
-            .Returns(new Message(SenderRole.User, "// Projects"));
-
-        _directoryStructureMessageFactory
-            .CreateWithRepositoryStructure(Arg.Any<IDirectoryInfo>())
-            .Returns(new Message(SenderRole.User, "// Structure"));
-
         var response = new CreateUnitTestResponse("path/to/tests/FileTests.cs", "// Generated unit test content");
         _chatService.Run(
+                input: Arg.Any<CreateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<ICreateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
+                chatScript: Arg.Any<ICreateUnitTestChatScript>())
             .Returns(response);
 
         var result = command.Execute(filePath, exampleFilePath);
 
         result.Should().Be(0);
         _chatService.Received(requiredNumberOfCalls: 1).Run(
+            input: Arg.Any<CreateUnitTestRequest>(),
             progress: Arg.Any<Progress>(),
-            llmModelType: Arg.Is<LlmModelType>(m => m == LlmModelType.Claude35Sonnet),
-            chatDefinition: Arg.Any<ICreateUnitTestChatDefinition>(),
-            initialMessages: Arg.Is<IReadOnlyList<Message>>(
-                messages =>
-                    messages.Any(m => m.Content.Contains("// Example test code")) &&
-                    messages.Any(m => m.Content.Contains("// Some code")))
-        );
+            llmModelType: Arg.Any<LlmModelType>(),
+            chatScript: Arg.Any<ICreateUnitTestChatScript>());
     }
 
     [Fact]
@@ -253,10 +228,10 @@ public sealed class CreateUnitTestCommandTests : IDisposable
             FilePath: "path/to/nonexistent/directory/FileTests.cs",
             Content: "// Generated unit test content");
         _chatService.Run(
+                input: Arg.Any<CreateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<ICreateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
+                chatScript: Arg.Any<ICreateUnitTestChatScript>())
             .Returns(response);
 
         var result = command.Execute(filePath);
@@ -283,22 +258,19 @@ public sealed class CreateUnitTestCommandTests : IDisposable
 
         var response = new CreateUnitTestResponse("path/to/tests/FileTests.cs", "// Generated unit test content");
         _chatService.Run(
+                input: Arg.Any<CreateUnitTestRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: Arg.Any<LlmModelType>(),
-                chatDefinition: Arg.Any<ICreateUnitTestChatDefinition>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
+                chatScript: Arg.Any<ICreateUnitTestChatScript>())
             .Returns(response);
 
         var result = command.Execute(filePath);
 
         result.Should().Be(0);
-        _projectFilesMessageFactory.Received(1).CreateWithProjectFilesContent(rootDirectory);
-        _directoryStructureMessageFactory.Received(1).CreateWithRepositoryStructure(rootDirectory);
         _chatService.Received(requiredNumberOfCalls: 1).Run(
+            input: Arg.Any<CreateUnitTestRequest>(),
             progress: Arg.Any<Progress>(),
             llmModelType: Arg.Any<LlmModelType>(),
-            chatDefinition: Arg.Any<ICreateUnitTestChatDefinition>(),
-            initialMessages: Arg.Is<IReadOnlyList<Message>>(messages => messages.Count >= 3)
-        );
+            chatScript: Arg.Any<ICreateUnitTestChatScript>());
     }
 }

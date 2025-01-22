@@ -18,8 +18,9 @@ namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Operations.ReviewChanges;
 [TestSubject(typeof(ReviewChangesCommand))]
 public sealed class ReviewChangesCommandTest : IDisposable
 {
+    private readonly TimeProvider _timeProvider = Substitute.For<TimeProvider>();
     private readonly TestConsole _console = new();
-    private readonly IReviewChatDefinition _chatDefinition = Substitute.For<IReviewChatDefinition>();
+    private readonly IReviewChatScript _chatScript = Substitute.For<IReviewChatScript>();
     private readonly IGitGetChangesHandler _getChangesHandler = Substitute.For<IGitGetChangesHandler>();
     private readonly ILoginUseCase _loginUseCase = Substitute.For<ILoginUseCase>();
     private readonly IChatService _chatService = Substitute.For<IChatService>();
@@ -27,8 +28,9 @@ public sealed class ReviewChangesCommandTest : IDisposable
 
     private ReviewChangesCommand CreateCommand() =>
         new(
+            timeProvider: _timeProvider,
             console: _console,
-            chatDefinition: _chatDefinition,
+            chatScript: _chatScript,
             getChangesHandler: _getChangesHandler,
             loginUseCase: _loginUseCase,
             chatService: _chatService,
@@ -73,7 +75,8 @@ public sealed class ReviewChangesCommandTest : IDisposable
 
         // Assert
         result.Should().Be(1);
-        _chatService.DidNotReceiveWithAnyArgs().Run<ReviewerFeedbackResponse>(null, default, null, null);
+        _chatService.DidNotReceiveWithAnyArgs()
+            .Run<ReviewChangesRequest, ReviewerFeedbackResponse>(null!, null, 0, null);
     }
 
     [Fact]
@@ -85,6 +88,9 @@ public sealed class ReviewChangesCommandTest : IDisposable
             new FileChange("path/to/file1.cs", "diff content 1"),
             new FileChange("path/to/file2.cs", "diff content 2"));
 
+        _timeProvider.GetUtcNow()
+            .Returns(new DateTime(2025, 1, 2, 3, 4, 5, DateTimeKind.Utc));
+
         _getChangesHandler
             .Extract(Arg.Any<string>(), Arg.Any<string>())
             .Returns(fileChanges);
@@ -93,8 +99,16 @@ public sealed class ReviewChangesCommandTest : IDisposable
             .Execute(isBackground: true)
             .Returns(0);
 
-        _chatDefinition.ChatScript
-            .Returns(new ChatScript("test", [".cs"], "system", [Instruction.StepInstruction.Of("Review changes")]));
+        _chatScript
+            .GetInitialMessages(
+                Arg.Is<ReviewChangesRequest>(
+                    r => r.Diff.Contains("diff content 1") &&
+                         r.Diff.Contains("diff content 2")))
+            .Returns([new Message(SenderRole.User, "diff content")]);
+        _chatScript.Extensions
+            .Returns([".cs"]);
+        _chatScript.Instructions
+            .Returns([Instruction.StepInstruction.Of("Review changes")]);
 
         var feedbackResponses = ImmutableList.Create(
             new ReviewerFeedbackResponse(
@@ -118,12 +132,12 @@ public sealed class ReviewChangesCommandTest : IDisposable
 
         _chatService
             .Run(
+                input: Arg.Any<ReviewChangesRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: LlmModelType.Claude35Sonnet,
-                chatDefinition: Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-                initialMessages: Arg.Is<IReadOnlyList<Message>>(
-                    m => m.Count == 1 && m[0].Content.Contains("diff content 1") &&
-                         m[0].Content.Contains("diff content 2")))
+                chatScript: Arg.Any<IProcessableChatScript<
+                    ReviewChangesRequest,
+                    ImmutableList<ReviewerFeedbackResponse>>>())
             .Returns(feedbackResponses);
 
         // Act
@@ -132,7 +146,7 @@ public sealed class ReviewChangesCommandTest : IDisposable
         // Assert
         result.Should().Be(0);
         _tempFileWriter.Received(1).Write(
-            Arg.Is<string>(s => s.EndsWith("-feedback.html")),
+            Arg.Is<string>(s => s == "20250102030405-feedback.html"),
             Arg.Is<string>(s => s.Contains("Feedback 1") && s.Contains("Feedback 2")));
         _console.Output.Should().Contain("Created 2 comments");
     }
@@ -152,15 +166,19 @@ public sealed class ReviewChangesCommandTest : IDisposable
             .Execute(isBackground: true)
             .Returns(0);
 
-        _chatDefinition.ChatScript
-            .Returns(new ChatScript("test", [".cs"], "system", [Instruction.StepInstruction.Of("Review changes")]));
+        _chatScript.Extensions
+            .Returns([".cs"]);
+        _chatScript.Instructions
+            .Returns([Instruction.StepInstruction.Of("Review changes")]);
 
         _chatService
             .Run(
+                input: Arg.Any<ReviewChangesRequest>(),
                 progress: Arg.Any<Progress>(),
                 llmModelType: LlmModelType.Claude35Sonnet,
-                chatDefinition: Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-                initialMessages: Arg.Any<IReadOnlyList<Message>>())
+                chatScript: Arg.Any<IProcessableChatScript<
+                    ReviewChangesRequest,
+                    ImmutableList<ReviewerFeedbackResponse>>>())
             .Returns("Error in Chat Service");
 
         // Act
@@ -191,15 +209,27 @@ public sealed class ReviewChangesCommandTest : IDisposable
             .Execute(isBackground: true)
             .Returns(0);
 
-        _chatDefinition.ChatScript
-            .Returns(new ChatScript("test", [".cs"], "system", [Instruction.StepInstruction.Of("Review changes")]));
+        _chatScript
+            .GetInitialMessages(
+                Arg.Is<ReviewChangesRequest>(
+                    r => r.Diff.Contains("diff content cs") &&
+                         !r.Diff.Contains("diff content js")))
+            .Returns([new Message(SenderRole.User, "diff content")]);
+        _chatScript.Extensions
+            .Returns([".cs"]);
+        _chatScript.Instructions
+            .Returns([Instruction.StepInstruction.Of("Review changes")]);
 
         _chatService
             .Run(
+                input: Arg.Is<ReviewChangesRequest>(
+                    r => r.Diff.Contains("diff content cs") &&
+                         !r.Diff.Contains("diff content js")),
                 progress: Arg.Any<Progress>(),
                 llmModelType: LlmModelType.Claude35Sonnet,
-                chatDefinition: Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-                initialMessages: Arg.Is<IReadOnlyList<Message>>(m => m.Count == 1 && m[0].Content == "diff content cs"))
+                chatScript: Arg.Any<IProcessableChatScript<
+                    ReviewChangesRequest,
+                    ImmutableList<ReviewerFeedbackResponse>>>())
             .Returns(ImmutableList<ReviewerFeedbackResponse>.Empty);
 
         // Act
@@ -207,11 +237,6 @@ public sealed class ReviewChangesCommandTest : IDisposable
 
         // Assert
         result.Should().Be(0);
-        _chatService.Received(1).Run(
-            Arg.Any<Progress>(),
-            LlmModelType.Claude35Sonnet,
-            Arg.Any<IChatDefinition<ImmutableList<ReviewerFeedbackResponse>>>(),
-            Arg.Is<IReadOnlyList<Message>>(m => m.Count == 1 && m[0].Content == "diff content cs"));
         _console.Output.Should().Contain("Created 0 comments");
         _tempFileWriter.DidNotReceiveWithAnyArgs().Write(null!, null!);
     }

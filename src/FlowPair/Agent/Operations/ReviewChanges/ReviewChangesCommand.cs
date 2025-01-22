@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using ConsoleAppFramework;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
+using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
 using Raiqub.LlmTools.FlowPair.Chats.Models;
 using Raiqub.LlmTools.FlowPair.Chats.Services;
 using Raiqub.LlmTools.FlowPair.Common;
@@ -13,8 +14,9 @@ using Spectre.Console;
 namespace Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
 
 public sealed class ReviewChangesCommand(
+    TimeProvider timeProvider,
     IAnsiConsole console,
-    IReviewChatDefinition chatDefinition,
+    IReviewChatScript chatScript,
     IGitGetChangesHandler getChangesHandler,
     ILoginUseCase loginUseCase,
     IChatService chatService,
@@ -41,12 +43,19 @@ public sealed class ReviewChangesCommand(
 
     private Result<Unit, int> BuildFeedback(ImmutableList<FileChange> changes)
     {
-        var feedback = changes
-            .GroupBy(c => ChatScript.FindChatScriptForFile([chatDefinition.ChatScript], c.Path))
-            .Where(g => g.Key.IsSome)
-            .Select(g => new { Script = g.Key.Unwrap(), Diff = g.AggregateToStringLines(c => c.Diff) })
-            .SelectMany(x => GetFeedback(x.Diff))
-            .Where(f => !string.IsNullOrWhiteSpace(f.Feedback))
+        var aggregatedChanges = changes
+            .Where(c => chatScript.CanHandleFile(c.Path))
+            .AggregateToStringLines(c => c.Diff);
+
+        var feedback = chatService
+            .Run(
+                new ReviewChangesRequest(aggregatedChanges),
+                console.Progress(),
+                LlmModelType.Claude35Sonnet,
+                chatScript)
+            .DoErr(error => console.MarkupLineInterpolated($"[red]Error:[/] {error}"))
+            .UnwrapOrElse(static () => [])
+            .Where(r => !string.IsNullOrWhiteSpace(r.Feedback))
             .OrderByDescending(x => x.RiskScore).ThenBy(x => x.Path, StringComparer.OrdinalIgnoreCase)
             .ToImmutableList();
 
@@ -56,23 +65,11 @@ public sealed class ReviewChangesCommand(
         {
             tempFileWriter
                 .Write(
-                    filename: $"{DateTime.UtcNow:yyyyMMddHHmmss}-feedback.html",
+                    filename: $"{timeProvider.GetUtcNow():yyyyMMddHHmmss}-feedback.html",
                     content: new FeedbackHtmlTemplate(feedback).TransformText())
                 .LaunchFile(console);
         }
 
         return Unit();
-    }
-
-    private ImmutableList<ReviewerFeedbackResponse> GetFeedback(
-        string diff)
-    {
-        return chatService.Run(
-                console.Progress(),
-                LlmModelType.Claude35Sonnet,
-                chatDefinition,
-                [new Message(SenderRole.User, diff)])
-            .DoErr(error => console.MarkupLineInterpolated($"[red]Error:[/] {error}"))
-            .UnwrapOrElse(static () => []);
     }
 }
