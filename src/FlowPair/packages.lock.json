@@ -69,11 +69,11 @@
         "resolved": "1.9.21",
         "contentHash": "zWpcPLpDwWczHfUqI4hV6YxJMKzsKH5mNbSuvv0NJ9NsM8pZ1oOEMPDvCcPbzlHDg4ZAddOFKXBcq2HouhsdNA=="
       },
-      "Raiqub.Generators.T4CodeWriter.Sources": {
+      "Raiqub.T4Template": {
         "type": "Direct",
-        "requested": "[1.0.64, )",
-        "resolved": "1.0.64",
-        "contentHash": "eEldrJOoau56Hu1KVcNb8+g0m4lMLcLU//XyYbem48hqYwFH9cAWbKpnwXymPXfVbM8F6SR+Z56DwXgHlMteKg=="
+        "requested": "[1.1.4, )",
+        "resolved": "1.1.4",
+        "contentHash": "2Pty8HHExwhK4AWH0e6PVSAxfmqa2a/j8CN66eI09uaw6sE57BzZ0KyzIAIonyCNLczLzZHO3XIhn/9bAEB2xA=="
       },
       "Spectre.Console": {
         "type": "Direct",
