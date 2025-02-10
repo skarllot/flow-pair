@@ -10,9 +10,9 @@
       },
       "ConsoleAppFramework": {
         "type": "Direct",
-        "requested": "[5.3.4, )",
-        "resolved": "5.3.4",
-        "contentHash": "/wDCZk9w895ZtpkqDxiDemh4Hrbz9txuHrOh+o6UFITY0jdsnIBxYJCKpnH6a99FsRrE2jsABqMC5NHgk8uV/w=="
+        "requested": "[5.4.0, )",
+        "resolved": "5.4.0",
+        "contentHash": "o0ZXrqMEX52h994QA5oiS8qBo62szFc//HH9SxvXIOG4KRmhrfpliW57iSl4/Hjr0tqJcdMwhMzr9K5+TLSUUA=="
       },
       "DotNet.ReproducibleBuilds": {
         "type": "Direct",
