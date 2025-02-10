@@ -16,7 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="Jab" Version="0.10.2" />
+    <PackageVersion Include="Jab" Version="0.11.0" />
     <PackageVersion Include="LibGit2Sharp" Version="0.31.0" />
     <PackageVersion Include="Raiqub.Generators.EnumUtilities" Version="1.9.21" />
     <PackageVersion Include="Raiqub.T4Template" Version="1.1.4" />
