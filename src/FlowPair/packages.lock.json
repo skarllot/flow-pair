@@ -71,9 +71,9 @@
       },
       "Raiqub.T4Template": {
         "type": "Direct",
-        "requested": "[1.1.4, )",
-        "resolved": "1.1.4",
-        "contentHash": "2Pty8HHExwhK4AWH0e6PVSAxfmqa2a/j8CN66eI09uaw6sE57BzZ0KyzIAIonyCNLczLzZHO3XIhn/9bAEB2xA=="
+        "requested": "[1.2.3, )",
+        "resolved": "1.2.3",
+        "contentHash": "mQ8ma62B1bz7kAG/q0ug/T9xtT56Mk4KMyjDjZ3ef8voVUpEn5o7LwCEGzhBNZtf+V7EYzSypyTwsB98zyruNA=="
       },
       "Spectre.Console": {
         "type": "Direct",
