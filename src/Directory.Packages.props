@@ -11,8 +11,8 @@
   <ItemGroup>
     <PackageVersion Include="AutomaticInterface" Version="5.1.2" />
     <PackageVersion Include="ConsoleAppFramework" Version="5.4.0" />
-    <PackageVersion Include="FxKit" Version="0.8.4" />
-    <PackageVersion Include="FxKit.CompilerServices" Version="0.8.4">
+    <PackageVersion Include="FxKit" Version="0.8.5" />
+    <PackageVersion Include="FxKit.CompilerServices" Version="0.8.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>

@@ -10,7 +10,7 @@
     </PackageVersion>
     <PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
     <PackageVersion Include="FluentAssertions" Version="7.0.0" />
-    <PackageVersion Include="FxKit.Testing" Version="0.8.4" />
+    <PackageVersion Include="FxKit.Testing" Version="0.8.5" />
     <PackageVersion Include="JetBrains.Annotations" Version="2024.3.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />

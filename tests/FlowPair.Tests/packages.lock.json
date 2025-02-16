@@ -25,12 +25,12 @@
       },
       "FxKit.Testing": {
         "type": "Direct",
-        "requested": "[0.8.4, )",
-        "resolved": "0.8.4",
-        "contentHash": "LlvidPAxZxxHC6te45ZLw9jM3QAkq6xyjAgaqnfZW2CEPAiR/NIUoWU4jAuvLgH93rR1mviwWwvFDiD5PKKazw==",
+        "requested": "[0.8.5, )",
+        "resolved": "0.8.5",
+        "contentHash": "HIL1Bdsbs+6fEzpaXlTncFx/1S9X3PI90UCnUvQSC4574/Q4TAswIae3ML1G8yZg0rSn6aaWObw+Q1QPcjXMKw==",
         "dependencies": {
           "FluentAssertions": "6.12.2",
-          "FxKit": "0.8.4"
+          "FxKit": "0.8.5"
         }
       },
       "JetBrains.Annotations": {
@@ -111,17 +111,17 @@
       },
       "FxKit": {
         "type": "Transitive",
-        "resolved": "0.8.4",
-        "contentHash": "rzPMlTzQNRNYs/5eXLHC7Qx3UI+1k9X8oaSBASUi6L/Y6lFw81PA7jrxxqSX6ebhtIs0wplq/EagrTBna3+v9g==",
+        "resolved": "0.8.5",
+        "contentHash": "SvdbTeHzGtqsIAQ3OmZ5vLrHIztDNTITI0DYMasV7x23M2EqLkHEK6BqypkhfZ5Repbl95NwRQrrIPMhBjsYiQ==",
         "dependencies": {
-          "FxKit.CompilerServices.Annotations": "0.8.4",
+          "FxKit.CompilerServices.Annotations": "0.8.5",
           "JetBrains.Annotations": "2024.3.0"
         }
       },
       "FxKit.CompilerServices.Annotations": {
         "type": "Transitive",
-        "resolved": "0.8.4",
-        "contentHash": "L6IcCB4wRURS0TfUjXElNfLSQBK6sg7OLJJTStPvivJdwAMP/GNhIYbdxMel4s9Klnx9pCVh3C73XC5hwW966A=="
+        "resolved": "0.8.5",
+        "contentHash": "xqMXDaY7JOBJWuajnXbAZUzgOrExjFEXCd0wph35q99wzaFueAA3/+bvowiPXM2i8sBbCf8/GTk6+CACQXFELA=="
       },
       "Jab": {
         "type": "Transitive",
@@ -306,7 +306,7 @@
       "flowpair": {
         "type": "Project",
         "dependencies": {
-          "FxKit": "[0.8.4, )",
+          "FxKit": "[0.8.5, )",
           "Jab": "[0.11.0, )",
           "LibGit2Sharp": "[0.31.0, )",
           "Raiqub.Generators.EnumUtilities": "[1.10.2, )",
