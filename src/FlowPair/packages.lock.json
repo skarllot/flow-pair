@@ -4,9 +4,9 @@
     "net9.0": {
       "AutomaticInterface": {
         "type": "Direct",
-        "requested": "[5.1.2, )",
-        "resolved": "5.1.2",
-        "contentHash": "z5FcwxOI53NrHSmKa5lsejnamQnTpBrRPWRBgJs6+JyF3uUo9lprpd6k/1KcR1zj5cbeRM9j68xMCkJysrjS0w=="
+        "requested": "[5.1.3, )",
+        "resolved": "5.1.3",
+        "contentHash": "f1alp86Dby33bKJpICLhxr6zvLi66CFRsXhl/G6xNR7205ZZ5Vr3lUoTgaMex9oh12vVjbeoGbshKJ65L7871A=="
       },
       "ConsoleAppFramework": {
         "type": "Direct",
