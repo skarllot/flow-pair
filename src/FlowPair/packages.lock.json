@@ -83,11 +83,11 @@
       },
       "TestableIO.System.IO.Abstractions.Wrappers": {
         "type": "Direct",
-        "requested": "[21.3.1, )",
-        "resolved": "21.3.1",
-        "contentHash": "l/xu8G96pntsofFG8vh6BKbVbYWtqYZTpNCcj4jGNwxwSbwY2gvDmkiFmIbWf7lgzPZbopW2FAfaY6m4K/3QJw==",
+        "requested": "[22.0.11, )",
+        "resolved": "22.0.11",
+        "contentHash": "HsaKBbeY1qRmaALkNt3qWfF3QpXCm+Q3KB8f34hQ1vXax3gmtZo2s56xRZPcFiW08N77LrX9GvAYZdV6rVQYEw==",
         "dependencies": {
-          "TestableIO.System.IO.Abstractions": "21.3.1"
+          "Testably.Abstractions.FileSystem.Interface": "9.0.0"
         }
       },
       "FxKit.CompilerServices.Annotations": {
@@ -105,10 +105,10 @@
         "resolved": "2.0.323",
         "contentHash": "Kg+fJGWhGj5qRXG0Ilj4ddhuodGXZg57yhfX6OVUDR0M2DKg/UR42/d74+qv5l1qotc1qJilo/ho7xQnULP6yA=="
       },
-      "TestableIO.System.IO.Abstractions": {
+      "Testably.Abstractions.FileSystem.Interface": {
         "type": "Transitive",
-        "resolved": "21.3.1",
-        "contentHash": "B9USlBOZAiqXss7AI4BH6HVWs+HoHx38OadJjBO0VCzEWgP/u0u52bogmrzDHsyqRv8Yo/xtIMQXgpjLoaAUXw=="
+        "resolved": "9.0.0",
+        "contentHash": "uksk86YlnzAdyfVNu3wICU0X5iXVe9LF7Q3UkngNliHWEvM5gvAlOUr+jmd9JwmbJWISH5+i1vyXE02lEVz7WQ=="
       }
     },
     "net9.0/linux-arm64": {
