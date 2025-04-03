@@ -9,8 +9,8 @@
     <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.7.115" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="AutomaticInterface" Version="5.1.2" />
-    <PackageVersion Include="ConsoleAppFramework" Version="5.4.0" />
+    <PackageVersion Include="AutomaticInterface" Version="5.1.3" />
+    <PackageVersion Include="ConsoleAppFramework" Version="5.4.1" />
     <PackageVersion Include="FxKit" Version="0.8.5" />
     <PackageVersion Include="FxKit.CompilerServices" Version="0.8.5">
       <PrivateAssets>all</PrivateAssets>
@@ -18,9 +18,9 @@
     </PackageVersion>
     <PackageVersion Include="Jab" Version="0.11.0" />
     <PackageVersion Include="LibGit2Sharp" Version="0.31.0" />
-    <PackageVersion Include="Raiqub.Generators.EnumUtilities" Version="1.10.2" />
+    <PackageVersion Include="Raiqub.Generators.EnumUtilities" Version="1.11.4" />
     <PackageVersion Include="Raiqub.T4Template" Version="1.2.3" />
     <PackageVersion Include="Spectre.Console" Version="0.49.1" />
-    <PackageVersion Include="TestableIO.System.IO.Abstractions.Wrappers" Version="21.3.1" />
+    <PackageVersion Include="TestableIO.System.IO.Abstractions.Wrappers" Version="22.0.12" />
   </ItemGroup>
 </Project>

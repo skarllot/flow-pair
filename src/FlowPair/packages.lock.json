@@ -4,15 +4,15 @@
     "net9.0": {
       "AutomaticInterface": {
         "type": "Direct",
-        "requested": "[5.1.2, )",
-        "resolved": "5.1.2",
-        "contentHash": "z5FcwxOI53NrHSmKa5lsejnamQnTpBrRPWRBgJs6+JyF3uUo9lprpd6k/1KcR1zj5cbeRM9j68xMCkJysrjS0w=="
+        "requested": "[5.1.3, )",
+        "resolved": "5.1.3",
+        "contentHash": "f1alp86Dby33bKJpICLhxr6zvLi66CFRsXhl/G6xNR7205ZZ5Vr3lUoTgaMex9oh12vVjbeoGbshKJ65L7871A=="
       },
       "ConsoleAppFramework": {
         "type": "Direct",
-        "requested": "[5.4.0, )",
-        "resolved": "5.4.0",
-        "contentHash": "o0ZXrqMEX52h994QA5oiS8qBo62szFc//HH9SxvXIOG4KRmhrfpliW57iSl4/Hjr0tqJcdMwhMzr9K5+TLSUUA=="
+        "requested": "[5.4.1, )",
+        "resolved": "5.4.1",
+        "contentHash": "2QlC0lYN8Qfu9Hwe+6tp/ZqG8gFN4jTHgaOQwpszLYa6Mtw2rXcsacaSBqS+Gt6HeO8oSSJJdKze6AnYuHSN6A=="
       },
       "DotNet.ReproducibleBuilds": {
         "type": "Direct",
@@ -53,9 +53,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.2, )",
-        "resolved": "9.0.2",
-        "contentHash": "+KFnCLVPicEq99ko0tq+ycTvNLXHw0tImmTZjPloB/DOFLPT56KLfk5aS7wbgXRPzYhXTTBYLGaABea5mke77w=="
+        "requested": "[9.0.3, )",
+        "resolved": "9.0.3",
+        "contentHash": "1rqGTfubVg0qj2PsK6esyq3PIxtYJYrN3LsYUV9RrvH3anmt3fT3ozYdAZZH4U8JU/pt5pPIUk8NBSu26wtekA=="
       },
       "Nerdbank.GitVersioning": {
         "type": "Direct",
@@ -65,9 +65,9 @@
       },
       "Raiqub.Generators.EnumUtilities": {
         "type": "Direct",
-        "requested": "[1.10.2, )",
-        "resolved": "1.10.2",
-        "contentHash": "leqWumOigNDEfgzhq7hXIHCTgQ31Wvk8o5NZgkZy00+Frtrv3+L8RDWLqq5mHYAvCSrk8we42XPdicBVCEDX2Q=="
+        "requested": "[1.11.4, )",
+        "resolved": "1.11.4",
+        "contentHash": "0s3LyLTU1O18eMkjZZo9jhhXSVtWjhw68t8miYIHUHEfoHtyRFV+id7jjgxx2WeHE5dsmNlovNauFO8vK0n/9A=="
       },
       "Raiqub.T4Template": {
         "type": "Direct",
@@ -83,11 +83,11 @@
       },
       "TestableIO.System.IO.Abstractions.Wrappers": {
         "type": "Direct",
-        "requested": "[21.3.1, )",
-        "resolved": "21.3.1",
-        "contentHash": "l/xu8G96pntsofFG8vh6BKbVbYWtqYZTpNCcj4jGNwxwSbwY2gvDmkiFmIbWf7lgzPZbopW2FAfaY6m4K/3QJw==",
+        "requested": "[22.0.12, )",
+        "resolved": "22.0.12",
+        "contentHash": "pu9OwvRInYnwNxgtEdlL3PMYwKgx2X81TAsgIwes3nnqTDjtWgb0uxcWUfxBGJd59/cvu3bi2IpfM0Au38+UKQ==",
         "dependencies": {
-          "TestableIO.System.IO.Abstractions": "21.3.1"
+          "Testably.Abstractions.FileSystem.Interface": "9.0.0"
         }
       },
       "FxKit.CompilerServices.Annotations": {
@@ -105,10 +105,10 @@
         "resolved": "2.0.323",
         "contentHash": "Kg+fJGWhGj5qRXG0Ilj4ddhuodGXZg57yhfX6OVUDR0M2DKg/UR42/d74+qv5l1qotc1qJilo/ho7xQnULP6yA=="
       },
-      "TestableIO.System.IO.Abstractions": {
+      "Testably.Abstractions.FileSystem.Interface": {
         "type": "Transitive",
-        "resolved": "21.3.1",
-        "contentHash": "B9USlBOZAiqXss7AI4BH6HVWs+HoHx38OadJjBO0VCzEWgP/u0u52bogmrzDHsyqRv8Yo/xtIMQXgpjLoaAUXw=="
+        "resolved": "9.0.0",
+        "contentHash": "uksk86YlnzAdyfVNu3wICU0X5iXVe9LF7Q3UkngNliHWEvM5gvAlOUr+jmd9JwmbJWISH5+i1vyXE02lEVz7WQ=="
       }
     },
     "net9.0/linux-arm64": {

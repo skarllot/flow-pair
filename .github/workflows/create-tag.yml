@@ -21,7 +21,7 @@ jobs:
 
     steps:
     - name: 🛡️ Harden Runner
-      uses: step-security/harden-runner@cb605e52c26070c328afc4562f0b4ada7618a84e # v2.10.4
+      uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
       with:
         disable-sudo: true
         egress-policy: block
@@ -40,7 +40,7 @@ jobs:
         fetch-depth: 0
 
     - name: 🧰 Setup .NET
-      uses: actions/setup-dotnet@3951f0dfe7a07e2313ec93c75700083e2005cbab # v4.3.0
+      uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
       with:
         global-json-file: global.json
 
