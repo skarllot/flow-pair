@@ -1,29 +1,22 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using FluentAssertions;
 using JetBrains.Annotations;
 using NSubstitute;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
-using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
-using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges.v1;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewPullRequest;
 using Raiqub.LlmTools.FlowPair.Agent.Services;
-using Raiqub.LlmTools.FlowPair.Chats.Contracts.v1;
-using Raiqub.LlmTools.FlowPair.Chats.Models;
-using Raiqub.LlmTools.FlowPair.Chats.Services;
 using Raiqub.LlmTools.FlowPair.Git.GetChanges;
-using Raiqub.LlmTools.FlowPair.LocalFileSystem.Services;
-using Spectre.Console;
-using Spectre.Console.Testing;
 
-namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Operations.ReviewChanges;
+namespace Raiqub.LlmTools.FlowPair.Tests.Agent.Operations.ReviewPullRequest;
 
-[TestSubject(typeof(ReviewChangesCommand))]
-public sealed class ReviewChangesCommandTest
+[TestSubject(typeof(ReviewPullRequestCommand))]
+public sealed class ReviewPullRequestCommandTest
 {
     private readonly IGitGetChangesHandler _getChangesHandler = Substitute.For<IGitGetChangesHandler>();
     private readonly ILoginUseCase _loginUseCase = Substitute.For<ILoginUseCase>();
     private readonly IReviewFeedbackBuilder _reviewFeedbackBuilder = Substitute.For<IReviewFeedbackBuilder>();
 
-    private ReviewChangesCommand CreateCommand() =>
+    private ReviewPullRequestCommand CreateCommand() =>
         new(
             getChangesHandler: _getChangesHandler,
             loginUseCase: _loginUseCase,

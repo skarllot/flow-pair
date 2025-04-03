@@ -2,6 +2,7 @@ using Jab;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewPullRequest;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.UpdateUnitTest;
 using Raiqub.LlmTools.FlowPair.Agent.Services;
 
@@ -15,6 +16,7 @@ namespace Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
 // Services
 [Singleton(typeof(IDirectoryStructureMessageFactory), typeof(DirectoryStructureMessageFactory))]
 [Singleton(typeof(IProjectFilesMessageFactory), typeof(ProjectFilesMessageFactory))]
+[Singleton(typeof(IReviewFeedbackBuilder), typeof(ReviewFeedbackBuilder))]
 
 // Chat scripts
 [Singleton(typeof(IReviewChatScript), typeof(ReviewChatScript))]
@@ -27,6 +29,7 @@ namespace Raiqub.LlmTools.FlowPair.Agent.Infrastructure;
 [Singleton(typeof(ReviewChangesCommand))]
 [Singleton(typeof(CreateUnitTestCommand))]
 [Singleton(typeof(UpdateUnitTestCommand))]
+[Singleton(typeof(ReviewPullRequestCommand))]
 public interface IAgentModule
 {
     static AgentJsonContext GetJsonContext() => AgentJsonContext.Default;

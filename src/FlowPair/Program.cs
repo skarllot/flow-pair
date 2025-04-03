@@ -2,6 +2,7 @@
 using Raiqub.LlmTools.FlowPair.Agent.Operations.CreateUnitTest;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.Login;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewChanges;
+using Raiqub.LlmTools.FlowPair.Agent.Operations.ReviewPullRequest;
 using Raiqub.LlmTools.FlowPair.Agent.Operations.UpdateUnitTest;
 using Raiqub.LlmTools.FlowPair.DependencyInjection;
 using Raiqub.LlmTools.FlowPair.Settings.Operations.Configure;
@@ -34,6 +35,7 @@ public static class Program
         app.Add<ReviewChangesCommand>();
         app.Add<CreateUnitTestCommand>();
         app.Add<UpdateUnitTestCommand>();
+        app.Add<ReviewPullRequestCommand>();
         app.Run(args);
     }
 }
