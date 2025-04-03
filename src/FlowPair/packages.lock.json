@@ -65,9 +65,9 @@
       },
       "Raiqub.Generators.EnumUtilities": {
         "type": "Direct",
-        "requested": "[1.10.2, )",
-        "resolved": "1.10.2",
-        "contentHash": "leqWumOigNDEfgzhq7hXIHCTgQ31Wvk8o5NZgkZy00+Frtrv3+L8RDWLqq5mHYAvCSrk8we42XPdicBVCEDX2Q=="
+        "requested": "[1.11.4, )",
+        "resolved": "1.11.4",
+        "contentHash": "0s3LyLTU1O18eMkjZZo9jhhXSVtWjhw68t8miYIHUHEfoHtyRFV+id7jjgxx2WeHE5dsmNlovNauFO8vK0n/9A=="
       },
       "Raiqub.T4Template": {
         "type": "Direct",
