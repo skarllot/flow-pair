@@ -20,7 +20,7 @@
     <PackageVersion Include="LibGit2Sharp" Version="0.31.0" />
     <PackageVersion Include="Raiqub.Generators.EnumUtilities" Version="1.11.4" />
     <PackageVersion Include="Raiqub.T4Template" Version="1.2.3" />
-    <PackageVersion Include="Spectre.Console" Version="0.49.1" />
+    <PackageVersion Include="Spectre.Console" Version="0.50.0" />
     <PackageVersion Include="TestableIO.System.IO.Abstractions.Wrappers" Version="22.0.13" />
   </ItemGroup>
 </Project>
