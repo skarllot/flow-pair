@@ -180,8 +180,8 @@
       },
       "Raiqub.T4Template": {
         "type": "Transitive",
-        "resolved": "1.2.3",
-        "contentHash": "mQ8ma62B1bz7kAG/q0ug/T9xtT56Mk4KMyjDjZ3ef8voVUpEn5o7LwCEGzhBNZtf+V7EYzSypyTwsB98zyruNA=="
+        "resolved": "1.2.7",
+        "contentHash": "rSApMzqoiBPAWI7VZO2zapabtHc5Vjsp8zVvTh/4EP1iyH7Rq/0dOmdpyIDAxfeZyvpj/6VaI85nRbPYSRRbKg=="
       },
       "Spectre.Console": {
         "type": "Transitive",
@@ -310,7 +310,7 @@
           "Jab": "[0.11.0, )",
           "LibGit2Sharp": "[0.31.0, )",
           "Raiqub.Generators.EnumUtilities": "[1.11.4, )",
-          "Raiqub.T4Template": "[1.2.3, )",
+          "Raiqub.T4Template": "[1.2.7, )",
           "Spectre.Console": "[0.49.1, )",
           "TestableIO.System.IO.Abstractions.Wrappers": "[22.0.13, )"
         }
